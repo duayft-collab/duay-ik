@@ -1,1014 +1,1079 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AkademiHub – Şirket Personel Platformu</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DUAY IK — İşe Alım Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F7F6F3;--surface:#FFF;--surface2:#F2F1ED;
-  --border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);
-  --text:#1A1A18;--text-2:#6B6B67;--text-3:#A0A09C;
-  --accent:#3C3489;--accent-light:#EEEDFE;--accent-text:#26215C;
-  --green:#1D9E75;--green-bg:#E1F5EE;--green-text:#085041;
-  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-text:#0C447C;
-  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-text:#854F0B;
-  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#711F1F;
-  --coral:#D85A30;--coral-bg:#FAECE7;--coral-text:#993C1D;
-  --radius:10px;--radius-sm:6px;
-  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:0 4px 12px rgba(0,0,0,.08);
-}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;display:flex;flex-direction:column}
-.topnav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
-.brand{display:flex;align-items:center;gap:10px}
-.brand-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600}
-.brand-name{font-size:15px;font-weight:600;letter-spacing:-.3px}
-.brand-sub{font-size:11px;color:var(--text-2);margin-top:1px}
-.topnav-right{display:flex;align-items:center;gap:12px}
-.mode-toggle{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:3px;gap:2px}
-.mode-btn{padding:5px 14px;border-radius:4px;font-size:12px;font-weight:500;border:none;cursor:pointer;background:transparent;color:var(--text-2);transition:all .15s;font-family:inherit}
-.mode-btn.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
-.user-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);padding:4px 10px 4px 4px;border-radius:99px;cursor:pointer;transition:background .15s}
-.user-chip:hover{background:var(--border)}
-.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
-.user-chip-name{font-size:12px;font-weight:500}
-.user-chip-role{font-size:10px;color:var(--text-2)}
-.layout{display:flex;flex:1;min-height:calc(100vh - 52px)}
-.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 8px;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
-.nav-section{font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;padding:12px 10px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--text-2);margin-bottom:1px;transition:all .15s;user-select:none}
-.nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
-.nav-item svg{flex-shrink:0;opacity:.7}
-.nav-item.active svg{opacity:1}
-.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:99px}
-.main{flex:1;padding:28px 32px;overflow-y:auto}
-.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
-.page-title{font-size:20px;font-weight:600;letter-spacing:-.4px}
-.page-sub{font-size:13px;color:var(--text-2);margin-top:3px}
-.panel{display:none}
-.panel.active{display:block}
-.btn{padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid var(--border-md);background:var(--surface);color:var(--text);transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{background:var(--surface2)}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-primary:hover{background:var(--accent-text)}
-.btn-sm{padding:5px 10px;font-size:12px}
-.btn-danger{background:var(--red-bg);color:var(--red-text);border-color:transparent}
-.btn-danger:hover{background:#f5c4c4}
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:16px 18px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
-.stat-val{font-size:26px;font-weight:600;letter-spacing:-.5px}
-.stat-lbl{font-size:12px;color:var(--text-2);margin-top:2px}
-.stat-delta{font-size:11px;margin-top:6px;font-weight:500}
-.delta-up{color:var(--green)}
-.delta-dn{color:var(--red)}
-.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:20px}
-.card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-size:14px;font-weight:600}
-.table{width:100%;border-collapse:collapse;font-size:13px}
-.table th{padding:10px 20px;text-align:left;font-size:11px;font-weight:600;color:var(--text-2);letter-spacing:.03em;text-transform:uppercase;background:var(--surface2)}
-.table td{padding:12px 20px;border-bottom:1px solid var(--border);vertical-align:middle}
-.table tr:last-child td{border-bottom:none}
-.table tr:hover td{background:var(--surface2)}
-.badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:500}
-.badge-green{background:var(--green-bg);color:var(--green-text)}
-.badge-blue{background:var(--blue-bg);color:var(--blue-text)}
-.badge-amber{background:var(--amber-bg);color:var(--amber-text)}
-.badge-red{background:var(--red-bg);color:var(--red-text)}
-.badge-purple{background:var(--accent-light);color:var(--accent-text)}
-.badge-gray{background:var(--surface2);color:var(--text-2)}
-.badge-coral{background:var(--coral-bg);color:var(--coral-text)}
-.user-row{display:flex;align-items:center;gap:10px}
-.user-info-cell .uname{font-weight:500;font-size:13px}
-.user-info-cell .uemail{font-size:11px;color:var(--text-2)}
-.perm-list{display:flex;flex-wrap:wrap;gap:4px}
-.perm-tag{padding:2px 8px;border-radius:99px;font-size:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-2)}
-.doc-controls{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.search-input{flex:1;min-width:200px;padding:8px 14px;border-radius:var(--radius-sm);border:1px solid var(--border-md);background:var(--surface);font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s}
-.search-input:focus{border-color:var(--accent)}
-.filter-chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:5px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1px solid var(--border-md);background:var(--surface);cursor:pointer;color:var(--text-2);transition:all .15s;font-family:inherit}
-.chip:hover{background:var(--surface2)}
-.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
-.doc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow)}
-.doc-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.doc-icon-wrap{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
-.doc-name{font-size:13px;font-weight:500;margin-bottom:4px;line-height:1.4}
-.doc-meta{font-size:11px;color:var(--text-2)}
-.doc-actions-row{display:flex;gap:4px;margin-top:10px}
-.doc-action-btn{padding:4px 10px;border-radius:5px;font-size:11px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text-2);font-family:inherit;transition:all .12s}
-.doc-action-btn:hover{background:var(--border);color:var(--text)}
-.activity-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border)}
-.activity-item:last-child{border-bottom:none}
-.act-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.act-text{font-size:13px;line-height:1.5}
-.act-time{font-size:11px;color:var(--text-3);margin-top:3px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(2px)}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border-radius:14px;padding:24px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.18)}
-.modal-title{font-size:16px;font-weight:600;margin-bottom:20px}
-.form-row{margin-bottom:14px}
-.form-lbl{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-.form-input{width:100%;padding:9px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-md);background:var(--surface2);font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s}
-.form-input:focus{border-color:var(--accent);background:var(--surface)}
-.checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
-.chk-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;user-select:none;transition:all .12s}
-.chk-item:hover{background:var(--surface2)}
-.chk-item input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
-.detail-row:last-child{border-bottom:none}
-.detail-lbl{color:var(--text-2);font-size:12px}
-.empty-state{padding:48px;text-align:center;color:var(--text-2)}
-.empty-icon{font-size:36px;margin-bottom:12px}
-.empty-title{font-size:15px;font-weight:500;margin-bottom:6px;color:var(--text)}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;box-shadow:var(--shadow-md);transform:translateY(80px);opacity:0;transition:all .25s ease;z-index:9999}
-.toast.show{transform:translateY(0);opacity:1}
-.toast.success{background:var(--green)}
-.toast.error{background:var(--red)}
-.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px}
-.quick-item{padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center;font-size:12px;color:var(--text-2);font-weight:500;transition:all .15s}
-.quick-item:hover{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
-.quick-item .qi-icon{font-size:20px;display:block;margin-bottom:6px}
-/* PUANTAJ */
-.puan-switch{position:relative;display:inline-block;width:36px;height:19px}
-.puan-switch input{opacity:0;width:0;height:0}
-.puan-slider{position:absolute;cursor:pointer;inset:0;background:#D1D5DB;border-radius:19px;transition:.3s}
-.puan-slider:before{position:absolute;content:"";height:13px;width:13px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
-.puan-switch input:checked+.puan-slider{background:var(--accent)}
-.puan-switch input:checked+.puan-slider:before{transform:translateX(17px)}
-.puan-table{width:100%;border-collapse:collapse;font-size:12px}
-.puan-table th{padding:9px 14px;text-align:left;font-size:10px;font-weight:600;color:var(--text-2);letter-spacing:.04em;text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)}
-.puan-table td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-.puan-table tr:last-child td{border-bottom:none}
-.puan-table tr:hover td{background:var(--surface2)}
-.puan-approve-btn{padding:3px 10px;border-radius:99px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid;transition:all .15s}
-.puan-approve-btn.approved{background:var(--green-bg);color:var(--green-text);border-color:var(--green-bg)}
-.puan-approve-btn.pending{background:var(--amber-bg);color:var(--amber-text);border-color:var(--amber-bg)}
-.mini-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
-.mini-stat-val{font-size:22px;font-weight:600;letter-spacing:-.4px}
-.mini-stat-lbl{font-size:11px;color:var(--text-2);margin-top:2px}
-/* TAKVİM */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-header-day{text-align:center;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;padding:6px 0}
-.cal-day{min-height:72px;border:1px solid var(--border);border-radius:6px;padding:6px;cursor:pointer;transition:all .12s;background:var(--surface)}
-.cal-day:hover{border-color:var(--accent);background:var(--accent-light)}
-.cal-day.today{border-color:var(--accent);background:var(--accent-light)}
-.cal-day.other-month{opacity:.35;pointer-events:none}
-.cal-day.selected{border-color:var(--accent);border-width:2px}
-.cal-day-num{font-size:12px;font-weight:600;margin-bottom:4px}
-.cal-event-dot{font-size:9px;padding:1px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cal-sidebar-event{padding:10px 14px;border-left:3px solid var(--accent);margin-bottom:8px;font-size:13px;background:var(--surface2);border-radius:0 6px 6px 0}
-/* PUSULA */
-.task-item{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .12s}
-.task-item:last-child{border-bottom:none}
-.task-item:hover{background:var(--surface2)}
-.task-item.done .task-title{text-decoration:line-through;color:var(--text-3)}
-.task-title{font-size:13px;font-weight:500;line-height:1.4}
-.task-meta{font-size:11px;color:var(--text-2);margin-top:2px}
-.task-check{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;margin-top:2px}
-.priority-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.p1{background:#FCEBEB;color:#A32D2D}
-.p2{background:#FAEEDA;color:#854F0B}
-.p3{background:#E6F1FB;color:#0C447C}
-@media(max-width:900px){.sidebar{display:none}.stat-grid{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:repeat(2,1fr)}}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:99px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f5f0fa;color:#1a0a2e;height:100vh;display:flex;overflow:hidden}
+button,input,textarea,select{font-family:'DM Sans',sans-serif}
+a{color:#8b1a4a;text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── Sidebar ── */
+#sidebar{width:220px;background:#1a0a2e;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s;overflow:hidden}
+#sidebar.collapsed{width:56px}
+.logo{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2d1a4a;flex-shrink:0}
+.logo-icon{background:#8b1a4a;border-radius:8px;padding:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-txt{font-weight:700;font-size:14px;color:#fff;white-space:nowrap}
+.logo-sub{font-size:9px;color:#7c5a9a;font-weight:500;letter-spacing:.06em;white-space:nowrap}
+nav{flex:1;padding:8px 6px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.nb{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:transparent;color:#7c5a9a;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
+.nb:hover{background:#2d1a4a;color:#e2d4f0}
+.nb.active{background:#8b1a4a;color:#fff}
+.nb svg{flex-shrink:0}
+.nb-badge{margin-left:auto;font-size:9px;font-weight:700;background:#4a0a2a;color:#f0a0c0;padding:1px 6px;border-radius:20px;flex-shrink:0}
+.nb.active .nb-badge{background:rgba(255,255,255,.2);color:#fff}
+.sb-toggle{padding:8px 6px;border-top:1px solid #2d1a4a;flex-shrink:0}
+.sb-toggle button{width:100%;padding:7px;border:none;background:transparent;color:#7c5a9a;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.sb-toggle button:hover{background:#2d1a4a}
+
+/* ── Main ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+header{height:52px;background:#fff;border-bottom:1px solid #e8dff5;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0}
+#page-title{font-weight:600;font-size:14px;color:#1a0a2e}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.srch{position:relative}
+.srch input{padding:5px 10px 5px 28px;border:1px solid #e0d0f0;border-radius:20px;font-size:12px;color:#334155;background:#f5f0fa;width:190px}
+.srch svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:#9a7ab0;pointer-events:none}
+.avatar-btn{width:28px;height:28px;border-radius:50%;background:#f0e0ea;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:#8b1a4a;border:none;cursor:pointer}
+#content{flex:1;overflow:auto;padding:18px}
+.panel{display:none}.panel.active{display:block}
+
+/* ── Cards / Boxes ── */
+.sec-head{background:linear-gradient(135deg,#1a0a2e,#5a1a5a);border-radius:12px;padding:16px 20px;margin-bottom:18px;color:#fff;display:flex;align-items:center;gap:12px}
+.sec-head-txt{font-weight:700;font-size:14px}
+.sec-head-sub{font-size:11px;opacity:.8;margin-top:2px}
+.card{background:#fff;border-radius:12px;border:1px solid #e8dff5;padding:16px}
+.card+.card{margin-top:12px}
+.tip{background:#f0e8f8;border-left:3px solid #8b1a4a;border-radius:0 8px 8px 0;padding:8px 12px;font-size:11px;color:#4a1a6a;line-height:1.6;margin-bottom:12px}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:2px;border-bottom:1px solid #e8dff5;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:#9a7ab0;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#1a0a2e;border-bottom-color:#8b1a4a}
+.tpanel{display:none}.tpanel.active{display:block}
+
+/* ── Forms ── */
+.field{margin-bottom:11px}
+.field label,.flabel{display:block;font-size:10px;font-weight:600;color:#6a4a7a;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field textarea,.field select,
+input[data-fi],textarea[data-fi],select[data-fi]{width:100%;border:1px solid #e0d0f0;border-radius:8px;padding:7px 10px;font-size:12px;color:#334155;background:#f8f5ff}
+.field input:focus,.field textarea:focus,.field select:focus,
+input[data-fi]:focus,textarea[data-fi]:focus{outline:none;border-color:#8b1a4a}
+.field textarea{resize:vertical;min-height:80px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-primary{background:#1a0a2e;color:#fff}.btn-primary:hover{opacity:.85}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-rose{background:#8b1a4a;color:#fff}.btn-rose:hover{opacity:.85}
+.btn-outline{background:#fff;color:#6a4a7a;border:1px solid #d0b8e8}.btn-outline:hover{background:#f5f0fa}
+.btn-danger{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}.btn-danger:hover{background:#fee2e2}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-full{width:100%}
+.err-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:7px 11px;font-size:11px;color:#991b1b;margin-bottom:10px}
+.res-box{background:#f8f5ff;border-radius:10px;padding:14px;border:1px solid #e8dff5;margin-top:10px}
+
+/* ── Pipeline ── */
+.pipe-wrap{display:flex;gap:11px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
+.stage-col{min-width:240px;width:240px;flex-shrink:0}
+.stage-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.stage-lbl{font-size:11px;font-weight:600;color:#6a4a7a}
+.stage-cnt{background:#e8d8f0;color:#6a4a7a;font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px}
+.stage-body{background:#ede6f8;border-radius:10px;padding:7px;min-height:160px;display:flex;flex-direction:column;gap:6px;border:1px dashed #c8a8e8}
+.pcard{background:#fff;padding:11px;border-radius:9px;border:1px solid #e8dff5;cursor:pointer;transition:all .15s}
+.pcard:hover{border-color:#8b1a4a;box-shadow:0 2px 8px rgba(139,26,74,.1)}
+.pcard-pos{font-size:9px;font-weight:700;color:#8b1a4a;letter-spacing:.04em;margin-bottom:2px}
+.pcard-name{font-weight:600;font-size:12px;color:#1a0a2e;margin-bottom:2px}
+.pcard-meta{font-size:10px;color:#9a8aaa;margin-bottom:7px}
+.pcard-foot{display:flex;justify-content:space-between;align-items:center}
+.pcard-score{display:flex;align-items:center;gap:3px;background:#fff8e0;color:#a06010;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid #f0d880}
+.add-btn{width:100%;padding:5px;background:transparent;border:none;color:#9a7ab0;font-size:11px;cursor:pointer;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px}
+.add-btn:hover{color:#8b1a4a;background:#f8e8f0}
+
+/* ── Modal ── */
+#mo{display:none;position:fixed;inset:0;background:rgba(26,10,46,.6);z-index:50;backdrop-filter:blur(4px)}
+#mo.open{display:flex;align-items:stretch;justify-content:flex-end}
+#modal{width:100%;max-width:520px;background:#fff;display:flex;flex-direction:column;animation:sli .3s cubic-bezier(.22,1,.36,1)}
+@keyframes sli{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.mhead{padding:14px 18px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;justify-content:space-between}
+.mav{width:36px;height:36px;border-radius:50%;background:#f8e8f0;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.mbody{flex:1;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.mfoot{padding:11px 18px;background:#1a0a2e;display:flex;gap:7px}
+.ic{background:#f8f5ff;padding:8px 11px;border-radius:9px;border:1px solid #f0e8f0}
+.ic-l{font-size:8px;font-weight:700;color:#9a7ab0;letter-spacing:.1em;margin-bottom:2px}
+.ic-v{font-size:11px;font-weight:600;color:#334155}
+.slist{display:flex;flex-direction:column;gap:3px}
+.step{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;border:1px solid transparent}
+.step.cur{background:#f8e8f0;border-color:#d8a0c0}
+.step-n{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* ── Interview Form ── */
+.iq-row{background:#fff;border:1px solid #e8dff5;border-radius:10px;padding:12px;margin-bottom:8px}
+.iq-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.iq-num{width:22px;height:22px;border-radius:6px;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px}
+.iq-q{flex:1;border:1px solid #e0d0f0;border-radius:7px;padding:6px 9px;font-size:12px;color:#334155;background:#f8f5ff;resize:none;min-height:36px}
+.iq-q:focus{outline:none;border-color:#8b1a4a}
+.iq-del{border:none;background:transparent;color:#d0a0b0;cursor:pointer;padding:3px;border-radius:5px;flex-shrink:0}
+.iq-del:hover{color:#ef4444;background:#fef2f2}
+.iq-ans{width:100%;border:1px solid #d4ecd4;border-radius:7px;padding:6px 9px;font-size:12px;color:#334155;background:#f0faf0;resize:none;min-height:50px}
+.iq-ans:focus{outline:none;border-color:#10b981}
+.iq-ans-lbl{font-size:10px;font-weight:600;color:#065f46;margin-bottom:3px;letter-spacing:.03em}
+
+/* ── Eval ── */
+.eval-wrap{max-width:800px;background:#fff;border-radius:12px;border:1px solid #e8dff5;overflow:hidden}
+.eval-hd{padding:16px 20px;border-bottom:1px solid #f0e8f0;background:#f8f5ff;display:flex;justify-content:space-between;align-items:center}
+.eval-grid{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.fac{display:flex;flex-direction:column;gap:4px}
+.fac-hd{display:flex;justify-content:space-between;align-items:center}
+.fac-lbl{font-size:11px;font-weight:600;color:#334155}
+.fac-sc{font-size:10px;font-weight:700;color:#8b1a4a;background:#f8e8f0;padding:1px 7px;border-radius:20px}
+.fac-bars{display:flex;gap:3px}
+.fbar{flex:1;height:4px;border-radius:2px;border:none;cursor:pointer;transition:background .1s}
+
+/* ── DB records ── */
+.db-row{background:#fff;border:1px solid #e8dff5;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
+.db-av{width:34px;height:34px;border-radius:50%;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
+.db-meta{font-size:10px;color:#9a7ab0;margin-top:2px}
+.db-preview{font-size:11px;color:#475569;margin-top:5px;line-height:1.5}
+.db-actions{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+
+/* ── Table ── */
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{background:#1a0a2e;color:#fff;padding:8px 11px;text-align:left;font-weight:600;white-space:nowrap}
+.tbl td{padding:7px 11px;border-bottom:1px solid #f0e8f0;color:#334155}
+.tbl tr:hover td{background:#f8f5ff}
+.tbl input{border:none;background:transparent;font-size:11px;color:#334155;width:90px}
+
+/* ── Resources ── */
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:900px}
+.res-card{background:#fff;border-radius:11px;border:1px solid #e8dff5;padding:14px;display:flex;flex-direction:column;gap:8px}
+.res-cat{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;align-self:flex-start}
+.res-title{font-size:12px;font-weight:700;color:#1a0a2e;line-height:1.4}
+.res-desc{font-size:11px;color:#64748b;line-height:1.5;flex:1}
+
+/* ── Score bar ── */
+.sbar-wrap{flex:1;height:5px;background:#e8dff5;border-radius:3px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* ── DISC badges ── */
+.disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:640px}
+.disc-card{background:#fff;border-radius:11px;padding:14px;border:1px solid #e8dff5}
+
+/* ── Misc ── */
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:220px;color:#9a7ab0;gap:8px;font-size:12px}
+.dot-load::after{content:'.';animation:dotani 1.2s infinite}
+@keyframes dotani{0%{content:'.'}33%{content:'..'}66%{content:'...'}100%{content:'.'}}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 </style>
 </head>
 <body>
 
-<header class="topnav">
-  <div class="brand">
-    <div class="brand-icon">A</div>
-    <div><div class="brand-name">AkademiHub</div><div class="brand-sub">Şirket Platformu</div></div>
+<!-- ════ SIDEBAR ════ -->
+<div id="sidebar">
+  <div class="logo">
+    <div class="logo-icon"><svg width="17" height="17" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <div><div class="logo-txt">DUAY IK</div><div class="logo-sub">İŞE ALIM SİSTEMİ</div></div>
   </div>
-  <div class="topnav-right">
-    <div class="mode-toggle">
-      <button class="mode-btn active" onclick="switchRole('admin',this)">⚙ Admin</button>
-      <button class="mode-btn" onclick="switchRole('user',this)">👤 Personel</button>
-    </div>
-    <div class="user-chip">
-      <div class="avatar" id="top-avatar" style="background:#EEEDFE;color:#3C3489">AA</div>
-      <div><div class="user-chip-name" id="top-name">Admin</div><div class="user-chip-role" id="top-role">Yönetici</div></div>
-    </div>
+  <nav>
+    <button class="nb active" onclick="go('pipeline',this,'Aday Havuzu')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Aday Havuzu</span>
+    </button>
+    <button class="nb" onclick="go('telefon',this,'Telefon Ön Eleme')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Telefon Ön Eleme</span>
+    </button>
+    <button class="nb" onclick="go('mulakat',this,'Mülakat Formu')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Mülakat Formu</span>
+    </button>
+    <button class="nb" onclick="go('kayitlar',this,'Mülakat Kayıtları')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Mülakat Kayıtları</span>
+      <span class="nb-badge" id="kayit-badge">0</span>
+    </button>
+    <button class="nb" onclick="go('test',this,'Test Sürüşü')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <span>Test Sürüşü</span>
+    </button>
+    <button class="nb" onclick="go('evaluation',this,'Değerlendirme')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Değerlendirme</span>
+    </button>
+    <button class="nb" onclick="go('referans',this,'Referans Kontrol')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="23,11 17,11 19,13"/><polyline points="23,11 17,11 19,9"/></svg>
+      <span>Referans Kontrol</span>
+    </button>
+    <button class="nb" onclick="go('tesekkur',this,'Teşekkür Mektubu')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span>Teşekkür Mektubu</span>
+    </button>
+    <button class="nb" onclick="go('ai',this,'YZ Araçları')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      <span>YZ Araçları</span>
+      <span class="nb-badge">YZ</span>
+    </button>
+    <button class="nb" onclick="go('ozet',this,'Aday Karşılaştırma')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Aday Karşılaştırma</span>
+    </button>
+    <button class="nb" onclick="go('kaynaklar',this,'IK Kaynakları')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span>IK Kaynakları</span>
+    </button>
+  </nav>
+  <div class="sb-toggle">
+    <button onclick="toggleSB()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
-</header>
+</div>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="nav-section" id="nav-label-admin">Yönetim</div>
-    <div class="nav-item active" onclick="nav('dashboard',this)">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
-      Dashboard
-    </div>
-    <div class="nav-item" onclick="nav('users',this)" id="nav-users">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="6" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M1 13c0-2.76 2.24-5 5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M11 9v6M8 12h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Kullanıcılar <span class="nav-badge" id="user-count-badge">5</span>
-    </div>
-    <div class="nav-section">İçerik</div>
-    <div class="nav-item" onclick="nav('docs',this)">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="1" width="9" height="13" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 5h5M5 8h5M5 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Dökümanlar
-    </div>
-    <div class="nav-item" onclick="nav('activity',this)" id="nav-activity">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.5V8l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Aktiviteler
-    </div>
-    <div class="nav-section">Araçlar</div>
-    <div class="nav-item" onclick="nav('pusula',this)">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 5.5l-2 4-4 2 2-4 4-2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
-      Pusula <span class="nav-badge" id="pusula-badge" style="background:var(--red);display:none">0</span>
-    </div>
-    <div class="nav-item" onclick="nav('puantaj',this)">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 7h14M5 3V1M11 3V1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Puantaj <span class="nav-badge" id="puan-pending-badge" style="background:var(--amber);display:none">0</span>
-    </div>
-    <div class="nav-item" onclick="nav('takvim',this)">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 7h14M5 3V1M11 3V1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="4" y="9" width="2" height="2" rx=".5" fill="currentColor"/><rect x="7" y="9" width="2" height="2" rx=".5" fill="currentColor"/><rect x="10" y="9" width="2" height="2" rx=".5" fill="currentColor"/></svg>
-      Takvim
-    </div>
-    <div class="nav-section">Hesap</div>
-    <div class="nav-item" onclick="nav('settings',this)">
-      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Ayarlar
-    </div>
-  </aside>
-
-  <main class="main">
-
-    <!-- DASHBOARD -->
-    <div class="panel active" id="panel-dashboard">
-      <div class="page-head">
-        <div><div class="page-title">Genel Bakış</div><div class="page-sub">Hoş geldiniz! Bugün 8 kullanıcı aktif.</div></div>
-        <span id="dashboard-date" style="font-size:12px;color:var(--text-2)"></span>
+<!-- ════ MAIN ════ -->
+<div id="main">
+  <header>
+    <div id="page-title">Aday Havuzu</div>
+    <div class="hdr-right">
+      <div class="srch">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="Aday ara..." oninput="filterCandidates(this.value)"/>
       </div>
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-icon" style="background:var(--accent-light)">👥</div><div class="stat-val" id="stat-users">5</div><div class="stat-lbl">Toplam Kullanıcı</div><div class="stat-delta delta-up">↑ +2 bu ay</div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:var(--blue-bg)">📄</div><div class="stat-val">9</div><div class="stat-lbl">Döküman</div><div class="stat-delta delta-up">↑ 3 yeni</div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:var(--red-bg)">🎯</div><div class="stat-val" id="stat-critical">0</div><div class="stat-lbl">Kritik Görev</div><div class="stat-delta delta-dn">↓ acil</div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:var(--amber-bg)">⏳</div><div class="stat-val" id="stat-pending">0</div><div class="stat-lbl">Bekleyen Onay</div><div class="stat-delta delta-dn">↓ incelenmeli</div></div>
+      <div class="avatar-btn">IK</div>
+    </div>
+  </header>
+
+  <div id="content">
+
+    <!-- ── PIPELINE ── -->
+    <div id="panel-pipeline" class="panel active">
+      <div class="pipe-wrap" id="pipe-board"></div>
+    </div>
+
+    <!-- ── TELEFON ÖN ELEME ── -->
+    <div id="panel-telefon" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <div><div class="sec-head-txt">Telefon Ön Görüşme Rehberi</div><div class="sec-head-sub">IKMG-0300-243 · Satınalma Asistanı Pozisyonu</div></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        <div class="card">
-          <div class="card-head"><span class="card-title">Son Aktiviteler</span></div>
-          <div>
-            <div class="activity-item"><div class="act-dot" style="background:var(--green)"></div><div><div class="act-text"><strong>Ayşe Kaya</strong> "Q3 Raporu.pdf" indirdi</div><div class="act-time">2 dk önce</div></div></div>
-            <div class="activity-item"><div class="act-dot" style="background:var(--accent)"></div><div><div class="act-text"><strong>Mert Demir</strong> İşe Alım formunu görüntüledi</div><div class="act-time">14 dk önce</div></div></div>
-            <div class="activity-item"><div class="act-dot" style="background:var(--blue)"></div><div><div class="act-text"><strong>Selin Arslan</strong> sisteme giriş yaptı</div><div class="act-time">1 saat önce</div></div></div>
-            <div class="activity-item"><div class="act-dot" style="background:var(--amber)"></div><div><div class="act-text"><strong>Admin</strong> erişim güncelledi</div><div class="act-time">2 saat önce</div></div></div>
+      <div style="max-width:820px">
+        <div class="tip">💡 Aday kaçamak yanıt veriyorsa, samimi görünmüyorsa ve net konuşmuyorsa görüşmeye çağırmayın. <strong>%10 siz konuşun, %90 adayı konuşturun.</strong></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div class="card">
+            <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:10px;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg> Sorulacak Sorular</div>
+            ${[
+              {n:1,q:'Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?'},
+              {n:2,q:'Bu pozisyonu kariyer olarak görüyor musunuz?',sub:['Satınalma sertifikanız var mı?','İlham aldığınız biri var mı?','Bu pozisyon hangi yönlerinizle örtüşüyor?']},
+              {n:3,q:'İlanı okudunuz — başvurunuza en çok ne sebep oldu?'},
+              {n:4,q:'DISC analiz raporunuzu iletebilir misiniz?'},
+              {n:5,q:'En başarılı indirim aldığınız pazarlığı anlatır mısınız?'},
+            ].map(i=>`<div style="margin-bottom:7px"><div style="display:flex;gap:7px;font-size:11px;color:#334155"><span style="width:16px;height:16px;border-radius:5px;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${i.n}</span><span>${i.q}</span></div>${(i.sub||[]).map(s=>`<div style="font-size:10px;color:#9a7ab0;padding-left:23px;margin-top:2px">↳ ${s}</div>`).join('')}</div>`).join('')}
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:10px;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Adaydan Gelen Sorulara Yanıtlar</div>
+            ${[
+              {s:'İş ne?',c:'Satınalma asistanlığı.'},
+              {s:'Online görüşebilir miyiz?',c:'Evet — ilk görüşme online, olumlu geçerse ikincisi yüz yüze.'},
+              {s:'Maaş nedir?',c:'Görüşmede konuşuluyor.'},
+              {s:'Diğer sorular',c:'Bu hususlar görüşmede sormanız durumunda iletilecek.'},
+            ].map(r=>`<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:600;color:#1a0a2e">${r.s}</div><div style="font-size:11px;color:#10b981;padding-left:8px;margin-top:2px">→ ${r.c}</div></div>`).join('')}
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:8px">📍 Ulaşım & Konum Kontrolü</div>
+          <div style="font-size:11px;color:#334155;line-height:1.9">
+            <div>✅ Ofise <strong>maksimum 5–6 km</strong> uzaklıkta olmalı.</div>
+            <div>✅ Metro ile <strong>aktarmasız</strong> gelebiliyorsa 10 km de kabul edilebilir.</div>
+            <div>✅ Uzaktan çalışma sistemi aktif olana kadar bu kural geçerli.</div>
+            <div style="font-size:10px;color:#9a7ab0;font-style:italic;margin-top:6px">1 gün kalacağın otele özenmezsin, ama içinde yaşayacağın evi seçerken çok daha dikkatli olursun.</div>
           </div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-title">Hızlı Erişim</span></div>
-          <div class="quick-grid">
-            <div class="quick-item" onclick="gotoPanel('pusula')"><span class="qi-icon">🧭</span>Pusula</div>
-            <div class="quick-item" onclick="gotoPanel('puantaj')"><span class="qi-icon">🗓</span>Puantaj</div>
-            <div class="quick-item" onclick="gotoPanel('takvim')"><span class="qi-icon">📅</span>Takvim</div>
-            <div class="quick-item" onclick="gotoPanel('docs')"><span class="qi-icon">📂</span>Dökümanlar</div>
+          <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:8px">📨 IK Yöneticisine İletilecek Bilgiler</div>
+          <div style="font-size:11px;color:#334155;line-height:1.9">
+            <div>• Adayın CV'si (PDF formatında)</div>
+            <div>• Telefon görüşmesi notları ve verilen yanıtlar</div>
+            <div>• Kanaat notu: <em>mutlaka görüşmeliyiz / iyi / fena değil / emin değilim</em></div>
+            <div>• Her görüşme max <strong>30 dakika</strong> — aralarında <strong>15 dakika</strong> ara</div>
+            <div>• Zoom / Google Meet linki WhatsApp üzerinden gönderilir</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- USERS -->
-    <div class="panel" id="panel-users">
-      <div class="page-head">
-        <div><div class="page-title">Kullanıcı Yönetimi</div><div class="page-sub">Tüm personel hesaplarını yönetin.</div></div>
-        <button class="btn btn-primary" onclick="openNewUserModal()">+ Yeni Kullanıcı</button>
+    <!-- ── MÜLAKAT FORMU ── -->
+    <div id="panel-mulakat" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <div><div class="sec-head-txt">Mülakat Formu</div><div class="sec-head-sub">Soru ekle · Yanıt yaz · Kaydet</div></div>
       </div>
-      <div class="card">
-        <div class="card-head"><span class="card-title">Kullanıcı Listesi</span><input class="search-input" style="width:200px;padding:6px 10px;font-size:12px" placeholder="Ara..." oninput="filterUsers(this.value)"></div>
-        <table class="table"><thead><tr><th>Kullanıcı</th><th>Rol</th><th>Erişim</th><th>Durum</th><th>İşlemler</th></tr></thead><tbody id="user-tbody"></tbody></table>
-      </div>
-    </div>
-
-    <!-- DOCS -->
-    <div class="panel" id="panel-docs">
-      <div class="page-head">
-        <div><div class="page-title">Dökümanlar</div><div class="page-sub" id="doc-page-sub">Tüm şirket dökümanlarına ulaşın.</div></div>
-        <button class="btn btn-primary" id="upload-btn" onclick="toast('Yükleme gerçek backend gerektirir.','error')">↑ Yükle</button>
-      </div>
-      <div class="doc-controls">
-        <input class="search-input" placeholder="Döküman ara..." oninput="filterDocs(this.value,'search')">
-        <div class="filter-chips">
-          <button class="chip active" onclick="filterDocs('all','cat',this)">Tümü</button>
-          <button class="chip" onclick="filterDocs('İK','cat',this)">İK</button>
-          <button class="chip" onclick="filterDocs('Finans','cat',this)">Finans</button>
-          <button class="chip" onclick="filterDocs('Operasyon','cat',this)">Operasyon</button>
-          <button class="chip" onclick="filterDocs('Teknik','cat',this)">Teknik</button>
+      <div style="max-width:800px">
+        <div class="tabs">
+          <button class="tab active" onclick="st('mul','kontrol',this)">Kontrol Listesi</button>
+          <button class="tab" onclick="st('mul','form',this)">Mülakat Formu</button>
+          <button class="tab" onclick="st('mul','sorubankasi',this)">Soru Bankası</button>
         </div>
-      </div>
-      <div class="doc-grid" id="doc-grid"></div>
-    </div>
 
-    <!-- ACTIVITY -->
-    <div class="panel" id="panel-activity">
-      <div class="page-head">
-        <div><div class="page-title">Aktivite Raporu</div><div class="page-sub">Kullanıcı hareketleri ve döküman erişim kayıtları.</div></div>
-        <button class="btn" onclick="toast('CSV dışa aktarıldı ✓','success')">⬇ CSV İndir</button>
-      </div>
-      <div class="card">
-        <div class="card-head"><span class="card-title">Tüm Aktiviteler</span></div>
-        <table class="table"><thead><tr><th>Kullanıcı</th><th>Döküman</th><th>İşlem</th><th>Tarih &amp; Saat</th></tr></thead>
-          <tbody>
-            <tr><td><div class="user-row"><div class="avatar" style="width:24px;height:24px;font-size:9px;background:#E1F5EE;color:#085041">AK</div>Ayşe Kaya</div></td><td>Q3 Raporu.pdf</td><td><span class="badge badge-blue">İndirdi</span></td><td style="font-size:12px;color:var(--text-2)">15.03.2026 09:12</td></tr>
-            <tr><td><div class="user-row"><div class="avatar" style="width:24px;height:24px;font-size:9px;background:#EEEDFE;color:#26215C">MD</div>Mert Demir</div></td><td>İşe Alım Süreci</td><td><span class="badge badge-green">Görüntüledi</span></td><td style="font-size:12px;color:var(--text-2)">15.03.2026 09:00</td></tr>
-            <tr><td><div class="user-row"><div class="avatar" style="width:24px;height:24px;font-size:9px;background:#E6F1FB;color:#0C447C">SA</div>Selin Arslan</div></td><td>— Oturum</td><td><span class="badge badge-amber">Giriş</span></td><td style="font-size:12px;color:var(--text-2)">15.03.2026 08:47</td></tr>
-            <tr><td><div class="user-row"><div class="avatar" style="width:24px;height:24px;font-size:9px;background:#FAECE7;color:#993C1D">EY</div>Emre Yıldız</div></td><td>Maaş Tablosu.xlsx</td><td><span class="badge badge-blue">İndirdi</span></td><td style="font-size:12px;color:var(--text-2)">14.03.2026 17:33</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PUSULA -->
-    <div class="panel" id="panel-pusula">
-      <div class="page-head">
-        <div><div class="page-title">🧭 Pusula</div><div class="page-sub" id="pusula-sub">Bugünkü görevler ve öncelikler.</div></div>
-        <button class="btn btn-primary" onclick="openAddTaskModal()">+ Görev Ekle</button>
-      </div>
-      <div id="pusula-user-filter" style="margin-bottom:16px;display:flex;align-items:center;gap:10px">
-        <label style="font-size:12px;color:var(--text-2);font-weight:500">Personel:</label>
-        <select class="form-input" id="pusula-user-sel" style="width:200px" onchange="renderPusula()">
-          <option value="0">Tüm Personel (Benim)</option>
-        </select>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px">
-        <div class="mini-stat"><div class="mini-stat-val" id="pus-total">0</div><div class="mini-stat-lbl">Toplam Görev</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--red)" id="pus-p1">0</div><div class="mini-stat-lbl">🔴 Kritik</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--amber)" id="pus-p2">0</div><div class="mini-stat-lbl">🟠 Önemli</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--green)" id="pus-done">0</div><div class="mini-stat-lbl">✅ Tamamlanan</div></div>
-      </div>
-      <!-- Bugünün 3 önceliği -->
-      <div class="card" style="margin-bottom:20px">
-        <div class="card-head">
-          <span class="card-title">🎯 Bugünün 3 Önceliği</span>
-          <span style="font-size:11px;color:var(--text-2)" id="pusula-top3-date"></span>
+        <!-- Kontrol listesi -->
+        <div id="mul-kontrol" class="tpanel active">
+          <div class="tip">📌 Görüşmeden önce tüm maddeler hazır olmalı.</div>
+          <div id="kontrol-list"></div>
         </div>
-        <div id="pusula-top3"></div>
-      </div>
-      <!-- Tüm görevler -->
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">Tüm Görevler</span>
-          <div style="display:flex;gap:6px">
-            <button class="chip active" onclick="setPusFilter('all',this)">Tümü</button>
-            <button class="chip" onclick="setPusFilter('todo',this)">Yapılacak</button>
-            <button class="chip" onclick="setPusFilter('done',this)">Tamamlanan</button>
+
+        <!-- Mülakat Formu -->
+        <div id="mul-form" class="tpanel">
+          <div class="card" style="margin-bottom:12px">
+            <div style="font-weight:700;font-size:13px;color:#1a0a2e;margin-bottom:12px">Görüşme Bilgileri</div>
+            <div class="frow">
+              <div class="field"><label>Adayın Adı Soyadı</label><input id="mf-aday" placeholder="Ad Soyad"/></div>
+              <div class="field"><label>Pozisyon</label><input id="mf-pozisyon" placeholder="ör. Satınalma Asistanı"/></div>
+              <div class="field"><label>Görüşme Tarihi & Saati</label><input id="mf-tarih" type="datetime-local"/></div>
+              <div class="field"><label>Görüşen Kişi</label><input id="mf-gorusen" placeholder="IK Yöneticisi adı"/></div>
+            </div>
           </div>
-        </div>
-        <div id="pusula-task-list"></div>
-      </div>
-    </div>
-
-    <!-- PUANTAJ -->
-    <div class="panel" id="panel-puantaj">
-      <div class="page-head">
-        <div><div class="page-title">📋 Puantaj Cetveli</div><div class="page-sub">Giriş-çıkış kayıtları ve onay yönetimi.</div></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn" onclick="puanExportExcel()">⬇ Excel</button>
-          <button class="btn btn-primary" onclick="openPuanModal()">+ Yeni Kayıt</button>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px">
-        <div class="mini-stat"><div class="mini-stat-val" id="ps-total">0</div><div class="mini-stat-lbl">Toplam Kayıt</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--amber)" id="ps-pending">0</div><div class="mini-stat-lbl">Onay Bekliyor</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--green)" id="ps-approved">0</div><div class="mini-stat-lbl">Onaylı</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--red)" id="ps-absent">0</div><div class="mini-stat-lbl">Devamsızlık</div></div>
-      </div>
-      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
-        <select class="form-input" id="puan-filter-user" style="width:180px" onchange="renderPuantaj()"><option value="">Tüm Personel</option></select>
-        <input type="month" class="form-input" id="puan-filter-month" style="width:160px" onchange="renderPuantaj()">
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);margin-left:auto">Fazla Mesai
-          <label class="puan-switch"><input type="checkbox" id="puan-show-overtime" checked onchange="renderPuantaj()"><span class="puan-slider"></span></label>
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2)">Eksik Mesai
-          <label class="puan-switch"><input type="checkbox" id="puan-show-undertime" checked onchange="renderPuantaj()"><span class="puan-slider"></span></label>
-        </label>
-      </div>
-      <div class="card" style="overflow-x:auto">
-        <table class="puan-table"><thead><tr id="puan-thead"></tr></thead><tbody id="puan-tbody"></tbody></table>
-      </div>
-    </div>
-
-    <!-- TAKVİM -->
-    <div class="panel" id="panel-takvim">
-      <div class="page-head">
-        <div><div class="page-title">📅 Şirket Takvimi</div><div class="page-sub">Toplantılar, etkinlikler ve önemli tarihler.</div></div>
-        <button class="btn btn-primary" onclick="openEventModal()">+ Etkinlik Ekle</button>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start">
-        <div class="card" style="padding:20px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-            <button class="btn btn-sm" onclick="calNav(-1)">← Önceki</button>
-            <span style="font-size:15px;font-weight:600" id="cal-month-label"></span>
-            <button class="btn btn-sm" onclick="calNav(1)">Sonraki →</button>
+          <div class="card" style="margin-bottom:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div style="font-weight:700;font-size:13px;color:#1a0a2e">Sorular ve Yanıtlar</div>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-outline btn-sm" onclick="addFromBank()">+ Bankadan Ekle</button>
+                <button class="btn btn-rose btn-sm" onclick="addIQ()">+ Soru Ekle</button>
+              </div>
+            </div>
+            <div id="iq-list"></div>
           </div>
-          <div class="cal-grid" id="cal-weekdays"></div>
-          <div class="cal-grid" id="cal-days" style="margin-top:4px"></div>
-        </div>
-        <div>
-          <div class="card" style="padding:16px;margin-bottom:16px">
-            <div style="font-size:13px;font-weight:600;margin-bottom:12px" id="cal-selected-label">Bir gün seçin</div>
-            <div id="cal-day-events"><div style="font-size:12px;color:var(--text-2)">Takvimden gün seçin.</div></div>
+          <div class="card" style="margin-bottom:12px">
+            <div class="field"><label>Görüşen Kişinin Notu (Özet Kanaat)</label><textarea id="mf-not" placeholder="Aday hakkındaki genel izlenimler, karar önerisi (mutlaka görüşelim / iyi / fena değil / uygun değil)..." style="min-height:90px"></textarea></div>
           </div>
-          <div class="card" style="padding:16px">
-            <div style="font-size:13px;font-weight:600;margin-bottom:12px">Yaklaşan Etkinlikler</div>
-            <div id="cal-upcoming"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" style="flex:1" onclick="saveInterview()">💾 Görüşmeyi Kaydet</button>
+            <button class="btn btn-outline" onclick="clearForm()">Formu Temizle</button>
           </div>
+          <div id="save-msg" style="margin-top:8px"></div>
+        </div>
+
+        <!-- Soru Bankası -->
+        <div id="mul-sorubankasi" class="tpanel">
+          <div class="tip">Herhangi bir soruyu forma eklemek için <strong>"Forma Ekle"</strong> butonuna tıklayın.</div>
+          <div id="soru-bankasi-list"></div>
         </div>
       </div>
     </div>
 
-    <!-- SETTINGS -->
-    <div class="panel" id="panel-settings">
-      <div class="page-head"><div><div class="page-title">Ayarlar</div><div class="page-sub">Sistem ve güvenlik yapılandırması.</div></div></div>
-      <div class="card" style="max-width:560px">
-        <div class="card-head"><span class="card-title">Güvenlik</span></div>
-        <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
-          <div class="detail-row"><span>İki Faktörlü Doğrulama (2FA)</span><span class="badge badge-green">Aktif</span></div>
-          <div class="detail-row"><span>Oturum Süresi</span><span class="badge badge-gray">8 saat</span></div>
-          <div class="detail-row"><span>Şifre Politikası</span><span class="badge badge-blue">Güçlü</span></div>
+    <!-- ── KAYITLAR ── -->
+    <div id="panel-kayitlar" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        <div><div class="sec-head-txt">Mülakat Kayıtları</div><div class="sec-head-sub">Kaydedilen tüm görüşmeler</div></div>
+      </div>
+      <div style="max-width:820px">
+        <div id="kayit-listesi"></div>
+      </div>
+    </div>
+
+    <!-- ── TEST SÜRÜŞÜ ── -->
+    <div id="panel-test" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div><div class="sec-head-txt">Test Sürüşü — Adım 8</div><div class="sec-head-sub">IKTS-0300-132 · Adayın vaatleri ile gerçek kapasitesi arasındaki fark</div></div>
+      </div>
+      <div style="max-width:880px">
+        <div class="tip">⚠️ Testlerin büyük çoğunluğu ön eğitim ve bilgi vermeden yapılır. <strong>İste ve çekilip izle.</strong></div>
+        <div class="tabs">
+          <button class="tab active" onclick="st('test','ilk2ay',this)">İlk 2 Ay Testleri</button>
+          <button class="tab" onclick="st('test','sonmulakat',this)">Son Mülakat Testleri</button>
+          <button class="tab" onclick="st('test','yonler',this)">Test Edilecek Yönler</button>
+        </div>
+        <div id="test-ilk2ay" class="tpanel active">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" id="test-grid-1"></div>
+        </div>
+        <div id="test-sonmulakat" class="tpanel">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" id="test-grid-2"></div>
+        </div>
+        <div id="test-yonler" class="tpanel">
+          <div class="card"><div id="yonler-wrap" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
         </div>
       </div>
-      <div class="card" style="max-width:560px">
-        <div class="card-head"><span class="card-title">Platform Bilgisi</span></div>
-        <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
-          <div class="detail-row"><span>Versiyon</span><span style="font-family:'DM Mono',monospace;font-size:12px">v2.0.0</span></div>
-          <div class="detail-row"><span>Modüller</span><span style="font-size:12px">Pusula · Puantaj · Takvim</span></div>
-          <div class="detail-row"><span>Aktif Oturumlar</span><span class="badge badge-green">8 aktif</span></div>
+    </div>
+
+    <!-- ── DEĞERLENDİRME ── -->
+    <div id="panel-evaluation" class="panel">
+      <div id="eval-content"></div>
+    </div>
+
+    <!-- ── REFERANS ── -->
+    <div id="panel-referans" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <div><div class="sec-head-txt">Referans Kontrol Formu</div><div class="sec-head-sub">Eski işveren / yöneticiyle görüşme formu</div></div>
+      </div>
+      <div style="max-width:680px">
+        <div class="card">
+          <div style="font-weight:700;font-size:13px;color:#1a0a2e;margin-bottom:14px">Referans Kontrol Formatı</div>
+          <div class="frow">
+            <div class="field"><label>Adayın Adı</label><input placeholder="Ad Soyad"/></div>
+            <div class="field"><label>Başvuru Tarihi</label><input type="date"/></div>
+            <div class="field"><label>Pozisyon</label><input placeholder="Başvurulan pozisyon"/></div>
+            <div class="field"><label>Referans Adı</label><input placeholder="Referansın adı"/></div>
+            <div class="field"><label>Firma</label><input placeholder="Eski çalıştığı firma"/></div>
+            <div class="field"><label>Telefon</label><input placeholder="+90 ..."/></div>
+            <div class="field"><label>Referansın Unvanı</label><input placeholder="Yönetici / Çalışan"/></div>
+            <div class="field"><label>Görüşme Tarihi</label><input type="date"/></div>
+            <div class="field"><label>Adayın Çalışma Tarihleri</label><input placeholder="2020–2023"/></div>
+            <div class="field"><label>Adayın Eski Unvanı</label><input placeholder="Unvan"/></div>
+            <div class="field"><label>Ayrılış Sebebi</label><input placeholder="Neden ayrıldı?"/></div>
+            <div class="field"><label>Maaş</label><input placeholder=""/></div>
+          </div>
+          <div class="field"><label>Çalışma Kalitesi</label><textarea placeholder="Genel çalışma kalitesi..." style="min-height:60px"></textarea></div>
+          <div class="field"><label>Eğitim Gereken Alanlar</label><textarea placeholder="Gelişim alanları..." style="min-height:55px"></textarea></div>
+          <div class="field"><label>Genel Yorumlar</label><textarea placeholder="Referansın genel değerlendirmesi..." style="min-height:75px"></textarea></div>
+          <button class="btn btn-primary btn-full" onclick="alert('Referans formu kaydedildi!')">Formu Kaydet</button>
         </div>
       </div>
     </div>
 
-  </main>
-</div>
-
-<!-- MODALS -->
-<div class="modal-overlay" id="modal-user">
-  <div class="modal">
-    <div class="modal-title" id="modal-user-title">Yeni Kullanıcı Ekle</div>
-    <div class="form-row"><div class="form-lbl">Ad Soyad</div><input class="form-input" id="f-name" placeholder="Örn: Ayşe Kaya"></div>
-    <div class="form-row"><div class="form-lbl">E-posta</div><input class="form-input" id="f-email" placeholder="kullanici@sirket.com"></div>
-    <div class="form-row"><div class="form-lbl">Rol</div><select class="form-input" id="f-role"><option>Personel</option><option>Takım Lideri</option><option>Yönetici</option><option>Admin</option></select></div>
-    <div class="form-row"><div class="form-lbl">Erişim İzinleri</div>
-      <div class="checkbox-grid">
-        <label class="chk-item"><input type="checkbox" id="p-ik" checked> 📋 İK</label>
-        <label class="chk-item"><input type="checkbox" id="p-finans"> 💰 Finans</label>
-        <label class="chk-item"><input type="checkbox" id="p-op" checked> 🏢 Operasyon</label>
-        <label class="chk-item"><input type="checkbox" id="p-teknik"> ⚙️ Teknik</label>
-        <label class="chk-item"><input type="checkbox" id="p-maas"> 💳 Maaş</label>
-        <label class="chk-item"><input type="checkbox" id="p-sistem"> 🖥 Sistem</label>
+    <!-- ── TEŞEKKÜR ── -->
+    <div id="panel-tesekkur" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <div><div class="sec-head-txt">Teşekkür Mektubu</div><div class="sec-head-sub">Görüşmeye gelen adaylara gönderilecek mektup</div></div>
+      </div>
+      <div style="max-width:600px">
+        <div class="card">
+          <div class="frow" style="margin-bottom:8px">
+            <div class="field"><label>Adayın Adı</label><input id="tsk-aday" oninput="updateTsk()" placeholder="Ad Soyad"/></div>
+            <div class="field"><label>Gönderen Adı & Unvanı</label><input id="tsk-gonderen" oninput="updateTsk()" placeholder="İsim Soyisim — Unvan"/></div>
+          </div>
+          <div class="flabel" style="margin-bottom:6px">Önizleme</div>
+          <div id="tsk-preview" style="background:#f8f5ff;border-radius:9px;padding:14px;font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap;border:1px solid #e8dff5;min-height:180px"></div>
+          <button class="btn btn-primary btn-full" style="margin-top:10px" onclick="copyTsk()">Metni Kopyala</button>
+        </div>
       </div>
     </div>
-    <div class="form-row"><div class="form-lbl">Durum</div><select class="form-input" id="f-status"><option value="active">Aktif</option><option value="inactive">Pasif</option></select></div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-user')">İptal</button><button class="btn btn-primary" onclick="saveUser()">Kaydet</button></div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="modal-doc">
-  <div class="modal"><div class="modal-title" id="modal-doc-title">Döküman Detayı</div><div id="modal-doc-body"></div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-doc')">Kapat</button><button class="btn btn-primary" onclick="toast('İndirme başladı ✓','success');closeModal('modal-doc')">⬇ İndir</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-puan">
-  <div class="modal" style="max-width:460px">
-    <div class="modal-title">Yeni Puantaj Kaydı</div>
-    <div class="form-row"><div class="form-lbl">Personel</div><select class="form-input" id="pf-user"></select></div>
-    <div class="form-row"><div class="form-lbl">Tarih</div><input type="date" class="form-input" id="pf-date"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-row"><div class="form-lbl">Giriş</div><input type="time" class="form-input" id="pf-in"></div>
-      <div class="form-row"><div class="form-lbl">Çıkış</div><input type="time" class="form-input" id="pf-out"></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-puan')">İptal</button><button class="btn btn-primary" onclick="savePuanRecord()">Kaydet</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-puan-approve">
-  <div class="modal" style="max-width:340px;text-align:center">
-    <div style="width:48px;height:48px;background:var(--green-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px">🔐</div>
-    <div class="modal-title" style="text-align:center">Onay Şifresi</div>
-    <div style="font-size:12px;color:var(--text-2);margin-bottom:16px">Admin şifresini girin.</div>
-    <input type="hidden" id="puan-approve-id">
-    <input type="password" class="form-input" id="puan-approve-pass" placeholder="••••" style="text-align:center;letter-spacing:.4em;font-size:18px">
-    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-puan-approve')">İptal</button><button class="btn btn-primary" onclick="verifyPuanApproval()">Onayla</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-event">
-  <div class="modal">
-    <div class="modal-title">Yeni Etkinlik</div>
-    <div class="form-row"><div class="form-lbl">Başlık</div><input class="form-input" id="ev-title" placeholder="Etkinlik başlığı"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-row"><div class="form-lbl">Tarih</div><input type="date" class="form-input" id="ev-date"></div>
-      <div class="form-row"><div class="form-lbl">Saat</div><input type="time" class="form-input" id="ev-time" value="09:00"></div>
-    </div>
-    <div class="form-row"><div class="form-lbl">Tür</div>
-      <select class="form-input" id="ev-type">
-        <option value="meeting">🤝 Toplantı</option>
-        <option value="deadline">⏰ Son Tarih</option>
-        <option value="holiday">🎉 Tatil / Etkinlik</option>
-        <option value="task">📋 Görev</option>
-      </select>
-    </div>
-    <div class="form-row"><div class="form-lbl">Açıklama</div><input class="form-input" id="ev-desc" placeholder="Opsiyonel"></div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-event')">İptal</button><button class="btn btn-primary" onclick="saveEvent()">Kaydet</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-task">
-  <div class="modal">
-    <div class="modal-title">Görev Ekle</div>
-    <div class="form-row"><div class="form-lbl">Görev Başlığı</div><input class="form-input" id="task-title" placeholder="Ne yapılacak?"></div>
-    <div class="form-row"><div class="form-lbl">Açıklama</div><input class="form-input" id="task-desc" placeholder="Detay (opsiyonel)"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-row"><div class="form-lbl">Öncelik</div>
-        <select class="form-input" id="task-priority">
-          <option value="1">🔴 Kritik (P1)</option>
-          <option value="2" selected>🟠 Önemli (P2)</option>
-          <option value="3">🔵 Normal (P3)</option>
-        </select>
+    <!-- ── YZ ARAÇLARI ── -->
+    <div id="panel-ai" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <div><div class="sec-head-txt">Yapay Zeka IK Araçları</div><div class="sec-head-sub">CV analizi · Mülakat soruları üretme · İş ilanı oluşturma</div></div>
       </div>
-      <div class="form-row"><div class="form-lbl">Personel</div><select class="form-input" id="task-user-sel"></select></div>
+      <div class="tabs">
+        <button class="tab active" onclick="st('ai','cv',this)">CV Analizi</button>
+        <button class="tab" onclick="st('ai','soru',this)">Mülakat Soruları</button>
+        <button class="tab" onclick="st('ai','ilan',this)">İş İlanı Oluştur</button>
+      </div>
+      <div id="ai-cv" class="tpanel active" style="max-width:680px">
+        <div class="field"><label>Pozisyon</label><input id="cv-pos" placeholder="ör. Satınalma Asistanı..."/></div>
+        <div class="field"><label>CV Metni</label><textarea id="cv-text" placeholder="CV içeriğini buraya yapıştırın..."></textarea></div>
+        <div class="field"><label>Aranan Özellikler (isteğe bağlı)</label><input id="cv-krit" placeholder="ör. pazarlık, sertifika, 3 yıl deneyim"/></div>
+        <div id="cv-err"></div>
+        <button class="btn btn-primary btn-full" id="cv-btn" onclick="analyzeCV()">CV'yi Analiz Et</button>
+        <div id="cv-result"></div>
+      </div>
+      <div id="ai-soru" class="tpanel" style="max-width:680px">
+        <div class="field"><label>Pozisyon</label><input id="s-pos" placeholder="ör. IK Yöneticisi..."/></div>
+        <div class="frow">
+          <div class="field"><label>Soru Türü</label><select id="s-tur"><option value="teknik">Teknik</option><option value="davranissal">Davranışsal</option><option value="durum">Durum Bazlı</option><option value="karma" selected>Karma</option></select></div>
+          <div class="field"><label>Seviye</label><select id="s-sev"><option value="junior">Junior</option><option value="mid" selected>Mid-level</option><option value="senior">Senior</option><option value="yonetici">Yönetici</option></select></div>
+        </div>
+        <div class="field"><label>Odak Yetkinlikler (isteğe bağlı)</label><input id="s-yet" placeholder="ör. ikna, iletişim, analitik..."/></div>
+        <div id="s-err"></div>
+        <button class="btn btn-primary btn-full" id="s-btn" onclick="genSorular()">Soru Üret</button>
+        <div id="s-result"></div>
+      </div>
+      <div id="ai-ilan" class="tpanel" style="max-width:680px">
+        <div class="field"><label>Pozisyon Adı</label><input id="i-pos" placeholder="ör. Satınalma Asistanı..."/></div>
+        <div class="frow">
+          <div class="field"><label>Departman</label><input id="i-dep" placeholder="ör. Satınalma..."/></div>
+          <div class="field"><label>Çalışma Modeli</label><select id="i-mod"><option value="ofis">Ofis</option><option value="remote">Remote</option><option value="hybrid" selected>Hibrit</option></select></div>
+        </div>
+        <div class="field"><label>Temel Gereksinimler</label><textarea id="i-ger" placeholder="Sorumluluklar ve nitelikler..." style="min-height:75px"></textarea></div>
+        <div id="i-err"></div>
+        <button class="btn btn-primary btn-full" id="i-btn" onclick="genIlan()">İş İlanı Oluştur</button>
+        <div id="i-result"></div>
+      </div>
     </div>
-    <div class="form-row"><div class="form-lbl">Son Tarih</div><input type="date" class="form-input" id="task-due"></div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-task')">İptal</button><button class="btn btn-primary" onclick="saveTask()">Kaydet</button></div>
+
+    <!-- ── ADAY KARŞILAŞTIRMA ── -->
+    <div id="panel-ozet" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <div><div class="sec-head-txt">Eleman Adayları Değerlendirme Özeti</div><div class="sec-head-sub">Tüm adayların görüşme sonuçlarını karşılaştırın</div></div>
+      </div>
+      <div style="max-width:900px">
+        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
+          <input id="oz-poz" placeholder="Pozisyon" style="border:1px solid #e0d0f0;border-radius:8px;padding:6px 10px;font-size:12px;color:#334155;background:#f8f5ff"/>
+          <input id="oz-bol" placeholder="Bölüm" style="border:1px solid #e0d0f0;border-radius:8px;padding:6px 10px;font-size:12px;color:#334155;background:#f8f5ff"/>
+          <button class="btn btn-rose" onclick="addOzetRow()">+ Aday Ekle</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl"><thead><tr><th>Adayın Adı</th><th>1. Görüşme</th><th>Test Sürüşü</th><th>2. Görüşme</th><th>Toplam Puan</th><th></th></tr></thead>
+          <tbody id="ozet-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── KAYNAKLAR ── -->
+    <div id="panel-kaynaklar" class="panel">
+      <div class="sec-head">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <div><div class="sec-head-txt">IK Kaynakları</div><div class="sec-head-sub">En iyi kitaplar · Araçlar · Web siteleri · Yöntemler</div></div>
+      </div>
+      <div id="kaynak-grid" class="res-grid"></div>
+    </div>
+
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- ════ MODAL ════ -->
+<div id="mo" onclick="closeMO(event)">
+  <div id="modal">
+    <div class="mhead">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="mav" id="m-av"></div>
+        <div><div style="font-weight:700;font-size:13px;color:#1a0a2e" id="m-name"></div><div style="font-size:11px;color:#9a7ab0" id="m-pos"></div></div>
+      </div>
+      <button onclick="document.getElementById('mo').classList.remove('open')" style="border:none;background:transparent;color:#9a7ab0;cursor:pointer;padding:3px;border-radius:50%;display:flex"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbody" id="m-body"></div>
+    <div class="mfoot" id="m-foot"></div>
+  </div>
+</div>
+
+<!-- ════ BANKA MODAL ════ -->
+<div id="bank-mo" style="display:none;position:fixed;inset:0;background:rgba(26,10,46,.6);z-index:60;backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#fff;border-radius:14px;width:560px;max-height:80vh;display:flex;flex-direction:column">
+    <div style="padding:14px 18px;border-bottom:1px solid #f0e8f0;font-weight:700;font-size:13px;color:#1a0a2e;display:flex;justify-content:space-between;align-items:center">
+      Soru Bankasından Seç
+      <button onclick="document.getElementById('bank-mo').style.display='none'" style="border:none;background:transparent;color:#9a7ab0;cursor:pointer;display:flex"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="flex:1;overflow:auto;padding:14px 18px" id="bank-mo-list"></div>
+  </div>
+</div>
 
 <script>
-// ════ CORE DATA ════
-const COLORS=[['#EEEDFE','#26215C'],['#E1F5EE','#085041'],['#E6F1FB','#0C447C'],['#FAECE7','#993C1D'],['#EAF3DE','#27500A'],['#FAEEDA','#854F0B'],['#FBEAF0','#72243E']];
-function initials(n){return n.split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2)}
-function avatarStyle(i){const c=COLORS[i%COLORS.length];return`background:${c[0]};color:${c[1]}`}
-
-let users=[
-  {id:1,name:'Ayşe Kaya',email:'ayse@sirket.com',role:'Takım Lideri',access:['İK','Operasyon','Finans'],status:'active'},
-  {id:2,name:'Mert Demir',email:'mert@sirket.com',role:'Personel',access:['İK'],status:'active'},
-  {id:3,name:'Selin Arslan',email:'selin@sirket.com',role:'Personel',access:['İK','Operasyon','Teknik'],status:'active'},
-  {id:4,name:'Emre Yıldız',email:'emre@sirket.com',role:'Yönetici',access:['İK','Finans','Operasyon','Teknik','Maaş'],status:'inactive'},
-  {id:5,name:'Zeynep Öztürk',email:'zeynep@sirket.com',role:'Personel',access:['Operasyon'],status:'active'}
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+const STAGES=[
+  {id:'phone-screening',label:'Telefon Ön Eleme'},
+  {id:'interview',label:'Mülakat'},
+  {id:'test-drive',label:'Test Sürüşü'},
+  {id:'evaluation',label:'Değerlendirme'},
+  {id:'onboarding',label:'Eğitim & Başlangıç'},
 ];
-const docs=[
-  {id:1,name:'Q3 Raporu 2025',cat:'Finans',type:'PDF',updated:'12 Mar 2026',icon:'📄',size:'2.4 MB',access:'Yönetici+',desc:'2025 yılı 3. çeyrek finansal performans raporu.'},
-  {id:2,name:'İşe Alım Süreci',cat:'İK',type:'DOCX',updated:'8 Mar 2026',icon:'📝',size:'340 KB',access:'Tümü',desc:'Yeni personel alımlarında izlenecek prosedür.'},
-  {id:3,name:'Maaş Tablosu 2026',cat:'Finans',type:'XLSX',updated:'1 Mar 2026',icon:'📊',size:'180 KB',access:'Yönetici',desc:'2026 yılı personel maaş ve yan haklar tablosu.'},
-  {id:4,name:'Onboarding Kılavuzu',cat:'İK',type:'PDF',updated:'20 Şub 2026',icon:'📘',size:'5.1 MB',access:'Tümü',desc:'Yeni başlayan personel için oryantasyon rehberi.'},
-  {id:5,name:'Sistem Dökümanı v2',cat:'Teknik',type:'PDF',updated:'15 Şub 2026',icon:'⚙️',size:'1.8 MB',access:'Teknik',desc:'Şirket altyapısı teknik dökümantasyonu.'},
-  {id:6,name:'Ofis Prosedürleri',cat:'Operasyon',type:'DOCX',updated:'10 Şub 2026',icon:'🏢',size:'210 KB',access:'Tümü',desc:'Günlük ofis işleyişi kuralları.'},
-  {id:7,name:'Bütçe Planı 2026',cat:'Finans',type:'XLSX',updated:'5 Şub 2026',icon:'💰',size:'420 KB',access:'Finans',desc:'2026 yılı departman bütçe planlaması.'},
-  {id:8,name:'Yazılım Erişim Kılavuzu',cat:'Teknik',type:'PDF',updated:'1 Şub 2026',icon:'💻',size:'890 KB',access:'Teknik',desc:'Şirket yazılım araçları kurulum ve erişim.'},
-  {id:9,name:'Performans Değerlendirme',cat:'İK',type:'DOCX',updated:'28 Oca 2026',icon:'⭐',size:'150 KB',access:'Takım Lideri+',desc:'Yıllık personel performans değerlendirme formu.'}
+let candidates=[
+  {id:1,name:'Ahmet Yılmaz',position:'Satınalma Asistanı',stage:'test-drive',score:4.2,notes:'Web sitesini incelemiş, istekli. İndirim hikayesi başarılı.',disc:'D (Dominant)',loc:'Eyüpsultan (3km)'},
+  {id:2,name:'Ayşe Kaya',position:'IK Yöneticisi',stage:'interview',score:3.8,notes:'Sertifikaları tam, kariyer hedefi net.',disc:'S (Uyumlu)',loc:'Beşiktaş (12km - Tek metro)'},
+  {id:3,name:'Mehmet Demir',position:'Satınalma Asistanı',stage:'phone-screening',score:0,notes:'Henüz aranmadı.',disc:'N/A',loc:'Kadıköy'},
+];
+let selCand=null;
+const FACTORS=['Dış görünüş','Dikkat','Deneyim (miktar)','Deneyim (kalite)','Merak','Hırs','Kararlılık','Yenilikçilik','Kendini yönetme','Analitik yetenek','Karar alma','Öğrenci Zihniyeti','Referanslar'];
+let evalSc=Object.fromEntries(FACTORS.map(f=>[f,3]));
+
+const SORU_BANKASI=[
+  {cat:'Karakter & Adaptasyon',sorular:['Daha önce çalıştığınız işleri göz önünde bulundurarak, her birindeki performansınızı nasıl değerlendirirsiniz?','En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?','Akşamları ve hafta sonları dahil uzun saatler çalışmak zorunda kaldınız mı? Bu durumlarda nasıl hissettiniz?','Amaçlarınıza ulaşırken karşılaştığınız engel ve zorluklardan bahsedin. Bunlarla nasıl başa çıktınız?','Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizi görünce ne yaptınız?','Karşılaştığınız en kötü problem neydi? Bu problemlere yaklaşımınız bugün daha farklı olur mu?','Kişileri ya da çalışmaları organize etmek zorunda kaldığınız bir işten bahsedin.','Bir işi bırakmanıza sebep olan şeyler nelerdir?']},
+  {cat:'Zihin Yapısı & Başarı',sorular:['En mükemmel işiniz ve iş dışı başarınız nedir?','En büyük hayal kırıklıklarınız nelerdir? Onlarla nasıl başa çıktınız?','Şu anki hedefleriniz ve bunları başarmak için hazırladığınız plan nedir?','Yeni beceriler öğrenmek ve kullanmak zorunda kaldığınız bir işinizden bahsedin.','Potansiyelinizi zorlayan — bittim, ama bu benim boyumu uzattı diyebileceğiniz bir iş anlatır mısınız?']},
+  {cat:'İlişkiler & İletişim',sorular:['Bir yönetici ya da müdürle aranızda geçen en olumlu ve olumsuz olayları anlatın.','Bir yöneticiyle aynı fikirde olmadığınız bir olaydan ve bu durumda ne yaptığınızdan bahsedin.','Birlikte çalıştığınız kişilerle ilişkilerinizde en sevdiğiniz ve sevmediğiniz yön nedir?','İkna yönünüzle ilgili hayatınızdan bir örnek verebilir misiniz?']},
+  {cat:'Motivasyon & Beklentiler',sorular:['Bir işten beklentileriniz nelerdir — maaş, eğitim, iş öğretme vb.?','Sevdiğiniz işte 1 şeyi düzeltebilseydiniz neyi düzeltirdiniz? Siz nasıl yapardınız?','Sabah koşa koşa geleceğiniz bir iş ve ortam nasıl olmalı?','Bu görüşmeye sizi getiren şey ne?']},
+  {cat:'IK Yöneticisi Özel',sorular:['En uzun süre çalıştığınız iş hangisiydi ve tam olarak neler yaptınız?','Karşılaştığınız en büyük zorlayıcı sorun neydi, nasıl çözdünüz?','Hayatta aldığınız en zor kararlardan biri nelerdi, neden aldınız?','Ofis ortamında mı yoksa sahada mı çalıştınız? Hangisi daha motive edici?','Firmamıza verebileceğiniz özel bir yönünüz var mı? (grafik, tasarım, güzel yazı vb.)','İyi indirim aldığınız veya iyi pazarlık yaptığınız bir anınızı anlatabilir misiniz?']},
+  {cat:'Telefon Ön Eleme',sorular:['Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?','Bu pozisyonu kariyer olarak görüyor musunuz?','Satınalma ile ilgili aldığınız sertifika/eğitim var mı?','İlandaki başvurunuza en çok ne sebep oldu?','En başarılı indirim aldığınız pazarlığı anlatır mısınız?']},
 ];
 
-let currentRole='admin';
-let editingUserId=null;
-let docSearch='';
-let docCat='all';
+const KONTROL_ITEMS=['Mülakat takımını seçin (diğer personel üyeleri katılacaksa).','Görüşme için sessiz bir ortam hazırlayın.','Adayın özgeçmişini, telefon görüşmesi notlarını ve DISC profil sonuçlarını inceleyin.','Aday için firmanız ve pozisyonla ilgili bir bilgi paketi hazırlayın.','Adayı selamlayın ve tesisinizde kısa gezintiye çıkarın. İçecek bir şeyler teklif edin (çay/kahve + kuruyemiş + çikolata).','Görüşmenin amacını açıklayın.','Pozisyonla ilgili açık bir genel bakış sunun.','Adayın özgeçmişi ve çalışma hayatıyla ilgili soruları sorun.','Deneyimler, eğitim, beceriler ve kişisel özelliklerle ilgili hazırladığınız soruları sorun.','Mülakatı bitirin. Sürecin bundan sonraki kısmını açıklayın.','Adaya başka bir sorusu olup olmadığını sorun ve teşekkür ettikten sonra kapıya kadar eşlik edin.','Ofisin tüm ışıkları açık olmalı, güzel bir koku sürülmeli, panjurlar açık, mutfak bölümü kapalı olmalı.'];
 
-// ════ NAV ════
-function nav(id,el){
+// mülakat soruları state
+let iqItems=[];
+
+// ═══════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════
+function go(id,btn,title){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  if(id==='puantaj') renderPuantaj();
-  if(id==='takvim') renderCalendar();
-  if(id==='pusula') renderPusula();
-}
-function gotoPanel(id){
-  const el=document.querySelector(`.nav-item[onclick*="${id}"]`);
-  nav(id,el);
-}
-
-// ════ ROLE ════
-function switchRole(role,btn){
-  currentRole=role;
-  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const isAdmin=role==='admin';
-  document.getElementById('nav-users').style.display=isAdmin?'flex':'none';
-  document.getElementById('nav-activity').style.display=isAdmin?'flex':'none';
-  document.getElementById('upload-btn').style.display=isAdmin?'inline-flex':'none';
-  document.getElementById('pusula-user-filter').style.display=isAdmin?'flex':'none';
-  document.getElementById('nav-label-admin').textContent=isAdmin?'Yönetim':'Menü';
-  if(isAdmin){
-    document.getElementById('top-avatar').textContent='AA';
-    document.getElementById('top-avatar').style.cssText='background:#EEEDFE;color:#3C3489';
-    document.getElementById('top-name').textContent='Admin';
-    document.getElementById('top-role').textContent='Yönetici';
-    document.getElementById('doc-page-sub').textContent='Tüm şirket dökümanlarına ulaşın.';
-  }else{
-    document.getElementById('top-avatar').textContent='AK';
-    document.getElementById('top-avatar').style.cssText='background:#E1F5EE;color:#085041';
-    document.getElementById('top-name').textContent='Ayşe Kaya';
-    document.getElementById('top-role').textContent='Takım Lideri';
-    document.getElementById('doc-page-sub').textContent='Erişim izniniz olan dökümanlar listeleniyor.';
-  }
-  const active=document.querySelector('.panel.active');
-  if(!isAdmin&&['panel-users','panel-activity'].includes(active.id))gotoPanel('docs');
-  renderDocs();
+  document.getElementById('page-title').textContent=title;
+  if(id==='evaluation') renderEval();
+  if(id==='kayitlar') renderKayitlar();
+}
+let sbCol=false;
+function toggleSB(){sbCol=!sbCol;document.getElementById('sidebar').classList.toggle('collapsed',sbCol);}
+function st(pre,id,btn){
+  document.querySelectorAll('#mul-'+pre+' .tpanel, #test-'+pre+' .tpanel, #ai-'+pre+' .tpanel, #panel-'+pre+' .tpanel').forEach(p=>p.classList.remove('active'));
+  const panels=document.querySelectorAll('[id^="'+pre+'-"]');
+  panels.forEach(p=>{if(p.classList.contains('tpanel')) p.classList.remove('active');});
+  document.querySelectorAll('[id^="'+pre+'"] .tab, #panel-'+pre+' .tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(pre+'-'+id).classList.add('active');
+  btn.classList.add('active');
 }
 
-// ════ MODAL ════
-function openModal(id){document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open')});
-
-// ════ TOAST ════
-let toastTimer;
-function toast(msg,type=''){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.className='toast'+(type?' '+type:'');
-  requestAnimationFrame(()=>el.classList.add('show'));
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
-}
-
-// ════ USERS ════
-function renderUsers(filter=''){
-  const tbody=document.getElementById('user-tbody');tbody.innerHTML='';
-  const filtered=users.filter(u=>u.name.toLowerCase().includes(filter.toLowerCase())||u.email.toLowerCase().includes(filter.toLowerCase()));
-  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-2)">Kullanıcı bulunamadı.</td></tr>`;return}
-  filtered.forEach(u=>{
-    const idx=users.indexOf(u);
-    const row=document.createElement('tr');
-    row.innerHTML=`<td><div class="user-row"><div class="avatar" style="width:30px;height:30px;font-size:10px;${avatarStyle(idx)}">${initials(u.name)}</div><div class="user-info-cell"><div class="uname">${u.name}</div><div class="uemail">${u.email}</div></div></div></td>
-      <td><span class="badge badge-purple">${u.role}</span></td>
-      <td><div class="perm-list">${u.access.map(a=>`<span class="perm-tag">${a}</span>`).join('')}</div></td>
-      <td>${u.status==='active'?'<span class="badge badge-green">Aktif</span>':'<span class="badge badge-red">Pasif</span>'}</td>
-      <td style="display:flex;gap:6px;padding-top:14px"><button class="btn btn-sm" onclick="editUser(${u.id})">Düzenle</button><button class="btn btn-sm btn-danger" onclick="toggleUser(${u.id})">${u.status==='active'?'Devre Dışı':'Aktif Et'}</button></td>`;
-    tbody.appendChild(row);
-  });
-  document.getElementById('stat-users').textContent=users.length;
-  document.getElementById('user-count-badge').textContent=users.length;
-}
-function filterUsers(v){renderUsers(v)}
-function toggleUser(id){
-  const u=users.find(x=>x.id===id);if(!u)return;
-  u.status=u.status==='active'?'inactive':'active';renderUsers();
-  toast(`${u.name} ${u.status==='active'?'aktif edildi':'devre dışı bırakıldı'}`,u.status==='active'?'success':'error');
-}
-function editUser(id){
-  const u=users.find(x=>x.id===id);if(!u)return;
-  editingUserId=id;document.getElementById('modal-user-title').textContent='Kullanıcıyı Düzenle';
-  document.getElementById('f-name').value=u.name;document.getElementById('f-email').value=u.email;
-  document.getElementById('f-role').value=u.role;document.getElementById('f-status').value=u.status;
-  const map={ik:'İK',finans:'Finans',op:'Operasyon',teknik:'Teknik',maas:'Maaş',sistem:'Sistem'};
-  Object.keys(map).forEach(k=>document.getElementById('p-'+k).checked=u.access.includes(map[k]));
-  openModal('modal-user');
-}
-function openNewUserModal(){
-  editingUserId=null;document.getElementById('modal-user-title').textContent='Yeni Kullanıcı Ekle';
-  ['f-name','f-email'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-role').value='Personel';document.getElementById('f-status').value='active';
-  ['p-ik','p-finans','p-op','p-teknik','p-maas','p-sistem'].forEach((id,i)=>document.getElementById(id).checked=[true,false,true,false,false,false][i]);
-  openModal('modal-user');
-}
-function saveUser(){
-  const name=document.getElementById('f-name').value.trim();const email=document.getElementById('f-email').value.trim();
-  if(!name||!email){toast('Ad ve e-posta zorunludur.','error');return}
-  const map={ik:'İK',finans:'Finans',op:'Operasyon',teknik:'Teknik',maas:'Maaş',sistem:'Sistem'};
-  const access=Object.keys(map).filter(k=>document.getElementById('p-'+k).checked).map(k=>map[k]);
-  const role=document.getElementById('f-role').value,status=document.getElementById('f-status').value;
-  if(editingUserId){Object.assign(users.find(x=>x.id===editingUserId),{name,email,role,access,status});toast(`${name} güncellendi ✓`,'success')}
-  else{users.push({id:Date.now(),name,email,role,access,status});toast(`${name} eklendi ✓`,'success')}
-  renderUsers();closeModal('modal-user');populatePusulaUsers();
-}
-
-// ════ DOCS ════
-function catColor(c){return{İK:'badge-purple',Finans:'badge-blue',Operasyon:'badge-green',Teknik:'badge-amber'}[c]||'badge-gray'}
-function renderDocs(){
-  const grid=document.getElementById('doc-grid');grid.innerHTML='';
-  let f=docs;
-  if(docCat!=='all')f=f.filter(d=>d.cat===docCat);
-  if(docSearch)f=f.filter(d=>d.name.toLowerCase().includes(docSearch.toLowerCase()));
-  if(currentRole==='user')f=f.filter(d=>d.access==='Tümü'||d.access.includes('Takım Lideri'));
-  if(!f.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div class="empty-title">Döküman bulunamadı</div></div>`;return}
-  f.forEach(d=>{
-    const card=document.createElement('div');card.className='doc-card';
-    const adm=currentRole==='admin'?`<button class="doc-action-btn" onclick="event.stopPropagation();toast('Erişim paneli açıldı','success')">Erişim</button>`:'';
-    card.innerHTML=`<div class="doc-icon-wrap" style="background:var(--surface2)">${d.icon}</div><div class="doc-name">${d.name}</div><div class="doc-meta">${d.type} · ${d.size}</div><div style="margin-top:8px"><span class="badge ${catColor(d.cat)}">${d.cat}</span></div><div class="doc-actions-row"><button class="doc-action-btn" onclick="event.stopPropagation();openDocDetail(${d.id})">Detay</button><button class="doc-action-btn" onclick="event.stopPropagation();toast('${d.name} indiriliyor...','success')">İndir</button>${adm}</div>`;
-    card.onclick=()=>openDocDetail(d.id);grid.appendChild(card);
-  });
-}
-function filterDocs(val,type,btn){
-  if(type==='search')docSearch=val;
-  if(type==='cat'){docCat=val;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));if(btn)btn.classList.add('active')}
-  renderDocs();
-}
-function openDocDetail(id){
-  const d=docs.find(x=>x.id===id);if(!d)return;
-  document.getElementById('modal-doc-title').textContent=d.name;
-  document.getElementById('modal-doc-body').innerHTML=`<div style="font-size:13px;color:var(--text-2);margin-bottom:16px">${d.desc}</div><div class="detail-row"><span class="detail-lbl">Kategori</span><span class="badge ${catColor(d.cat)}">${d.cat}</span></div><div class="detail-row"><span class="detail-lbl">Tip</span><span>${d.type}</span></div><div class="detail-row"><span class="detail-lbl">Boyut</span><span>${d.size}</span></div><div class="detail-row"><span class="detail-lbl">Güncelleme</span><span>${d.updated}</span></div><div class="detail-row"><span class="detail-lbl">Erişim</span><span class="badge badge-amber">${d.access}</span></div>`;
-  openModal('modal-doc');
-}
-
-// ════ PUANTAJ ════
-const PUAN_PASS='Admin1212';
-const PUAN_KEY='akademihub_puantaj_v1';
-let puantajData=JSON.parse(localStorage.getItem(PUAN_KEY)||'null')||[
-  {id:1,userId:1,date:'2026-03-10',plannedIn:'09:00',plannedOut:'18:00',actualIn:'09:05',actualOut:'18:20',approved:true},
-  {id:2,userId:1,date:'2026-03-11',plannedIn:'09:00',plannedOut:'18:00',actualIn:'09:18',actualOut:'17:45',approved:false},
-  {id:3,userId:2,date:'2026-03-10',plannedIn:'09:00',plannedOut:'18:00',actualIn:'08:55',actualOut:'18:00',approved:true},
-  {id:4,userId:3,date:'2026-03-10',plannedIn:'09:00',plannedOut:'18:00',actualIn:null,actualOut:null,approved:false},
-  {id:5,userId:2,date:'2026-03-11',plannedIn:'09:00',plannedOut:'18:00',actualIn:'09:02',actualOut:'18:30',approved:false},
-  {id:6,userId:4,date:'2026-03-12',plannedIn:'09:00',plannedOut:'18:00',actualIn:'09:45',actualOut:'18:00',approved:false},
-];
-function savePuantaj(){localStorage.setItem(PUAN_KEY,JSON.stringify(puantajData))}
-function pTime(t){if(!t)return 0;const[h,m]=t.split(':').map(Number);return h*60+m}
-function puanCalc(r){
-  if(!r.actualIn||!r.actualOut)return{late:0,overtime:0,undertime:0,total:0,absent:true};
-  const pIn=pTime(r.plannedIn),pOut=pTime(r.plannedOut),aIn=pTime(r.actualIn),aOut=pTime(r.actualOut);
-  const late=aIn>pIn+10?aIn-pIn:0;
-  const dur=aOut<aIn?(aOut+1440)-aIn:aOut-aIn,work=dur-60;
-  const planned=(pOut<pIn?(pOut+1440)-pIn:pOut-pIn)-60;
-  return{late,overtime:Math.max(0,work-planned),undertime:Math.max(0,planned-work),total:Math.max(0,work),absent:false};
-}
-function fmtMin(m){return m?`${Math.floor(m/60)}s ${m%60}dk`:'-'}
-function puanUpdateBadge(){
-  const p=puantajData.filter(r=>!r.approved&&r.actualIn).length;
-  const b=document.getElementById('puan-pending-badge');
-  if(b){b.textContent=p;b.style.display=p>0?'inline':'none'}
-  const sp=document.getElementById('stat-pending');if(sp)sp.textContent=p;
-}
-function renderPuantaj(){
-  const sel=document.getElementById('puan-filter-user');
-  if(sel)sel.innerHTML='<option value="">Tüm Personel</option>'+users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
-  const pfu=document.getElementById('pf-user');
-  if(pfu)pfu.innerHTML=users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
-  const mn=document.getElementById('puan-filter-month');
-  if(mn&&!mn.value){const n=new Date();mn.value=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`}
-  puanUpdateBadge();
-  const fu=document.getElementById('puan-filter-user')?.value||'';
-  const fm=document.getElementById('puan-filter-month')?.value||'';
-  const showOT=document.getElementById('puan-show-overtime')?.checked??true;
-  const showUT=document.getElementById('puan-show-undertime')?.checked??true;
-  let data=[...puantajData];
-  if(fu)data=data.filter(r=>String(r.userId)===fu);
-  if(fm)data=data.filter(r=>r.date.startsWith(fm));
-  data.sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('ps-total').textContent=data.length;
-  document.getElementById('ps-pending').textContent=data.filter(r=>!r.approved&&r.actualIn).length;
-  document.getElementById('ps-approved').textContent=data.filter(r=>r.approved).length;
-  document.getElementById('ps-absent').textContent=data.filter(r=>!r.actualIn).length;
-  const thead=document.getElementById('puan-thead');
-  thead.innerHTML=`<th>Personel</th><th>Tarih</th><th>Giriş / Çıkış</th><th>Gecikme</th>${showOT?'<th>Fazla</th>':''}${showUT?'<th>Eksik</th>':''}<th>Net Süre</th><th>Onay</th>`;
-  const tbody=document.getElementById('puan-tbody');
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-2)">Kayıt bulunamadı.</td></tr>`;return}
-  tbody.innerHTML=data.map(r=>{
-    const u=users.find(x=>x.id===r.userId||String(x.id)===String(r.userId));
-    const uName=u?u.name:'?';const uIdx=u?users.indexOf(u):0;
-    const s=puanCalc(r);
-    const ab=s.absent?`<span class="badge badge-red">Devamsız</span>`:`<span style="font-family:'DM Mono',monospace;font-size:12px">${r.actualIn} → ${r.actualOut}</span>`;
-    const approveBtn=r.approved?`<button class="puan-approve-btn approved" onclick="puanToggleApprove(${r.id})">✓ Onaylı</button>`:`<button class="puan-approve-btn pending" onclick="puanRequestApprove(${r.id})">Onayla</button>`;
-    return`<tr><td><div class="user-row"><div class="avatar" style="width:26px;height:26px;font-size:9px;${avatarStyle(uIdx)}">${initials(uName)}</div><span style="font-weight:500;font-size:13px">${uName}</span></div></td>
-      <td style="font-size:12px;color:var(--text-2)">${r.date}</td><td>${ab}</td>
-      <td>${s.late>0?`<span style="color:var(--red);font-weight:600;font-size:12px">+${s.late}dk</span>`:`<span style="color:var(--text-3)">—</span>`}</td>
-      ${showOT?`<td style="font-size:12px;color:var(--accent)">${s.overtime>0?'+'+s.overtime+'dk':'—'}</td>`:''}
-      ${showUT?`<td style="font-size:12px;color:var(--amber)">${s.undertime>0?'-'+s.undertime+'dk':'—'}</td>`:''}
-      <td style="font-size:12px;font-weight:500">${s.absent?'—':fmtMin(s.total)}</td><td>${approveBtn}</td></tr>`;
-  }).join('');
-}
-function puanRequestApprove(id){
-  document.getElementById('puan-approve-id').value=id;document.getElementById('puan-approve-pass').value='';
-  openModal('modal-puan-approve');setTimeout(()=>document.getElementById('puan-approve-pass').focus(),100);
-}
-function verifyPuanApproval(){
-  if(document.getElementById('puan-approve-pass').value===PUAN_PASS){
-    puanToggleApprove(parseInt(document.getElementById('puan-approve-id').value));closeModal('modal-puan-approve');
-  }else{toast('Hatalı şifre!','error');document.getElementById('puan-approve-pass').value=''}
-}
-function puanToggleApprove(id){
-  puantajData=puantajData.map(r=>r.id===id?{...r,approved:!r.approved}:r);
-  savePuantaj();renderPuantaj();toast('Onay güncellendi ✓','success');
-}
-function openPuanModal(){
-  renderPuantaj();document.getElementById('pf-date').valueAsDate=new Date();openModal('modal-puan');
-}
-function savePuanRecord(){
-  const userId=parseInt(document.getElementById('pf-user').value);
-  const date=document.getElementById('pf-date').value;
-  if(!date){toast('Tarih zorunludur.','error');return}
-  const u=users.find(x=>x.id===userId);
-  puantajData.unshift({id:Date.now(),userId,date,plannedIn:'09:00',plannedOut:'18:00',actualIn:document.getElementById('pf-in').value||null,actualOut:document.getElementById('pf-out').value||null,approved:false});
-  savePuantaj();closeModal('modal-puan');renderPuantaj();toast(`${u?.name||'Kayıt'} eklendi ✓`,'success');
-}
-function puanExportExcel(){
-  if(typeof XLSX==='undefined'){toast('XLSX yüklenemedi','error');return}
-  const rows=puantajData.map(r=>{
-    const u=users.find(x=>x.id===r.userId||String(x.id)===String(r.userId));const s=puanCalc(r);
-    return{'Personel':u?.name||'?','Rol':u?.role||'-','Tarih':r.date,'Giriş':r.actualIn||'-','Çıkış':r.actualOut||'-','Gecikme(dk)':s.late,'Fazla(dk)':s.overtime,'Eksik(dk)':s.undertime,'Net(dk)':s.total,'Onay':r.approved?'EVET':'HAYIR'};
-  });
-  const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Puantaj');XLSX.writeFile(wb,`Puantaj_${new Date().toISOString().slice(0,10)}.xlsx`);
-  toast('Excel indirildi ✓','success');
-}
-
-// ════ TAKVİM ════
-const CAL_KEY='akademihub_events_v1';
-let calEvents=JSON.parse(localStorage.getItem(CAL_KEY)||'null')||[
-  {id:1,title:'Yönetim Kurulu Toplantısı',date:'2026-03-17',time:'10:00',type:'meeting',desc:'Aylık yönetim toplantısı'},
-  {id:2,title:'Q1 Rapor Son Tarihi',date:'2026-03-31',time:'17:00',type:'deadline',desc:'Finansal rapor teslimi'},
-  {id:3,title:'Takım Öğle Yemeği',date:'2026-03-20',time:'12:30',type:'holiday',desc:'Şirket yemeği'},
-  {id:4,title:'Sprint 12 Review',date:'2026-03-18',time:'14:00',type:'meeting',desc:'Yazılım sprint review'},
-  {id:5,title:'İşe Alım Görüşmeleri',date:'2026-03-19',time:'09:00',type:'task',desc:'3 aday ile mülakat'},
-];
-let calCurrentDate=new Date();
-let calSelectedDate=null;
-function saveCalEvents(){localStorage.setItem(CAL_KEY,JSON.stringify(calEvents))}
-const EV_C={meeting:{bg:'#E6F1FB',text:'#0C447C',dot:'🤝'},deadline:{bg:'#FCEBEB',text:'#A32D2D',dot:'⏰'},holiday:{bg:'#E1F5EE',text:'#085041',dot:'🎉'},task:{bg:'#EEEDFE',text:'#26215C',dot:'📋'}};
-function renderCalendar(){
-  const year=calCurrentDate.getFullYear(),month=calCurrentDate.getMonth();
-  document.getElementById('cal-month-label').textContent=calCurrentDate.toLocaleDateString('tr-TR',{month:'long',year:'numeric'});
-  const wd=document.getElementById('cal-weekdays');
-  wd.innerHTML=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map(d=>`<div class="cal-header-day">${d}</div>`).join('');
-  const first=new Date(year,month,1);
-  let startDow=first.getDay()-1;if(startDow<0)startDow=6;
-  const totalDays=new Date(year,month+1,0).getDate();
-  const prevDays=new Date(year,month,0).getDate();
-  const today=new Date();
-  const grid=document.getElementById('cal-days');grid.innerHTML='';
-  for(let i=startDow-1;i>=0;i--){
-    const cell=document.createElement('div');cell.className='cal-day other-month';
-    cell.innerHTML=`<div class="cal-day-num">${prevDays-i}</div>`;grid.appendChild(cell);
-  }
-  for(let d2=1;d2<=totalDays;d2++){
-    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;
-    const evs=calEvents.filter(e=>e.date===ds);
-    const isToday=today.getFullYear()===year&&today.getMonth()===month&&today.getDate()===d2;
-    const isSel=calSelectedDate===ds;
-    const cell=document.createElement('div');
-    cell.className='cal-day'+(isToday?' today':'')+(isSel?' selected':'');
-    cell.innerHTML=`<div class="cal-day-num" style="${isToday?'color:var(--accent);font-weight:700':''}">${d2}</div>${evs.slice(0,2).map(e=>`<div class="cal-event-dot" style="background:${EV_C[e.type]?.bg||'#eee'};color:${EV_C[e.type]?.text||'#333'}">${e.title}</div>`).join('')}`;
-    cell.onclick=()=>selectCalDay(ds);grid.appendChild(cell);
-  }
-  const tot=startDow+totalDays,rem=(7-tot%7)%7;
-  for(let d3=1;d3<=rem;d3++){const cell=document.createElement('div');cell.className='cal-day other-month';cell.innerHTML=`<div class="cal-day-num">${d3}</div>`;grid.appendChild(cell)}
-  renderUpcoming();
-  if(calSelectedDate)selectCalDay(calSelectedDate);
-}
-function calNav(dir){calCurrentDate=new Date(calCurrentDate.getFullYear(),calCurrentDate.getMonth()+dir,1);renderCalendar()}
-function selectCalDay(ds){
-  calSelectedDate=ds;
-  const evs=calEvents.filter(e=>e.date===ds);
-  document.getElementById('cal-selected-label').textContent=new Date(ds+'T12:00:00').toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
-  const c=document.getElementById('cal-day-events');
-  if(!evs.length){c.innerHTML=`<div style="font-size:12px;color:var(--text-2);padding:8px 0">Bu gün için etkinlik yok.</div><button class="btn btn-sm" onclick="openEventModal()" style="margin-top:8px">+ Etkinlik Ekle</button>`;return}
-  c.innerHTML=evs.map(e=>`<div class="cal-sidebar-event" style="border-color:${EV_C[e.type]?.text||'var(--accent)'}"><div style="font-weight:500;font-size:13px">${EV_C[e.type]?.dot||''} ${e.title}</div><div style="font-size:11px;color:var(--text-2);margin-top:3px">${e.time}${e.desc?' · '+e.desc:''}</div><button style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;margin-top:4px" onclick="deleteEvent(${e.id})">✕ Sil</button></div>`).join('');
-  renderCalendar();
-}
-function renderUpcoming(){
-  const today=new Date().toISOString().slice(0,10);
-  const up=calEvents.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
-  const c=document.getElementById('cal-upcoming');
-  if(!up.length){c.innerHTML=`<div style="font-size:12px;color:var(--text-2)">Yaklaşan etkinlik yok.</div>`;return}
-  c.innerHTML=up.map(e=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><div style="font-weight:500">${EV_C[e.type]?.dot||''} ${e.title}</div><div style="color:var(--text-2);font-size:11px;margin-top:2px">${e.date} · ${e.time}</div></div>`).join('');
-}
-function openEventModal(){
-  document.getElementById('ev-title').value='';document.getElementById('ev-desc').value='';document.getElementById('ev-time').value='09:00';
-  document.getElementById('ev-date').value=calSelectedDate||new Date().toISOString().slice(0,10);
-  openModal('modal-event');
-}
-function saveEvent(){
-  const title=document.getElementById('ev-title').value.trim();const date=document.getElementById('ev-date').value;
-  if(!title||!date){toast('Başlık ve tarih zorunludur.','error');return}
-  calEvents.push({id:Date.now(),title,date,time:document.getElementById('ev-time').value,type:document.getElementById('ev-type').value,desc:document.getElementById('ev-desc').value});
-  saveCalEvents();closeModal('modal-event');renderCalendar();toast('Etkinlik eklendi ✓','success');
-}
-function deleteEvent(id){
-  calEvents=calEvents.filter(e=>e.id!==id);saveCalEvents();
-  if(calSelectedDate)selectCalDay(calSelectedDate);else renderCalendar();
-  toast('Etkinlik silindi','success');
-}
-
-// ════ PUSULA ════
-const PUS_KEY='akademihub_pusula_v1';
-let tasks=JSON.parse(localStorage.getItem(PUS_KEY)||'null')||[
-  {id:1,userId:1,title:'Q1 Raporu hazırla ve sun',desc:'Finans departmanıyla koordineli',priority:1,done:false,due:'2026-03-17'},
-  {id:2,userId:1,title:'Yeni personel onboarding planı',desc:'Nisan için hazırlık',priority:2,done:false,due:'2026-03-20'},
-  {id:3,userId:1,title:'Toplantı tutanaklarını paylaş',desc:'Perşembe toplantısı',priority:3,done:true,due:'2026-03-15'},
-  {id:4,userId:2,title:'Sprint 12 görevlerini tamamla',desc:'Backend API entegrasyonu',priority:1,done:false,due:'2026-03-18'},
-  {id:5,userId:2,title:'Kod review yap',desc:'PR #42 incelemesi',priority:2,done:false,due:'2026-03-16'},
-  {id:6,userId:3,title:'Teknik döküman güncellemesi',desc:'v2.1 değişiklikleri',priority:2,done:false,due:'2026-03-19'},
-  {id:7,userId:1,title:'İzin talepleri incele',desc:'Nisan izin planlaması',priority:3,done:false,due:'2026-03-21'},
-  {id:8,userId:4,title:'Bütçe revizyonu',desc:'Q2 bütçe güncellemesi',priority:1,done:false,due:'2026-03-16'},
-];
-let pusFilter='all';
-function saveTasks(){localStorage.setItem(PUS_KEY,JSON.stringify(tasks))}
-function populatePusulaUsers(){
-  const sel=document.getElementById('pusula-user-sel');
-  const tSel=document.getElementById('task-user-sel');
-  if(sel)sel.innerHTML='<option value="0">Tüm Personel (Benim)</option>'+users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
-  if(tSel)tSel.innerHTML=users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
-}
-function getActiveUserId(){
-  const v=parseInt(document.getElementById('pusula-user-sel')?.value||'0');
-  return v===0?0:v; // 0 = tüm / kendi
-}
-function setPusFilter(f,btn){
-  pusFilter=f;
-  document.querySelectorAll('#panel-pusula .chip').forEach(c=>c.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  renderPusula();
-}
-const P_LABELS={1:{label:'Kritik',cls:'p1',e:'🔴'},2:{label:'Önemli',cls:'p2',e:'🟠'},3:{label:'Normal',cls:'p3',e:'🔵'}};
-function renderPusula(){
-  const uid=getActiveUserId();
-  let myTasks=uid===0?tasks:tasks.filter(t=>t.userId===uid);
-  // stats
-  document.getElementById('pus-total').textContent=myTasks.length;
-  document.getElementById('pus-p1').textContent=myTasks.filter(t=>t.priority===1&&!t.done).length;
-  document.getElementById('pus-p2').textContent=myTasks.filter(t=>t.priority===2&&!t.done).length;
-  document.getElementById('pus-done').textContent=myTasks.filter(t=>t.done).length;
-  // badges
-  const undone=tasks.filter(t=>!t.done&&t.priority===1).length;
-  const pb=document.getElementById('pusula-badge');if(pb){pb.textContent=undone;pb.style.display=undone>0?'inline':'none'}
-  const sc=document.getElementById('stat-critical');if(sc)sc.textContent=undone;
-  // date sub
-  const today=new Date();
-  document.getElementById('pusula-top3-date').textContent=today.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('pusula-sub').textContent=`${today.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})} — Günlük öncelik paneli`;
-  // top 3
-  const top3=myTasks.filter(t=>!t.done).sort((a,b)=>a.priority-b.priority).slice(0,3);
-  const t3El=document.getElementById('pusula-top3');
-  if(!top3.length){t3El.innerHTML=`<div style="padding:24px;text-align:center;color:var(--green);font-size:14px;font-weight:500">🎉 Harika! Tüm öncelikli görevler tamamlandı.</div>`;
-  }else{
-    t3El.innerHTML=top3.map((t,i)=>{
-      const p=P_LABELS[t.priority]||P_LABELS[3];
-      const od=t.due&&t.due<new Date().toISOString().slice(0,10)&&!t.done;
-      const owner=uid===0?users.find(u=>u.id===t.userId):null;
-      return`<div class="task-item${t.done?' done':''}">
-        <input type="checkbox" class="task-check" ${t.done?'checked':''} onchange="toggleTask(${t.id},this.checked)">
-        <div class="priority-badge ${p.cls}" style="font-size:13px">${i+1}</div>
-        <div style="flex:1">
-          <div class="task-title">${p.e} ${t.title}</div>
-          <div class="task-meta">${t.desc||''}${owner?` · <strong>${owner.name}</strong>`:''}${t.due?` · Son: <span style="color:${od?'var(--red)':'var(--text-2)'};font-weight:${od?600:400}">${t.due}</span>`:''}${od?' <span style="color:var(--red);font-weight:600">· GECİKMİŞ</span>':''}</div>
+// ═══════════════════════════════════════════════════════
+// PIPELINE
+// ═══════════════════════════════════════════════════════
+function renderPipe(){
+  const board=document.getElementById('pipe-board');
+  board.innerHTML='';
+  STAGES.forEach(stage=>{
+    const cards=candidates.filter(c=>c.stage===stage.id);
+    const col=document.createElement('div');
+    col.className='stage-col';
+    col.innerHTML=`<div class="stage-hdr"><span class="stage-lbl">${stage.label}</span><span class="stage-cnt">${cards.length}</span></div>
+    <div class="stage-body">
+      ${cards.map(c=>`<div class="pcard" onclick="openModal(${c.id})">
+        <div class="pcard-pos">${c.position}</div>
+        <div class="pcard-name">${c.name}</div>
+        <div class="pcard-meta">3 gün önce · ${c.loc}</div>
+        <div class="pcard-foot">
+          <div style="display:flex">${[0,1,2].map(i=>`<div style="width:17px;height:17px;border-radius:50%;border:2px solid #fff;background:#e8d8f0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#6a4a7a;margin-left:${i?'-5px':'0'}">IK</div>`).join('')}</div>
+          ${c.score>0?`<div class="pcard-score">★ ${c.score}</div>`:''}
         </div>
-        <button onclick="deleteTask(${t.id})" style="background:none;border:none;cursor:pointer;color:var(--text-3);padding:2px 6px">✕</button>
-      </div>`;
-    }).join('');
-  }
-  // all tasks
-  let filtered=myTasks;
-  if(pusFilter==='todo')filtered=filtered.filter(t=>!t.done);
-  if(pusFilter==='done')filtered=filtered.filter(t=>t.done);
-  filtered=filtered.slice().sort((a,b)=>a.priority-b.priority||(a.done?1:-1));
-  const list=document.getElementById('pusula-task-list');
-  if(!filtered.length){list.innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-2)">Görev bulunamadı.</div>`;return}
-  list.innerHTML=filtered.map(t=>{
-    const p=P_LABELS[t.priority]||P_LABELS[3];
-    const od=t.due&&t.due<new Date().toISOString().slice(0,10)&&!t.done;
-    const owner=uid===0?users.find(u=>u.id===t.userId):null;
-    return`<div class="task-item${t.done?' done':''}">
-      <input type="checkbox" class="task-check" ${t.done?'checked':''} onchange="toggleTask(${t.id},this.checked)">
-      <div class="priority-badge ${p.cls}">${p.e}</div>
-      <div style="flex:1">
-        <div class="task-title">${t.title}</div>
-        <div class="task-meta">${t.desc||''}${owner?` · <strong>${owner.name}</strong>`:''}${t.due?` · <span style="color:${od?'var(--red)':'var(--text-2)'}">${t.due}</span>`:''}${od?' · <span style="color:var(--red);font-weight:600">GECİKMİŞ</span>':''}</div>
-      </div>
-      <span class="badge ${t.priority===1?'badge-red':t.priority===2?'badge-amber':'badge-blue'}" style="font-size:9px">${p.label}</span>
-      <button onclick="deleteTask(${t.id})" style="background:none;border:none;cursor:pointer;color:var(--text-3);padding:2px 8px">✕</button>
+      </div>`).join('')}
+      <button class="add-btn" onclick="addCand('${stage.id}')">+ Aday Ekle</button>
     </div>`;
-  }).join('');
+    board.appendChild(col);
+  });
 }
-function toggleTask(id,done){
-  tasks=tasks.map(t=>t.id===id?{...t,done}:t);saveTasks();renderPusula();
-  toast(done?'Tamamlandı ✓':'Yeniden açıldı','success');
+function filterCandidates(v){
+  document.querySelectorAll('.pcard').forEach(c=>{
+    const visible=c.querySelector('.pcard-name').textContent.toLowerCase().includes(v.toLowerCase());
+    c.style.opacity=visible?'1':'0.3';
+  });
 }
-function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);saveTasks();renderPusula();toast('Görev silindi','success')}
-function openAddTaskModal(){
-  populatePusulaUsers();
-  ['task-title','task-desc'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('task-priority').value='2';document.getElementById('task-due').value='';
-  const uid=getActiveUserId();
-  const sel=document.getElementById('task-user-sel');if(sel&&uid>0)sel.value=uid;
-  openModal('modal-task');
+function addCand(stageId){
+  const name=prompt('Aday adı soyadı:');
+  if(!name?.trim()) return;
+  const pos=prompt('Pozisyon:')||'Belirtilmedi';
+  candidates.push({id:Date.now(),name:name.trim(),position:pos,stage:stageId,score:0,notes:'',disc:'N/A',loc:'Belirtilmedi'});
+  renderPipe();
 }
-function saveTask(){
-  const title=document.getElementById('task-title').value.trim();
-  if(!title){toast('Görev başlığı zorunludur.','error');return}
-  const userId=parseInt(document.getElementById('task-user-sel').value)||1;
-  tasks.push({id:Date.now(),userId,title,desc:document.getElementById('task-desc').value,priority:parseInt(document.getElementById('task-priority').value),done:false,due:document.getElementById('task-due').value||null});
-  saveTasks();closeModal('modal-task');renderPusula();toast('Görev eklendi ✓','success');
+function moveC(id,dir){
+  const ids=STAGES.map(s=>s.id);
+  const c=candidates.find(c=>c.id===id);
+  if(!c) return;
+  const idx=ids.indexOf(c.stage);
+  const next=idx+(dir==='next'?1:-1);
+  if(next>=0&&next<ids.length) c.stage=ids[next];
+  renderPipe();
+  document.getElementById('mo').classList.remove('open');
 }
 
-// ════ INIT ════
-const d=new Date();
-document.getElementById('dashboard-date').textContent=d.toLocaleDateString('tr-TR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-renderUsers();
-renderDocs();
-populatePusulaUsers();
-setTimeout(()=>{puanUpdateBadge();renderPusula();},60);
+// ═══════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════
+function openModal(id){
+  const c=candidates.find(c=>c.id===id);
+  if(!c) return;
+  selCand=c;
+  document.getElementById('m-av').textContent=c.name.split(' ').map(n=>n[0]).join('').slice(0,2);
+  document.getElementById('m-name').textContent=c.name;
+  document.getElementById('m-pos').textContent=c.position;
+  const ids=STAGES.map(s=>s.id);
+  const ci=ids.indexOf(c.stage);
+  document.getElementById('m-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="ic"><div class="ic-l">KONUM</div><div class="ic-v">${c.loc}</div></div>
+      <div class="ic"><div class="ic-l">DISC PROFİLİ</div><div class="ic-v">${c.disc}</div></div>
+    </div>
+    <div>
+      <div style="font-weight:700;font-size:11px;color:#1a0a2e;margin-bottom:5px;display:flex;align-items:center;gap:5px">📞 Telefon Görüşme Notları</div>
+      <div style="background:#f0e8f8;border-radius:8px;padding:9px 12px;font-size:11px;color:#4a1a6a;line-height:1.7;font-style:italic;border:1px solid #d8c0f0">"${c.notes||'Not eklenmemiş.'}"</div>
+    </div>
+    <div>
+      <div style="font-weight:700;font-size:11px;color:#1a0a2e;margin-bottom:5px">✅ Mülakat Kontrol Listesi</div>
+      <div>${KONTROL_ITEMS.slice(0,6).map(item=>`<div style="display:flex;align-items:flex-start;gap:7px;padding:5px 8px;border:1px solid #f0e8f0;border-radius:6px;font-size:11px;color:#334155;margin-bottom:4px;line-height:1.5"><input type="checkbox" style="flex-shrink:0;accent-color:#8b1a4a;width:12px;height:12px;margin-top:2px"><span>${item}</span></div>`).join('')}</div>
+    </div>
+    <div>
+      <div style="font-weight:700;font-size:11px;color:#1a0a2e;margin-bottom:5px">🔄 Süreç Aşamaları</div>
+      <div class="slist">${STAGES.map((s,i)=>`<div class="step ${s.id===c.stage?'cur':''}">
+        <div class="step-n" style="background:${i<ci?'#10b981':s.id===c.stage?'#8b1a4a':'#e8d8f0'}">${i<ci?'✓':i+1}</div>
+        <span style="font-size:11px;font-weight:${s.id===c.stage?'600':'400'};color:${s.id===c.stage?'#4a1a6a':'#64748b'}">${s.label}</span>
+      </div>`).join('')}</div>
+    </div>`;
+  document.getElementById('m-foot').innerHTML=`
+    ${ci<STAGES.length-1?`<button style="flex:1;padding:8px;background:#8b1a4a;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" onclick="moveC(${c.id},'next')">Bir Sonraki Aşamaya Taşı →</button>`:''}
+    <button style="padding:8px 14px;background:transparent;color:#7c5a9a;border:1px solid #3d2a5a;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" onclick="document.getElementById('mo').classList.remove('open')">Kapat</button>`;
+  document.getElementById('mo').classList.add('open');
+}
+function closeMO(e){if(e.target===document.getElementById('mo')) document.getElementById('mo').classList.remove('open');}
+
+// ═══════════════════════════════════════════════════════
+// KONTROL LİSTESİ
+// ═══════════════════════════════════════════════════════
+function renderKontrolList(){
+  document.getElementById('kontrol-list').innerHTML=KONTROL_ITEMS.map((item,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border:1px solid #e8dff5;border-radius:8px;font-size:11px;color:#334155;margin-bottom:5px;line-height:1.5;background:#fff">
+      <input type="checkbox" style="flex-shrink:0;accent-color:#8b1a4a;width:14px;height:14px;margin-top:2px">
+      <span>${item}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// MÜLAKAT FORMU — SORU EKLEMELİ
+// ═══════════════════════════════════════════════════════
+function renderIQList(){
+  const el=document.getElementById('iq-list');
+  if(iqItems.length===0){
+    el.innerHTML='<div style="color:#9a7ab0;font-size:12px;padding:16px 0;text-align:center">Henüz soru eklenmedi. Yukarıdaki "+ Soru Ekle" butonunu veya soru bankasını kullanın.</div>';
+    return;
+  }
+  el.innerHTML=iqItems.map((item,i)=>`
+    <div class="iq-row">
+      <div class="iq-top">
+        <div class="iq-num">${i+1}</div>
+        <textarea class="iq-q" id="iq-q-${item.id}" onchange="iqItems[${i}].soru=this.value" rows="2">${item.soru}</textarea>
+        <button class="iq-del" onclick="removeIQ(${item.id})" title="Soruyu Sil">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+      <div class="iq-ans-lbl">✍️ Yanıt / Not</div>
+      <textarea class="iq-ans" id="iq-a-${item.id}" placeholder="Adayın yanıtını veya notunuzu buraya yazın..." rows="3" onchange="iqItems[${i}].yanit=this.value">${item.yanit||''}</textarea>
+    </div>`).join('');
+}
+
+function addIQ(soruText){
+  const id=Date.now()+Math.random();
+  iqItems.push({id,soru:soruText||'',yanit:''});
+  renderIQList();
+  if(!soruText){
+    setTimeout(()=>{
+      const el=document.getElementById('iq-q-'+id);
+      if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}
+    },50);
+  }
+}
+function removeIQ(id){
+  iqItems=iqItems.filter(i=>i.id!==id);
+  renderIQList();
+}
+function syncIQValues(){
+  iqItems.forEach(item=>{
+    const q=document.getElementById('iq-q-'+item.id);
+    const a=document.getElementById('iq-a-'+item.id);
+    if(q) item.soru=q.value;
+    if(a) item.yanit=a.value;
+  });
+}
+
+// ── Banka modalı ──
+function addFromBank(){
+  const el=document.getElementById('bank-mo-list');
+  el.innerHTML=SORU_BANKASI.map(cat=>`
+    <div style="margin-bottom:14px">
+      <div style="font-weight:700;font-size:11px;color:#4a1a6a;margin-bottom:6px;padding:4px 0;border-bottom:1px solid #f0e8f0">${cat.cat}</div>
+      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 4px;border-radius:6px;cursor:pointer;transition:background .1s" onmouseover="this.style.background='#f5f0fa'" onmouseout="this.style.background='transparent'" onclick="addIQ(${JSON.stringify(s)});document.getElementById('bank-mo').style.display='none'">
+        <svg width="13" height="13" fill="none" stroke="#8b1a4a" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span style="font-size:11px;color:#334155;line-height:1.5">${s}</span>
+      </div>`).join('')}
+    </div>`).join('');
+  document.getElementById('bank-mo').style.display='flex';
+}
+
+// ── Soru bankası sekmesi ──
+function renderSoruBankasi(){
+  document.getElementById('soru-bankasi-list').innerHTML=SORU_BANKASI.map(cat=>`
+    <div class="card" style="margin-bottom:10px">
+      <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:8px">${cat.cat}</div>
+      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 6px;border-radius:7px;margin-bottom:3px">
+        <span style="width:16px;height:16px;border-radius:5px;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px">▸</span>
+        <span style="flex:1;font-size:11px;color:#334155;line-height:1.5">${s}</span>
+        <button class="btn btn-outline btn-sm" onclick="addIQ(${JSON.stringify(s)});st('mul','form',document.querySelectorAll('#panel-mulakat .tab')[1])" style="flex-shrink:0;font-size:10px;padding:3px 8px">Forma Ekle</button>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+// ── Kaydet ──
+function saveInterview(){
+  syncIQValues();
+  const aday=document.getElementById('mf-aday').value.trim();
+  const poz=document.getElementById('mf-pozisyon').value.trim();
+  const tarih=document.getElementById('mf-tarih').value;
+  const gorusen=document.getElementById('mf-gorusen').value.trim();
+  const not=document.getElementById('mf-not').value.trim();
+  if(!aday){document.getElementById('save-msg').innerHTML='<div class="err-box">⚠ Adayın adı zorunludur.</div>';return;}
+  const kayit={
+    id:Date.now(),
+    aday,poz,
+    tarih:tarih?new Date(tarih).toLocaleString('tr-TR'):'Belirtilmedi',
+    gorusen:gorusen||'Belirtilmedi',
+    not,
+    sorular:[...iqItems.map(i=>({soru:i.soru,yanit:i.yanit}))],
+    savedAt:new Date().toLocaleString('tr-TR'),
+  };
+  const mevcut=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
+  mevcut.unshift(kayit);
+  localStorage.setItem('duay-ik-kayitlar',JSON.stringify(mevcut));
+  updateBadge();
+  document.getElementById('save-msg').innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 12px;font-size:11px;color:#065f46">✅ Görüşme "'+aday+'" adına kaydedildi! <a href="#" onclick="go(\'kayitlar\',document.querySelector(\'.nb:nth-child(4)\'),\'Mülakat Kayıtları\');return false" style="font-weight:700">Kayıtları Görüntüle →</a></div>';
+  setTimeout(()=>document.getElementById('save-msg').innerHTML='',6000);
+}
+function clearForm(){
+  document.getElementById('mf-aday').value='';
+  document.getElementById('mf-pozisyon').value='';
+  document.getElementById('mf-tarih').value='';
+  document.getElementById('mf-gorusen').value='';
+  document.getElementById('mf-not').value='';
+  iqItems=[];renderIQList();
+  document.getElementById('save-msg').innerHTML='';
+}
+function updateBadge(){
+  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
+  const b=document.getElementById('kayit-badge');
+  if(b) b.textContent=k.length;
+}
+
+// ── Kayıtları göster ──
+function renderKayitlar(){
+  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
+  const el=document.getElementById('kayit-listesi');
+  if(k.length===0){el.innerHTML='<div class="empty"><svg width="40" height="40" fill="none" stroke="#d0b8e8" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><span>Henüz kaydedilmiş mülakat yok.</span></div>';return;}
+  el.innerHTML=k.map((r,ri)=>`
+    <div class="db-row">
+      <div class="db-av">${r.aday.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;color:#1a0a2e">${r.aday}</div>
+        <div class="db-meta">${r.poz||'—'} · ${r.tarih} · Görüşen: ${r.gorusen}</div>
+        ${r.not?`<div class="db-preview">${r.not.slice(0,140)}${r.not.length>140?'…':''}</div>`:''}
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+          ${(r.sorular||[]).slice(0,3).map(s=>`<span style="background:#f0e8f8;color:#4a1a6a;font-size:10px;padding:2px 7px;border-radius:20px">${s.soru.slice(0,40)}${s.soru.length>40?'…':''}</span>`).join('')}
+          ${(r.sorular||[]).length>3?`<span style="font-size:10px;color:#9a7ab0">+${r.sorular.length-3} soru</span>`:''}
+        </div>
+      </div>
+      <div class="db-actions">
+        <button class="btn btn-outline btn-sm" onclick="viewKayit(${ri})">Görüntüle</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteKayit(${ri})">Sil</button>
+      </div>
+    </div>`).join('');
+}
+function viewKayit(idx){
+  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
+  const r=k[idx];
+  if(!r) return;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Mülakat — ${r.aday}</title>
+  <style>body{font-family:'Segoe UI',sans-serif;max-width:700px;margin:40px auto;padding:0 20px;color:#1a0a2e}
+  h1{color:#8b1a4a;margin-bottom:4px}h2{font-size:14px;color:#4a1a6a;margin:20px 0 8px;border-bottom:1px solid #e8dff5;padding-bottom:4px}
+  .meta{font-size:12px;color:#6a4a7a;margin-bottom:20px}.qitem{margin-bottom:16px;border:1px solid #e8dff5;border-radius:8px;padding:12px}
+  .qsoru{font-weight:600;font-size:13px;color:#1a0a2e;margin-bottom:6px}.qyanit{font-size:12px;color:#334155;line-height:1.6;background:#f0faf0;padding:8px;border-radius:6px}
+  .not-box{background:#f0e8f8;border-radius:8px;padding:12px;font-size:12px;color:#4a1a6a;line-height:1.6}
+  @media print{.no-print{display:none}}</style></head><body>
+  <h1>${r.aday}</h1>
+  <div class="meta">${r.poz||''} · ${r.tarih} · Görüşen: ${r.gorusen} · Kaydedildi: ${r.savedAt}</div>
+  ${r.not?`<h2>Görüşen Kişinin Notu</h2><div class="not-box">${r.not}</div>`:''}
+  <h2>Sorular & Yanıtlar (${(r.sorular||[]).length} soru)</h2>
+  ${(r.sorular||[]).map((s,i)=>`<div class="qitem"><div class="qsoru">${i+1}. ${s.soru}</div><div class="qyanit">${s.yanit||'<em style="color:#94a3b8">Yanıt girilmemiş.</em>'}</div></div>`).join('')}
+  <div class="no-print" style="margin-top:24px"><button onclick="window.print()" style="padding:8px 16px;background:#8b1a4a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px">🖨 Yazdır / PDF</button></div>
+  </body></html>`);
+  w.document.close();
+}
+function deleteKayit(idx){
+  if(!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
+  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
+  k.splice(idx,1);
+  localStorage.setItem('duay-ik-kayitlar',JSON.stringify(k));
+  updateBadge();renderKayitlar();
+}
+
+// ═══════════════════════════════════════════════════════
+// TEST SÜRÜŞÜ
+// ═══════════════════════════════════════════════════════
+function renderTests(){
+  const t1=[
+    {title:'Kahraman Bey Testi',desc:'Zor tedarikçiden ayrıcalık almak, özel indirim alma, isteneni yaptırabilme.',color:'#7c3aed'},
+    {title:'Ofis Temizliği',desc:'Her hafta ofis temizliği yaptırıp personelin ne yapacağını gözlemleme.',color:'#10b981'},
+    {title:'Zamansız Arama',desc:'Zamansız arama / mesaj gönderme. Dönüş hızı ve profesyonellik ölçümü.',color:'#f97316'},
+    {title:'Uzak Yere Yollama',desc:'Aniden uzak bir yerden bir şey alıp gelmesini isteme. Sabır ve iş bitirme kapasitesi.',color:'#0ea5e9'},
+    {title:'Fikir Üretkenliği',desc:'Yeni müşteri kazanma, şirketi büyütme konusunda fikirlerini alma.',color:'#ec4899'},
+    {title:'Ürün Araştırması',desc:'Detaylı ve eksik bilgi verilen ürünleri bulmasını isteme. Hangi yöntemleri kullandığını öğrenmek.',color:'#8b1a4a'},
+  ];
+  const t2=[
+    {title:'İknacılık — Satış Eğitimi',desc:'Adaydan bir satış eğitimi satmasını isteyin.',color:'#7c3aed'},
+    {title:'İknacılık — Görsel Temin',desc:'Zor bir firmadan ürün görsellerini kaliteli şekilde göndermesini sağlama.',color:'#8b1a4a'},
+    {title:'İknacılık — Yüksek İndirim',desc:'Çok yüksek fiyat indirimi almasını isteyin ve ne yapacağını izleyin.',color:'#ef4444'},
+    {title:'Hız Testi',desc:'Şirketin çeyreklik hedeflerini ne kadar sürede ve hangi yöntemlerle gerçekleştireceği.',color:'#f97316'},
+    {title:'Eksik Bilgi ile İş',desc:'Detayları tam ve eksik verilmiş ürünü bulmasını isteyin. Hangi yöntemleri kullandığını sorun.',color:'#0ea5e9'},
+    {title:'Döküman Geliştirme',desc:'Şirket dökümanı verip kısa sürede çelişki ve yazım hatası bulmasını, yeni fikirler sunmasını isteyin.',color:'#10b981'},
+    {title:'Fuar Testi',desc:'Fuarda broşür dağıtma ve müşterilerden bilgi alma. Hedef net ama nasıl yapacağı bilgisi az.',color:'#ec4899'},
+    {title:'Uygulama Testi (30+30 dk)',desc:'3-4 iş zorluğunu yazın → 30 dk düşünsün → 30 dk birlikte çalışarak nasıl düşündüğünü görün.',color:'#6366f1'},
+  ];
+  const mkCard=t=>`<div style="background:#fff;padding:15px;border-radius:11px;border:1px solid #e8dff5;display:flex;flex-direction:column;gap:9px">
+    <div style="width:36px;height:36px;border-radius:10px;background:${t.color}18;display:flex;align-items:center;justify-content:center">
+      <svg width="17" height="17" fill="none" stroke="${t.color}" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div><div style="font-weight:700;font-size:12px;color:#1a0a2e;margin-bottom:4px">${t.title}</div><div style="font-size:11px;color:#64748b;line-height:1.6">${t.desc}</div></div>
+    <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;align-self:flex-start;background:${t.color}15;color:${t.color}">Gözlemle</span>
+  </div>`;
+  document.getElementById('test-grid-1').innerHTML=t1.map(mkCard).join('');
+  document.getElementById('test-grid-2').innerHTML=t2.map(mkCard).join('');
+  document.getElementById('yonler-wrap').innerHTML=['Pratiklik','Kararlılık','Sabırlılık','Kıvrak Zeka','Dış Görünüş','Kendini Yönetme','Coşku','Dinamizm','Yeni Yollar Deneme','Ekip Çalışmasına Yatkınlık','Araştırmacılık','Detaycılık','Dikkat','Analitik Yetenek','Yenilikçilik','Hırs','Dakiklik','Yalan Söylememe','Pazarlık / İkna','Soğuk Kanlılık','Deneyim (miktar)','Karar Alma','Merak','Hızlı İş Yapma','Fedakarlık','İşi Küçük Görmeme','Deneyim (Kalite)','Öğrenci Zihniyeti','Öz Güven','İletişim','Çalışkanlık','Kaliteli İş Yapma']
+    .map(y=>`<span style="background:#f0e8f8;color:#4a1a6a;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500">${y}</span>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// DEĞERLENDİRME
+// ═══════════════════════════════════════════════════════
+function renderEval(){
+  const el=document.getElementById('eval-content');
+  if(!selCand){el.innerHTML='<div class="empty"><svg width="42" height="42" fill="none" stroke="#d0b8e8" stroke-width="1.5" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Aday Havuzu\'ndan bir aday seçin.</span></div>';return;}
+  const avg=(Object.values(evalSc).reduce((a,b)=>a+b,0)/FACTORS.length).toFixed(1);
+  el.innerHTML=`<div class="eval-wrap">
+    <div class="eval-hd">
+      <div><div style="font-weight:700;font-size:14px;color:#1a0a2e">${selCand.name}</div><div style="font-size:11px;color:#9a7ab0;margin-top:2px">${selCand.position} · Eleman Adayı Değerlendirme Cetveli · Puanlama: 1–5</div></div>
+      <div style="text-align:right"><div style="font-size:9px;font-weight:700;color:#9a7ab0;letter-spacing:.1em;margin-bottom:2px">TOPLAM PUAN</div><div style="font-size:26px;font-weight:800;color:#8b1a4a">${avg}</div></div>
+    </div>
+    <div class="eval-grid">${FACTORS.map(f=>`<div class="fac">
+      <div class="fac-hd"><span class="fac-lbl">${f}</span><span class="fac-sc">${evalSc[f]}</span></div>
+      <div class="fac-bars">${[1,2,3,4,5].map(v=>`<button class="fbar" style="background:${v<=evalSc[f]?'#8b1a4a':'#e8dff5'}" onclick="setSc('${f}',${v})"></button>`).join('')}</div>
+    </div>`).join('')}</div>
+    <div style="padding:14px 20px;background:#f8f5ff;border-top:1px solid #f0e8f0">
+      <div class="flabel" style="margin-bottom:6px">Diğer Bilgiler ve Gözlemler</div>
+      <textarea style="width:100%;padding:8px 10px;border:1px solid #e0d0f0;border-radius:8px;font-size:11px;color:#334155;background:#fff;min-height:75px;resize:vertical;font-family:'DM Sans',sans-serif" placeholder="Kanaat notlarınızı buraya yazın..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-full" style="flex:1;background:#10b981;color:#fff" onclick="alert('İşe alım onaylandı!')">✓ İşe Alımı Onayla</button>
+        <button class="btn btn-outline" style="flex:1" onclick="go('tesekkur',document.querySelector('.nb:nth-child(8)'),'Teşekkür Mektubu')">✉ Teşekkür Mektubu</button>
+      </div>
+    </div>
+  </div>`;
+}
+function setSc(f,v){evalSc[f]=v;renderEval();}
+
+// ═══════════════════════════════════════════════════════
+// TEŞEKKÜR
+// ═══════════════════════════════════════════════════════
+function updateTsk(){
+  const a=document.getElementById('tsk-aday').value||'[Adayın Adı]';
+  const g=document.getElementById('tsk-gonderen').value||'İsim Soyisim\nUnvan';
+  document.getElementById('tsk-preview').textContent=`Sayın ${a},\n\nGeldiğiniz ve benimle tanıştığınız için teşekkür ederim. Sizinle görüşmekten memnunluk duyduğumu ve ilginize teşekkür ettiğimi belirtmek isterim.\n\nÇok sayıda nitelikli aday arasından bir karar vermek oldukça güç oldu. Pozisyonu size teklif edemediğimizden dolayı üzüntü duymaktayım; ancak önümüzdeki altı aylık süre içerisinde boşalan diğer pozisyonlar için özgeçmişinizi saklayacağımızı bildirmek isterim.\n\nİş arayışınızda başarılar dilerim.\n\nSaygılarımla,\n${g}\nDUAY Uluslararası Tic. Ltd. Şti.\nwww.duaycor.com | +90 212 625 5 444`;
+}
+function copyTsk(){
+  navigator.clipboard.writeText(document.getElementById('tsk-preview').textContent)
+    .then(()=>alert('Metin kopyalandı!'))
+    .catch(()=>alert('Manuel olarak seçip kopyalayın.'));
+}
+
+// ═══════════════════════════════════════════════════════
+// ÖZET TABLO
+// ═══════════════════════════════════════════════════════
+function addOzetRow(){
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td><input placeholder="Ad Soyad" style="border:none;background:transparent;font-size:11px;color:#334155;width:120px;font-family:DM Sans,sans-serif"></td>'
+    +['—','—','—','—'].map(v=>`<td><input placeholder="${v}" style="border:none;background:transparent;font-size:11px;color:#334155;width:60px;font-family:DM Sans,sans-serif"></td>`).join('')
+    +'<td><button onclick="this.closest(\'tr\').remove()" style="border:none;background:transparent;color:#ef4444;cursor:pointer;font-size:12px">✕</button></td>';
+  document.getElementById('ozet-body').appendChild(tr);
+}
+
+// ═══════════════════════════════════════════════════════
+// KAYNAKLAR
+// ═══════════════════════════════════════════════════════
+function renderKaynaklar(){
+  const resources=[
+    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'Who: The A Method for Hiring',desc:'Geoff Smart & Randy Street. Doğru insanı işe almanın sistematik yöntemi. DUAY sürecinizle birebir örtüşüyor.',link:'https://www.amazon.com/Who-Geoff-Smart/dp/0345504194'},
+    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'Topgrading (Brad Smart)',desc:'A/B/C kalite çalışan modeli. Mülakatlarda gerçeği nasıl öğrenirsiniz? CIDS görüşme yöntemi.',link:'https://topgrading.com/'},
+    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'Work Rules! (Laszlo Bock)',desc:'Google\'ın IK yaklaşımı. Yapısal mülakat, veri bazlı işe alım ve iş yeri kültürü.',link:'https://www.amazon.com/Work-Rules-Insights-Inside-Transform/dp/1455554790'},
+    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'The DISC Model of Human Behavior',desc:'Bill J. Bonnstetter. D/I/S/C profillerini işe alım ve ekip yönetiminde kullanma rehberi.',link:'https://www.amazon.com/DISC-Model-Human-Behavior/dp/1885228139'},
+    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'SHRM — shrm.org',desc:'Dünya\'nın en büyük IK derneği. Ücretsiz şablonlar, mülakat soruları, hukuki rehberler.',link:'https://www.shrm.org'},
+    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'LinkedIn Talent Solutions',desc:'İşe alım trendleri, mülakat soruları bankası, yetenek raporları. Global benchmarklar.',link:'https://business.linkedin.com/talent-solutions'},
+    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'Harvard Business Review — IK',desc:'İşe alım hataları, önyargıdan kaçınma, yapısal mülakat araştırmaları. Akademik temelli.',link:'https://hbr.org/topic/subject/hiring'},
+    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'Glassdoor — Interview Questions',desc:'Şirkete ve pozisyona göre gerçek mülakat sorularını görün. Rakip analizi için de kullanılır.',link:'https://www.glassdoor.com/Interview/index.htm'},
+    {cat:'Araç',catColor:'#fdf4ff',catText:'#7e22ce',title:'Crystal Knows (DISC)',desc:'DISC profillerini LinkedIn\'den otomatik çıkaran araç. Adayı tanımak için görüşme öncesi kullanın.',link:'https://www.crystalknows.com'},
+    {cat:'Araç',catColor:'#fdf4ff',catText:'#7e22ce',title:'TestGorilla',desc:'150+ yetenek testi: mantık, kişilik, iş simülasyonu. Test sürüşü öncesi eleme için ideal.',link:'https://www.testgorilla.com'},
+    {cat:'Araç',catColor:'#fdf4ff',catText:'#7e22ce',title:'Workable',desc:'Başvuru takibi (ATS), iş ilanı yayınlama, mülakat planlama ve işbirliği platformu.',link:'https://www.workable.com'},
+    {cat:'Yöntem',catColor:'#fff7ed',catText:'#c2410c',title:'STAR Mülakat Yöntemi',desc:'Situation → Task → Action → Result. Davranışsal mülakat sorularında adayı yapısal olarak değerlendirme.',link:'https://www.themuse.com/advice/star-interview-method'},
+    {cat:'Yöntem',catColor:'#fff7ed',catText:'#c2410c',title:'Yapısal Mülakat Tekniği',desc:'Tüm adaylara aynı soruları sormak ve standart puanlama. Önyargıyı en aza indiren bilimsel yöntem.',link:'https://hbr.org/2016/04/a-refresher-on-structured-vs-unstructured-interviews'},
+    {cat:'Yöntem',catColor:'#fff7ed',catText:'#c2410c',title:'Topgrading CIDS Görüşmesi',desc:'Career History Interview — adayın her iş deneyimini derinlemesine sorgulama. Referans bazlı doğrulama.',link:'https://topgrading.com/resources/topgrading-interview/'},
+    {cat:'Türkçe',catColor:'#fef2f2',catText:'#b91c1c',title:'Kariyer.net İK Rehberi',desc:'Türkiye\'ye özel iş ilanı yayınlama, maaş araştırması ve IK içerikleri.',link:'https://www.kariyer.net'},
+    {cat:'Türkçe',catColor:'#fef2f2',catText:'#b91c1c',title:'HR Dergi — hrdergi.com',desc:'Türkiye\'nin önde gelen IK dergisi. Araştırmalar, vaka çalışmaları ve sektörel haberler.',link:'https://www.hrdergi.com'},
+    {cat:'Türkçe',catColor:'#fef2f2',catText:'#b91c1c',title:'Peryön — peryön.org.tr',desc:'Personel Yönetimi Derneği. Türkiye IK sertifika programları ve etkinlikler.',link:'https://www.peryon.org.tr'},
+    {cat:'Podcast',catColor:'#f0fdf4',catText:'#166534',title:'The Talent Cast',desc:'İşe alım, yetenek yönetimi ve IK teknolojisi üzerine haftalık İngilizce podcast.',link:'https://www.thetalentcast.com'},
+  ];
+  document.getElementById('kaynak-grid').innerHTML=resources.map(r=>`
+    <div class="res-card">
+      <span class="res-cat" style="background:${r.catColor};color:${r.catText}">${r.cat}</span>
+      <div class="res-title">${r.title}</div>
+      <div class="res-desc">${r.desc}</div>
+      <a href="${r.link}" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;color:#8b1a4a;display:flex;align-items:center;gap:4px">Ziyaret Et <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// AI TOOLS
+// ═══════════════════════════════════════════════════════
+async function callClaude(prompt,sys,max){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max||1024,system:sys,messages:[{role:'user',content:prompt}]})
+  });
+  const d=await res.json();
+  return d.content?.[0]?.text||'';
+}
+async function analyzeCV(){
+  const pos=document.getElementById('cv-pos').value.trim();
+  const txt=document.getElementById('cv-text').value.trim();
+  const krit=document.getElementById('cv-krit').value.trim();
+  const er=document.getElementById('cv-err'),re=document.getElementById('cv-result'),btn=document.getElementById('cv-btn');
+  if(!pos||!txt){er.innerHTML='<div class="err-box">⚠ Pozisyon ve CV metni zorunludur.</div>';return;}
+  er.innerHTML='';btn.disabled=true;btn.textContent='Analiz ediliyor...';
+  re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Yapay zeka CV\'yi inceliyor<span class="dot-load"></span></div>';
+  try{
+    const raw=await callClaude('Pozisyon: '+pos+'\n'+(krit?'Kriterler: '+krit+'\n':'')+'CV:\n'+txt,'Sen deneyimli bir IK uzmanısın. Sadece JSON döndür:\n{"uyum_skoru":0-100,"guclu_yonler":["..."],"eksik_yonler":["..."],"genel_yorum":"2-3 cümle","tavsiye":"işe al / değerlendirilebilir / uygun değil"}');
+    const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const s=d.uyum_skoru||0;
+    const bc=s>=70?'#10b981':s>=45?'#f59e0b':'#ef4444';
+    const [bb,bf]=s>=70?['#ecfdf5','#065f46']:s>=45?['#fffbeb','#92400e']:['#fef2f2','#991b1b'];
+    re.innerHTML='<div class="res-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-weight:600;font-size:13px">Uyum Skoru</span><span style="font-size:10px;font-weight:700;background:'+bb+';color:'+bf+';padding:2px 10px;border-radius:20px">'+d.tavsiye+'</span></div>'
+      +'<div class="score-row"><span style="font-size:22px;font-weight:800;min-width:36px">'+s+'</span><div class="sbar-wrap"><div class="sbar-fill" style="width:'+s+'%;background:'+bc+'"></div></div><span style="font-size:11px;color:#9a7ab0">/100</span></div>'
+      +(d.guclu_yonler||[]).map(g=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#10b981;font-weight:700">+ </span>'+g+'</div>').join('')
+      +((d.eksik_yonler||[]).length?'<div style="margin-top:8px">'+(d.eksik_yonler||[]).map(e=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#ef4444;font-weight:700">- </span>'+e+'</div>').join('')+'</div>':'')
+      +(d.genel_yorum?'<div style="margin-top:10px;padding-top:10px;border-top:1px solid #e8dff5;font-size:11px;color:#64748b;line-height:1.7">'+d.genel_yorum+'</div>':'')
+      +'</div>';
+  }catch(e){re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı. Lütfen tekrar deneyin.</div>';}
+  btn.disabled=false;btn.textContent="CV'yi Analiz Et";
+}
+async function genSorular(){
+  const pos=document.getElementById('s-pos').value.trim();
+  const er=document.getElementById('s-err'),re=document.getElementById('s-result'),btn=document.getElementById('s-btn');
+  if(!pos){er.innerHTML='<div class="err-box">⚠ Pozisyon adı zorunludur.</div>';return;}
+  er.innerHTML='';btn.disabled=true;btn.textContent='Üretiliyor...';
+  re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sorular hazırlanıyor<span class="dot-load"></span></div>';
+  try{
+    const raw=await callClaude('Pozisyon: '+pos+'\nSeviye: '+document.getElementById('s-sev').value+'\nTür: '+document.getElementById('s-tur').value+(document.getElementById('s-yet').value?'\nYetkinlikler: '+document.getElementById('s-yet').value:''),'IK mülakatçısısın. Tam 7 soru üret. Sadece JSON:\n{"sorular":[{"soru":"...","amac":"kısa","ipucu":"kısa"}]}');
+    const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    re.innerHTML='<div style="display:flex;flex-direction:column;gap:7px;margin-top:8px">'
+      +(d.sorular||[]).map((s,i)=>'<div class="res-box" style="padding:11px 13px"><div style="font-size:9px;color:#9a7ab0;font-weight:600;margin-bottom:3px">Soru '+(i+1)+'</div>'
+        +'<div style="font-size:12px;font-weight:600;color:#1a0a2e;margin-bottom:5px;line-height:1.5">'+s.soru+'</div>'
+        +'<div style="font-size:11px;color:#64748b"><strong>Amaç:</strong> '+s.amac+'</div>'
+        +'<div style="font-size:11px;color:#64748b;margin-top:2px"><strong>İpucu:</strong> '+s.ipucu+'</div>'
+        +'<button class="btn btn-outline btn-sm" style="margin-top:7px;font-size:10px" onclick="addIQ('+JSON.stringify(s.soru)+');go(\'mulakat\',document.querySelector(\'.nb:nth-child(3)\'),\'Mülakat Formu\')">Forma Ekle →</button>'
+        +'</div>').join('')+'</div>';
+  }catch(e){re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı.</div>';}
+  btn.disabled=false;btn.textContent='Soru Üret';
+}
+async function genIlan(){
+  const pos=document.getElementById('i-pos').value.trim();
+  const er=document.getElementById('i-err'),re=document.getElementById('i-result'),btn=document.getElementById('i-btn');
+  if(!pos){er.innerHTML='<div class="err-box">⚠ Pozisyon adı zorunludur.</div>';return;}
+  er.innerHTML='';btn.disabled=true;btn.textContent='Oluşturuluyor...';
+  re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">İş ilanı yazılıyor<span class="dot-load"></span></div>';
+  try{
+    const txt=await callClaude('Pozisyon: '+pos+'\n'+(document.getElementById('i-dep').value?'Departman: '+document.getElementById('i-dep').value+'\n':'')+'Çalışma: '+document.getElementById('i-mod').value+'\n'+(document.getElementById('i-ger').value?'Gereksinimler:\n'+document.getElementById('i-ger').value:''),'Profesyonel IK yazarısın. DUAY Uluslararası Tic. Ltd. Şti. için çekici Türkçe iş ilanı yaz. Format: başlık, hakkımızda, görev tanımı, nitelikler, imkânlar. Düz metin.',1200);
+    re.innerHTML='<div class="res-box"><div style="font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap">'+txt+'</div></div>';
+  }catch(e){re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı.</div>';}
+  btn.disabled=false;btn.textContent='İş İlanı Oluştur';
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+renderPipe();
+renderKontrolList();
+renderIQList();
+renderSoruBankasi();
+renderTests();
+updateTsk();
+renderKaynaklar();
+updateBadge();
+// Set default datetime
+document.getElementById('mf-tarih').value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
 </script>
 </body>
 </html>
