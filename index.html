@@ -7,135 +7,164 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#f1f5f9;color:#0f172a;height:100vh;display:flex;overflow:hidden}
-button{font-family:'DM Sans',sans-serif;cursor:pointer}
-input,textarea,select{font-family:'DM Sans',sans-serif}
-#sidebar{width:220px;background:#0f172a;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s}
+body{font-family:'DM Sans',sans-serif;background:#f8f5f2;color:#1a1a1a;height:100vh;display:flex;overflow:hidden}
+button,input,textarea,select{font-family:'DM Sans',sans-serif}
+/* Sidebar */
+#sidebar{width:230px;background:#1a0a2e;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s}
 #sidebar.collapsed{width:60px}
-.logo{padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1e293b;flex-shrink:0}
-.logo-icon{background:#2563eb;border-radius:8px;padding:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-text{font-weight:700;font-size:14px;color:#f8fafc;white-space:nowrap;overflow:hidden}
-.logo-sub{font-size:9px;color:#475569;font-weight:500;letter-spacing:.06em}
-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
-.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;border:none;background:transparent;color:#64748b;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;overflow:hidden;width:100%;text-align:left}
-.nav-btn:hover{background:#1e293b;color:#e2e8f0}
-.nav-btn.active{background:#2563eb;color:#fff}
+.logo{padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2d1a4a;flex-shrink:0}
+.logo-icon{background:#8b1a4a;border-radius:8px;padding:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text div:first-child{font-weight:700;font-size:15px;color:#fff;white-space:nowrap}
+.logo-text div:last-child{font-size:9px;color:#7c5a9a;font-weight:500;letter-spacing:.06em;white-space:nowrap}
+nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:1px}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;border:none;background:transparent;color:#7c5a9a;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;overflow:hidden;width:100%;text-align:left}
+.nav-btn:hover{background:#2d1a4a;color:#e2d4f0}
+.nav-btn.active{background:#8b1a4a;color:#fff}
 .nav-btn svg{flex-shrink:0}
-.nav-badge{margin-left:auto;font-size:9px;font-weight:700;background:#1e40af;color:#93c5fd;padding:1px 6px;border-radius:20px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:9px;font-weight:700;background:#4a0a2a;color:#f0a0c0;padding:1px 6px;border-radius:20px;flex-shrink:0}
 .nav-btn.active .nav-badge{background:rgba(255,255,255,.2);color:#fff}
-.sidebar-toggle{padding:10px 8px;border-top:1px solid #1e293b}
-.sidebar-toggle button{width:100%;padding:7px;border:none;background:transparent;color:#475569;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.sidebar-toggle button:hover{background:#1e293b}
+.sidebar-toggle{padding:10px 8px;border-top:1px solid #2d1a4a}
+.sidebar-toggle button{width:100%;padding:7px;border:none;background:transparent;color:#7c5a9a;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.sidebar-toggle button:hover{background:#2d1a4a}
+/* Main */
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-header{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
-#page-title{font-weight:600;font-size:14px}
+header{height:56px;background:#fff;border-bottom:1px solid #e8e0f0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+#page-title{font-weight:600;font-size:14px;color:#1a0a2e}
 .header-right{display:flex;align-items:center;gap:12px}
 .search-wrap{position:relative}
-.search-wrap input{padding:6px 10px 6px 30px;border:1px solid #e2e8f0;border-radius:20px;font-size:12px;color:#334155;background:#f8fafc;width:200px}
-.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none}
-.user-badge{display:flex;align-items:center;gap:7px;border-left:1px solid #e2e8f0;padding-left:12px}
-.avatar{width:28px;height:28px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:#475569}
+.search-wrap input{padding:6px 10px 6px 30px;border:1px solid #e8e0f0;border-radius:20px;font-size:12px;color:#334155;background:#f8f5f2;width:200px}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#9a7ab0;pointer-events:none}
+.user-badge{display:flex;align-items:center;gap:7px;border-left:1px solid #e8e0f0;padding-left:12px}
+.avatar{width:28px;height:28px;border-radius:50%;background:#f0e0ea;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:#8b1a4a}
 #content{flex:1;overflow:auto;padding:20px}
-.panel{display:none}
-.panel.active{display:block}
+.panel{display:none}.panel.active{display:block}
+
+/* Pipeline */
 .pipeline-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
-.stage-col{min-width:250px;width:250px;flex-shrink:0}
+.stage-col{min-width:255px;width:255px;flex-shrink:0}
 .stage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px}
-.stage-label{font-size:11px;font-weight:600;color:#475569;display:flex;align-items:center;gap:5px}
-.stage-count{background:#e2e8f0;color:#64748b;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
-.stage-body{background:#f1f5f9;border-radius:10px;padding:8px;min-height:180px;display:flex;flex-direction:column;gap:7px;border:1px dashed #cbd5e1}
-.card{background:#fff;padding:12px;border-radius:9px;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s}
-.card:hover{border-color:#93c5fd;box-shadow:0 2px 8px rgba(37,99,235,.1)}
-.card-pos{font-size:9px;font-weight:700;color:#2563eb;letter-spacing:.04em;margin-bottom:3px}
-.card-name{font-weight:600;font-size:12px;color:#0f172a;margin-bottom:3px}
-.card-meta{font-size:10px;color:#94a3b8;margin-bottom:8px}
+.stage-label{font-size:11px;font-weight:600;color:#6a4a7a;display:flex;align-items:center;gap:5px}
+.stage-count{background:#e8d8f0;color:#6a4a7a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.stage-body{background:#f0e8f8;border-radius:10px;padding:8px;min-height:180px;display:flex;flex-direction:column;gap:7px;border:1px dashed #d0b8e8}
+.card{background:#fff;padding:12px;border-radius:9px;border:1px solid #e8d8f0;cursor:pointer;transition:all .15s}
+.card:hover{border-color:#8b1a4a;box-shadow:0 2px 8px rgba(139,26,74,.1)}
+.card-pos{font-size:9px;font-weight:700;color:#8b1a4a;letter-spacing:.04em;margin-bottom:3px}
+.card-name{font-weight:600;font-size:12px;color:#1a0a2e;margin-bottom:3px}
+.card-meta{font-size:10px;color:#9a8aaa;margin-bottom:8px}
 .card-footer{display:flex;justify-content:space-between;align-items:center}
-.card-score{display:flex;align-items:center;gap:3px;background:#fefce8;color:#a16207;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid #fef08a}
-.add-btn{width:100%;padding:6px;background:transparent;border:none;color:#94a3b8;font-size:11px;cursor:pointer;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
-.add-btn:hover{color:#2563eb;background:#eff6ff}
-#modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:50;backdrop-filter:blur(4px)}
+.card-score{display:flex;align-items:center;gap:3px;background:#fff8e0;color:#a06010;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid #f0d880}
+.add-btn{width:100%;padding:6px;background:transparent;border:none;color:#9a7ab0;font-size:11px;cursor:pointer;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
+.add-btn:hover{color:#8b1a4a;background:#f8e8f0}
+
+/* Modal */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,10,46,.6);z-index:50;backdrop-filter:blur(4px)}
 #modal-overlay.open{display:flex;align-items:stretch;justify-content:flex-end}
-#modal{width:100%;max-width:500px;background:#fff;display:flex;flex-direction:column;animation:slideIn .3s cubic-bezier(.22,1,.36,1)}
+#modal{width:100%;max-width:520px;background:#fff;display:flex;flex-direction:column;animation:slideIn .3s cubic-bezier(.22,1,.36,1)}
 @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
-.modal-head{padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between}
-.modal-avatar{width:38px;height:38px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.modal-head{padding:16px 20px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;justify-content:space-between}
+.modal-avatar{width:38px;height:38px;border-radius:50%;background:#f8e8f0;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
 .modal-body{flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:16px}
-.modal-foot{padding:12px 20px;background:#0f172a;display:flex;gap:8px}
+.modal-foot{padding:12px 20px;background:#1a0a2e;display:flex;gap:8px}
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.info-card{background:#f8fafc;padding:9px 11px;border-radius:9px;border:1px solid #f1f5f9}
-.info-label{font-size:8px;font-weight:700;color:#94a3b8;letter-spacing:.1em;margin-bottom:3px}
+.info-card{background:#f8f5f2;padding:9px 11px;border-radius:9px;border:1px solid #f0e8f0}
+.info-lbl{font-size:8px;font-weight:700;color:#9a7ab0;letter-spacing:.1em;margin-bottom:3px}
 .info-val{font-size:11px;font-weight:600;color:#334155}
-.section-title{display:flex;align-items:center;gap:5px;font-weight:700;font-size:11px;color:#334155;margin-bottom:6px}
-.phone-note{background:#eff6ff;border-radius:9px;padding:9px 12px;font-size:11px;color:#1e40af;line-height:1.7;font-style:italic;border:1px solid #bfdbfe}
+.sec-title{display:flex;align-items:center;gap:5px;font-weight:700;font-size:11px;color:#1a0a2e;margin-bottom:6px}
+.phone-note{background:#f0e8f8;border-radius:9px;padding:9px 12px;font-size:11px;color:#4a1a6a;line-height:1.7;font-style:italic;border:1px solid #d8c0f0}
 .checklist{display:flex;flex-direction:column;gap:4px}
-.check-item{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #f1f5f9;border-radius:7px;font-size:11px;color:#334155}
+.check-item{display:flex;align-items:flex-start;gap:7px;padding:6px 9px;border:1px solid #f0e8f0;border-radius:7px;font-size:11px;color:#334155;line-height:1.5}
 .stage-steps{display:flex;flex-direction:column;gap:3px}
 .step{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:7px;border:1px solid transparent}
-.step.current{background:#eff6ff;border-color:#bfdbfe}
+.step.current{background:#f8e8f0;border-color:#d8a0c0}
 .step-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
-.modal-btn-main{flex:1;padding:9px;background:#2563eb;color:#fff;border:none;border-radius:9px;font-weight:700;font-size:11px;cursor:pointer}
-.modal-btn-sec{padding:9px 14px;background:transparent;color:#64748b;border:1px solid #334155;border-radius:9px;font-weight:700;font-size:11px;cursor:pointer}
-.ai-header{background:linear-gradient(135deg,#1e40af,#2563eb);border-radius:14px;padding:18px 20px;margin-bottom:20px;color:#fff;display:flex;align-items:center;gap:10px}
-.sub-tabs{display:flex;gap:3px;border-bottom:1px solid #e2e8f0;margin-bottom:20px}
-.sub-tab{padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:#94a3b8;border-bottom:2px solid transparent;margin-bottom:-1px}
-.sub-tab.active{color:#0f172a;border-bottom-color:#0f172a}
-.ai-panel{display:none;max-width:680px}
-.ai-panel.active{display:block}
+.modal-btn-main{flex:1;padding:9px;background:#8b1a4a;color:#fff;border:none;border-radius:9px;font-weight:700;font-size:11px;cursor:pointer}
+.modal-btn-sec{padding:9px 14px;background:transparent;color:#7c5a9a;border:1px solid #3d2a5a;border-radius:9px;font-weight:700;font-size:11px;cursor:pointer}
+
+/* Sections shared */
+.section-header{background:linear-gradient(135deg,#1a0a2e,#4a1a6a);border-radius:14px;padding:18px 20px;margin-bottom:20px;color:#fff;display:flex;align-items:center;gap:12px}
+.sub-tabs{display:flex;gap:3px;border-bottom:1px solid #e8e0f0;margin-bottom:20px;flex-wrap:wrap}
+.sub-tab{padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:#9a7ab0;border-bottom:2px solid transparent;margin-bottom:-1px}
+.sub-tab.active{color:#1a0a2e;border-bottom-color:#8b1a4a}
+.sub-panel{display:none;max-width:720px}.sub-panel.active{display:block}
+
+/* Forms */
 .field{margin-bottom:12px}
-.field label{display:block;font-size:10px;font-weight:600;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
-.field input,.field textarea,.field select{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:8px 11px;font-size:12px;color:#334155;background:#f8fafc}
-.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:#93c5fd}
+.field label{display:block;font-size:10px;font-weight:600;color:#6a4a7a;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field textarea,.field select{width:100%;border:1px solid #e0d0f0;border-radius:8px;padding:8px 11px;font-size:12px;color:#334155;background:#f8f5f2}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:#8b1a4a}
 .field textarea{resize:vertical;min-height:100px}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.primary-btn{width:100%;padding:10px;background:#0f172a;color:#fff;border:none;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:opacity .15s}
-.primary-btn:hover{opacity:.85}
+.primary-btn{width:100%;padding:10px;background:#1a0a2e;color:#fff;border:none;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer}
 .primary-btn:disabled{opacity:.45;cursor:not-allowed}
-.result-box{background:#f8fafc;border-radius:11px;padding:16px;border:1px solid #e2e8f0;margin-top:12px}
+.result-box{background:#f8f5f2;border-radius:11px;padding:16px;border:1px solid #e8d8f0;margin-top:12px}
 .score-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.score-bar{flex:1;height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+.score-bar{flex:1;height:5px;background:#e8d8f0;border-radius:3px;overflow:hidden}
 .score-fill{height:100%;border-radius:3px;transition:width .6s ease}
-.yorum{margin-top:10px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:11px;color:#64748b;line-height:1.7}
-.soru-card{background:#f8fafc;border-radius:9px;padding:11px 13px;border:1px solid #e2e8f0;margin-bottom:8px}
 .error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:11px;color:#991b1b;margin-bottom:10px}
-.qb-header{background:#2563eb;border-radius:14px;padding:18px 22px;color:#fff;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.qb-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:800px}
-.qb-card{background:#fff;border-radius:11px;border:1px solid #e2e8f0;overflow:hidden}
-.qb-cat{background:#f8fafc;padding:10px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;font-size:11px;color:#334155}
-.qb-body{padding:10px 12px;display:flex;flex-direction:column;gap:3px}
-.qb-item{display:flex;gap:7px;padding:5px 5px;font-size:11px;color:#475569;line-height:1.5}
-.qb-num{width:17px;height:17px;border-radius:5px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;margin-top:1px}
-.td-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:800px}
-.td-card{background:#fff;padding:18px;border-radius:13px;border:1px solid #e2e8f0;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s}
-.td-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+
+/* Question bank */
+.qb-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.qb-card{background:#fff;border-radius:11px;border:1px solid #e8d8f0;overflow:hidden}
+.qb-cat{background:#f0e8f8;padding:10px 14px;border-bottom:1px solid #e8d8f0;font-weight:600;font-size:11px;color:#4a1a6a;display:flex;align-items:center;gap:6px}
+.qb-body{padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.qb-item{display:flex;gap:7px;padding:5px 5px;font-size:11px;color:#334155;line-height:1.5}
+.qb-num{width:18px;height:18px;border-radius:5px;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;margin-top:1px}
+.qb-sub{font-size:10px;color:#9a7ab0;margin-top:1px;padding-left:25px;line-height:1.4}
+.qb-answer{font-size:10px;color:#6a8a6a;padding-left:25px;margin-top:1px;font-style:italic}
+
+/* Test drive */
+.td-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:860px}
+.td-card{background:#fff;padding:18px;border-radius:13px;border:1px solid #e8d8f0;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s}
+.td-card:hover{box-shadow:0 4px 16px rgba(139,26,74,.1)}
 .td-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
-.td-title{font-weight:700;font-size:12px;color:#0f172a;margin-bottom:3px}
-.td-desc{font-size:11px;color:#64748b;line-height:1.6}
-.td-btn{margin-top:auto;display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;background:none;border:none;padding:0;cursor:pointer}
-.eval-wrap{max-width:760px;background:#fff;border-radius:14px;border:1px solid #e2e8f0;overflow:hidden}
-.eval-head{padding:18px 22px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;justify-content:space-between;align-items:center}
+.td-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;align-self:flex-start}
+
+/* Eval */
+.eval-wrap{max-width:820px;background:#fff;border-radius:14px;border:1px solid #e8d8f0;overflow:hidden}
+.eval-head{padding:18px 22px;border-bottom:1px solid #f0e8f0;background:#f8f5f2;display:flex;justify-content:space-between;align-items:center}
 .eval-grid{padding:18px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px 28px}
 .factor{display:flex;flex-direction:column;gap:5px}
 .factor-header{display:flex;justify-content:space-between;align-items:center}
 .factor-label{font-size:11px;font-weight:600;color:#334155}
-.factor-score-badge{font-size:10px;font-weight:700;color:#2563eb;background:#eff6ff;padding:1px 7px;border-radius:20px}
+.factor-score-badge{font-size:10px;font-weight:700;color:#8b1a4a;background:#f8e8f0;padding:1px 7px;border-radius:20px}
 .factor-bars{display:flex;gap:3px}
 .factor-bar{flex:1;height:4px;border-radius:2px;border:none;cursor:pointer;transition:background .12s}
-.eval-foot{padding:14px 22px;background:#f8fafc;border-top:1px solid #f1f5f9}
-.eval-foot textarea{width:100%;padding:9px 11px;border:1px solid #e2e8f0;border-radius:9px;font-size:11px;color:#334155;background:#fff;min-height:80px;resize:vertical;font-family:'DM Sans',sans-serif}
+.eval-foot{padding:14px 22px;background:#f8f5f2;border-top:1px solid #f0e8f0}
+.eval-foot textarea{width:100%;padding:9px 11px;border:1px solid #e0d0f0;border-radius:9px;font-size:11px;color:#334155;background:#fff;min-height:80px;resize:vertical}
 .eval-actions{display:flex;gap:8px;margin-top:10px}
 .btn-green{flex:1;padding:9px;background:#10b981;color:#fff;border:none;border-radius:9px;font-weight:700;font-size:11px;cursor:pointer}
-.btn-outline{flex:1;padding:9px;background:#fff;color:#475569;border:1px solid #e2e8f0;border-radius:9px;font-weight:700;font-size:11px;cursor:pointer}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:280px;color:#94a3b8;gap:8px;font-size:12px}
+.btn-outline{flex:1;padding:9px;background:#fff;color:#475569;border:1px solid #e0d0f0;border-radius:9px;font-weight:700;font-size:11px;cursor:pointer}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:280px;color:#9a7ab0;gap:8px;font-size:12px}
+
+/* Referans */
+.ref-form{max-width:680px;background:#fff;border-radius:14px;border:1px solid #e8d8f0;padding:22px}
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ref-title{font-weight:700;font-size:15px;color:#1a0a2e;margin-bottom:4px}
+.ref-sub{font-size:11px;color:#9a7ab0;margin-bottom:18px}
+
+/* Teşekkür */
+.tsk-box{max-width:600px;background:#fff;border-radius:14px;border:1px solid #e8d8f0;padding:22px}
+.tsk-preview{background:#f8f5f2;border-radius:10px;padding:16px;font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap;border:1px solid #e8d8f0;margin-top:10px;min-height:120px}
+
+/* DISC */
 .disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:680px}
-.disc-card{background:#fff;border-radius:13px;padding:18px;border:1px solid #e2e8f0}
-.disc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.disc-letter{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.disc-card{background:#fff;border-radius:13px;padding:18px;border:1px solid #e8d8f0}
+
+/* Summary table */
+.summary-wrap{max-width:860px;overflow-x:auto}
+.summary-table{width:100%;border-collapse:collapse;font-size:11px}
+.summary-table th{background:#1a0a2e;color:#fff;padding:9px 12px;text-align:left;font-weight:600;white-space:nowrap}
+.summary-table td{padding:8px 12px;border-bottom:1px solid #f0e8f0;color:#334155}
+.summary-table tr:hover td{background:#f8f5f2}
+
 .loading-dots::after{content:'.';animation:dots 1.2s infinite}
 @keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}100%{content:'.'}}
+.tip-box{background:#f0e8f8;border-left:3px solid #8b1a4a;border-radius:0 8px 8px 0;padding:8px 12px;font-size:11px;color:#4a1a6a;line-height:1.6;margin-bottom:10px}
 </style>
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <div id="sidebar">
   <div class="logo">
     <div class="logo-icon">
@@ -143,7 +172,7 @@ header{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;
     </div>
     <div class="logo-text">
       <div>DUAY IK</div>
-      <div class="logo-sub">İŞE ALIM SİSTEMİ</div>
+      <div>İŞE ALIM SİSTEMİ</div>
     </div>
   </div>
   <nav>
@@ -151,16 +180,15 @@ header{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span>Aday Havuzu</span>
     </button>
-    <button class="nav-btn" onclick="goTab('ai-tools',this,'YZ Araçları')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-      <span>YZ Araçları</span>
-      <span class="nav-badge">YZ</span>
+    <button class="nav-btn" onclick="goTab('telefon',this,'Telefon Ön Eleme')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
+      <span>Telefon Ön Eleme</span>
     </button>
-    <button class="nav-btn" onclick="goTab('questions',this,'Mülakat Soruları')">
+    <button class="nav-btn" onclick="goTab('mulakat',this,'Mülakat Soruları')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       <span>Mülakat Soruları</span>
     </button>
-    <button class="nav-btn" onclick="goTab('test-drive',this,'Test Sürüşü')">
+    <button class="nav-btn" onclick="goTab('test',this,'Test Sürüşü')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       <span>Test Sürüşü</span>
     </button>
@@ -168,18 +196,32 @@ header{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span>Değerlendirme</span>
     </button>
-    <button class="nav-btn" onclick="goTab('personality',this,'Kişilik Profilleri')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      <span>Kişilik Profilleri</span>
+    <button class="nav-btn" onclick="goTab('referans',this,'Referans Kontrol')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      <span>Referans Kontrol</span>
+    </button>
+    <button class="nav-btn" onclick="goTab('tesekkur',this,'Teşekkür Mektubu')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span>Teşekkür Mektubu</span>
+    </button>
+    <button class="nav-btn" onclick="goTab('ai-tools',this,'YZ Araçları')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      <span>YZ Araçları</span>
+      <span class="nav-badge">YZ</span>
+    </button>
+    <button class="nav-btn" onclick="goTab('ozet',this,'Aday Karşılaştırma')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Aday Karşılaştırma</span>
     </button>
   </nav>
   <div class="sidebar-toggle">
-    <button onclick="toggleSidebar()" title="Menüyü Daralt/Genişlet">
+    <button onclick="toggleSidebar()">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
 </div>
 
+<!-- MAIN -->
 <div id="main">
   <header>
     <div id="page-title">Aday Havuzu</div>
@@ -190,112 +232,397 @@ header{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;
       </div>
       <div class="user-badge">
         <div class="avatar">IK</div>
-        <span style="font-size:12px;font-weight:500;color:#334155">IK Yöneticisi</span>
+        <span style="font-size:12px;font-weight:500;color:#1a0a2e">IK Yöneticisi</span>
       </div>
     </div>
   </header>
 
   <div id="content">
 
+    <!-- PIPELINE -->
     <div id="panel-pipeline" class="panel active">
       <div class="pipeline-wrap" id="pipeline-board"></div>
     </div>
 
-    <div id="panel-ai-tools" class="panel">
-      <div class="ai-header">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+    <!-- TELEFON ÖN ELEME -->
+    <div id="panel-telefon" class="panel">
+      <div class="section-header">
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
         <div>
-          <div style="font-weight:700;font-size:15px">Yapay Zeka IK Araçları</div>
-          <div style="font-size:11px;opacity:.85;margin-top:2px">CV analizi · Mülakat soruları · İş ilanı oluşturma</div>
+          <div style="font-weight:700;font-size:15px">Telefon Ön Görüşme Rehberi</div>
+          <div style="font-size:11px;opacity:.85;margin-top:2px">IKMG-0300-243 · Satınalma Asistanı Pozisyonu</div>
+        </div>
+      </div>
+      <div style="max-width:820px">
+        <div class="tip-box">💡 Aday kaçamak yanıt veriyorsa, samimi görünmüyorsa ve net konuşmuyorsa görüşmeye çağırmayın. %10 siz konuşun, %90 adayı konuşturun.</div>
+        <div class="qb-grid" style="margin-bottom:16px">
+          <div class="qb-card">
+            <div class="qb-cat">📋 Sorulacak Sorular</div>
+            <div class="qb-body">
+              <div class="qb-item"><div class="qb-num">1</div><div>Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?</div></div>
+              <div class="qb-item"><div class="qb-num">2</div><div>Bu pozisyonu kariyer olarak görüyor musunuz?</div></div>
+              <div class="qb-sub">↳ Satınalma sertifikanız var mı?</div>
+              <div class="qb-sub">↳ İlham aldığınız biri var mı?</div>
+              <div class="qb-sub">↳ Bu pozisyon hangi yönlerinizle örtüşüyor?</div>
+              <div class="qb-item"><div class="qb-num">3</div><div>İlanı okudunuz — başvurunuza en çok ne sebep oldu?</div></div>
+              <div class="qb-item"><div class="qb-num">4</div><div>DISC analiz raporunuzu iletebilir misiniz?</div></div>
+              <div class="qb-item"><div class="qb-num">5</div><div>Yaptığınız en iyi, en başarılı indirim aldığınız pazarlığı anlatır mısınız?</div></div>
+            </div>
+          </div>
+          <div class="qb-card">
+            <div class="qb-cat">💬 Adaydan Gelen Sorulara Yanıtlar</div>
+            <div class="qb-body">
+              <div class="qb-item"><div class="qb-num">S</div><div><strong>İş ne?</strong></div></div>
+              <div class="qb-answer">→ Satınalma asistanlığı.</div>
+              <div class="qb-item"><div class="qb-num">S</div><div><strong>Online görüşebilir miyiz?</strong></div></div>
+              <div class="qb-answer">→ Evet. İlk görüşme online, olumlu geçerse ikincisi yüz yüze.</div>
+              <div class="qb-item"><div class="qb-num">S</div><div><strong>Maaş nedir?</strong></div></div>
+              <div class="qb-answer">→ Görüşmede konuşuluyor.</div>
+              <div class="qb-item"><div class="qb-num">S</div><div><strong>Diğer sorular</strong></div></div>
+              <div class="qb-answer">→ Görüşmede sormanız durumunda iletilecek.</div>
+            </div>
+          </div>
+        </div>
+        <div class="qb-card" style="margin-bottom:16px">
+          <div class="qb-cat">📍 Ulaşım & Konum Kontrolü</div>
+          <div class="qb-body" style="padding:12px 14px">
+            <div style="font-size:11px;color:#334155;line-height:1.8">
+              <div>✅ Ofise <strong>max 5-6 km</strong> uzaklıkta olmalı.</div>
+              <div>✅ Metro ile <strong>aktarmasız</strong> gelebiliyorsa 10 km de kabul edilebilir.</div>
+              <div>✅ Uzaktan çalışma aktif olana kadar bu kural geçerli.</div>
+              <div style="margin-top:8px;font-size:10px;color:#9a7ab0;font-style:italic">1 gün konaklayacağın otele özenmezsin ama içinde oturacağın evi seçerken daha dikkatli olursun.</div>
+            </div>
+          </div>
+        </div>
+        <div class="qb-card">
+          <div class="qb-cat">📨 IK Yöneticisine İletilecek Bilgiler</div>
+          <div class="qb-body" style="padding:12px 14px">
+            <div style="font-size:11px;color:#334155;line-height:1.8">
+              <div>• Adayın CV'si (PDF)</div>
+              <div>• Telefon görüşmesi notları</div>
+              <div>• Kanaat notu: <em>mutlaka görüşmeliyiz / iyi / fena değil / emin değilim</em></div>
+              <div>• Her görüşme max <strong>30 dk</strong> — aralarında <strong>15 dk</strong> ara</div>
+              <div>• Zoom/Google Meet linki WhatsApp'tan gönderilir</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÜLAKAT SORULARI -->
+    <div id="panel-mulakat" class="panel">
+      <div class="section-header">
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <div>
+          <div style="font-weight:700;font-size:15px">Mülakat Soruları & Kontrol Listesi</div>
+          <div style="font-size:11px;opacity:.85;margin-top:2px">IK Yöneticisi Pozisyonu · Adım 6 & 7</div>
         </div>
       </div>
       <div class="sub-tabs">
-        <button class="sub-tab active" onclick="switchSub('cv',this)">CV Analizi</button>
-        <button class="sub-tab" onclick="switchSub('soru',this)">Mülakat Soruları</button>
-        <button class="sub-tab" onclick="switchSub('ilan',this)">İş İlanı Oluştur</button>
+        <button class="sub-tab active" onclick="switchSub('mulakat','kontrol',this)">Kontrol Listesi</button>
+        <button class="sub-tab" onclick="switchSub('mulakat','karakter',this)">Karakter & Adaptasyon</button>
+        <button class="sub-tab" onclick="switchSub('mulakat','hedef',this)">Hedef & Başarı</button>
+        <button class="sub-tab" onclick="switchSub('mulakat','iliski',this)">İlişkiler & Motivasyon</button>
+        <button class="sub-tab" onclick="switchSub('mulakat','oneleme',this)">Ön Eleme (IK Yöneticisi)</button>
       </div>
-      <div id="ai-cv" class="ai-panel active">
-        <div class="field"><label>Pozisyon</label><input id="cv-pos" placeholder="ör. Yazılım Mühendisi..."/></div>
+      <div id="mulakat-kontrol" class="sub-panel active" style="max-width:680px">
+        <div class="tip-box">📌 Mülakat Kontrol Listesi — Görüşmeden önce tüm maddeler hazır olmalı.</div>
+        <div class="checklist">
+          ${['Mülakat takımını seçin (diğer personel üyeleri katılacaksa).','Görüşme için sessiz bir ortam hazırlayın.','Adayın özgeçmişini, telefon görüşmesi notlarını ve DISC profil sonuçlarını inceleyin.','Aday için firmanız ve pozisyonla ilgili bir bilgi paketi hazırlayın.','Adayı selamlayın ve tesisinizde kısa gezintiye çıkarın. İçecek bir şeyler teklif edin (çay/kahve + kuruyemiş + çikolata).','Görüşmenin amacını açıklayın.','Pozisyonla ilgili açık bir genel bakış sunun.','Adayın özgeçmişi ve çalışma hayatıyla ilgili soruları sorun.','Deneyimler, eğitim, beceriler ve kişisel özelliklerle ilgili hazırladığınız soruları sorun.','Mülakatı bitirin. Sürecin bundan sonraki kısmını açıklayın.','Adaya başka bir sorusu olup olmadığını sorun ve teşekkür ettikten sonra kapıya kadar eşlik edin.','Ofisin tüm ışıkları açık olmalı, güzel bir koku sürülmeli, panjurlar açık, mutfak bölümü kapalı olmalı.'].map(item=>`<div class="check-item"><input type="checkbox" style="flex-shrink:0;accent-color:#8b1a4a;width:14px;height:14px"> <span>${item}</span></div>`).join('')}
+        </div>
+      </div>
+      <div id="mulakat-karakter" class="sub-panel" style="max-width:820px">
+        <div class="tip-box">💡 İşin gereklerini anlatma — o zaman yanıtlarını o yönde kabul görecek şekilde ayarlar. Gerçekte kim olduğunu anlayamazsın.</div>
+        <div class="qb-grid">
+          <div class="qb-card">
+            <div class="qb-cat">Çalışma Kaydı & Adaptasyon</div>
+            <div class="qb-body">
+              ${['Daha önce çalıştığınız işleri göz önünde bulundurarak, her birindeki performansınızı nasıl değerlendirirsiniz?','En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?','Akşamları ve hafta sonları dahil uzun saatler çalışmak zorunda kaldınız mı? Bu durumlarda nasıl hissettiniz?','Amaçlarınıza ulaşırken karşılaştığınız engel ve zorluklardan bahsedin. Bunlarla nasıl başa çıktınız?','Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizi görünce ne yaptınız?','Karşılaştığınız en kötü problem neydi? Bu problemlere yaklaşımınız bugün daha farklı olur mu?','Kişileri ya da çalışmaları organize etmek zorunda kaldığınız bir işten bahsedin.','Bir işi bırakmanıza sebep olan şeyler nelerdir?'].map((q,i)=>`<div class="qb-item"><div class="qb-num">${i+1}</div><div>${q}</div></div>`).join('')}
+            </div>
+          </div>
+          <div class="qb-card">
+            <div class="qb-cat">Dinleme Teknikleri</div>
+            <div class="qb-body" style="padding:12px 14px">
+              <div style="font-size:11px;color:#334155;line-height:1.9">
+                <div>✦ <em>"Bu güzel, biraz daha detaylandırabilir misiniz?"</em></div>
+                <div>✦ <em>"Şurasını tam anlamadım, daha basitçe anlatabilir misiniz?"</em></div>
+                <div>✦ <em>"Merak ettim, sonra ne oldu?"</em></div>
+                <div>✦ <em>"Neden böyle düşündünüz/yaptınız/hissettiniz?"</em></div>
+                <div>✦ <em>"Son 5 dakikamız kaldı…"</em> (önemli şeylerin hatırlanmasını tetikler)</div>
+                <div style="margin-top:10px;padding:8px;background:#f8e8f0;border-radius:7px;font-size:10px;color:#4a1a6a">Aday susunca konuşma. Bırak tekrar başlasın, bırak detaya girsin.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="mulakat-hedef" class="sub-panel" style="max-width:820px">
+        <div class="qb-grid">
+          <div class="qb-card">
+            <div class="qb-cat">Hedeflere Yönelme & Öğrenme</div>
+            <div class="qb-body">
+              ${['En mükemmel işiniz ve iş dışı başarınız nedir?','En büyük hayal kırıklıklarınız nelerdir? Onlarla nasıl başa çıktınız?','Şu anki hedefleriniz ve bunları başarmak için hazırladığınız plan nedir?','Şu anki işinizde öğrenmeyi umduğunuz şeyler neydi ve gerçekte neler öğrendiniz?','Yeni beceriler öğrenmek ve kullanmak zorunda kaldığınız bir işinizden bahsedin.'].map((q,i)=>`<div class="qb-item"><div class="qb-num">${i+1}</div><div>${q}</div></div>`).join('')}
+            </div>
+          </div>
+          <div class="qb-card">
+            <div class="qb-cat">Beklentiler & Motivasyon</div>
+            <div class="qb-body">
+              ${['Bir işten beklentileriniz nelerdir — maaş, eğitim, iş öğretme vb.?','Sevdiğiniz işte 1 şeyi düzeltebilseydiniz neyi düzeltirdiniz? Siz nasıl yapardınız?','Potansiyelinizi zorlayan bir iş anlatır mısınız?','İkna yönünüzle ilgili bir örnek verebilir misiniz?','Sabah koşa koşa geleceğiniz bir iş ve ortam nasıl olmalı?','Bu görüşmeye sizi getiren şey ne?'].map((q,i)=>`<div class="qb-item"><div class="qb-num">${i+1}</div><div>${q}</div></div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="mulakat-iliski" class="sub-panel" style="max-width:820px">
+        <div class="qb-grid">
+          <div class="qb-card">
+            <div class="qb-cat">Kişilerle İlişkiler</div>
+            <div class="qb-body">
+              ${['Bir yönetici ya da müdürle aranızda geçen en olumlu ve olumsuz olayları anlatın.','Bir yöneticiyle aynı fikirde olmadığınız bir olaydan ve ne yaptığınızdan bahsedin.','Birlikte çalıştığınız kişilerle ilişkilerinizde en sevdiğiniz ve sevmediğiniz yön nedir?','Çalışanlarınızla yaşadığınız bir problemden ve tutumunuzdan bahsedin.','Sizi en çok gururlandıran iş başarıları nelerdir?'].map((q,i)=>`<div class="qb-item"><div class="qb-num">${i+1}</div><div>${q}</div></div>`).join('')}
+            </div>
+          </div>
+          <div class="qb-card">
+            <div class="qb-cat">İş Motivasyonu & Kendini Yönetme</div>
+            <div class="qb-body">
+              ${['Çalışmış olduğunuz işlerde en çok ve en az hoşunuza gideni ve nedenini anlatın.','Zaman ve faaliyetlerinizi kendinizin ayarlayarak bağımsız çalıştığınız bir deneyiminizden örnek verin.','Atandığınız özel bir projeden ve onu nasıl planlayıp başardığınızdan bahsedin.','Liderlik rollerinizi tanımlayın. Etkili bir lideri neyin oluşturduğuna dair fikrinizi anlatın.','Ne tür iş başarıları sizi gururlandırır ve neden?'].map((q,i)=>`<div class="qb-item"><div class="qb-num">${i+1}</div><div>${q}</div></div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="mulakat-oneleme" class="sub-panel" style="max-width:820px">
+        <div class="tip-box">📌 Bu soruları şirketimiz hakkında ÖN BİLGİ VERMEDEN sorun — aksi takdirde yanıtlarını manipüle etme şansı verirsiniz.</div>
+        <div class="qb-grid">
+          <div class="qb-card">
+            <div class="qb-cat">IK Yöneticisi Ön Eleme Soruları</div>
+            <div class="qb-body">
+              ${[
+                {s:'En uzun süre çalıştığınız iş hangisiydi ve tam olarak neler yaptınız?',d:'Detaylı anlatabilmeli; ne kadar zengin bir tecrübe geçmişi olduğunu öğrenmek isteriz.'},
+                {s:'Bu işin sizi en çok motive eden ya da en çok zorlayan kısmı neydi?',d:''},
+                {s:'Karşılaştığınız en büyük zorlayıcı sorun neydi, nasıl çözdünüz? Detaylı anlatır mısınız?',d:''},
+                {s:'Hayatta aldığınız en zor kararlardan biri nelerdi, neden aldınız?',d:'Birinin neden bir karar aldığını bilmek, zihin yapısının nasıl çalıştığını gösterir.'},
+                {s:'Ofis ortamında mı yoksa sahada mı çalıştınız? Hangisi daha motive edici?',d:'Doğru yanıt: Ofis ortamında çalışmak beni daha motive edici.'},
+                {s:'En çok hangi şirkette çalışmak istediniz ancak kısmet olmadı?',d:'Kendini nerede görmek istediğiyle ilgili ipucu verebilir.'},
+                {s:'Muhatabınız hızlı dönüş yapmıyor, acil yanıta ihtiyacınız var — nasıl bir mesaj yazarsınız?',d:'İletişim kalitesini gösterir.'},
+                {s:'Şirketimize verebileceğiniz özel bir yönünüz var mı? (grafik, tasarım, güzel yazı vb.)',d:'Tüm donanımlarını söylüyor mu, yoksa gizliyor mu?'},
+                {s:'Kendinizi çok başarılı hissettiğiniz bir işi anlatabilir misiniz?',d:''},
+                {s:'İyi indirim aldığınız veya iyi pazarlık yaptığınız bir anınızı anlatabilir misiniz?',d:''},
+              ].map((q,i)=>`<div class="qb-item"><div class="qb-num">${i+1}</div><div>${q.s}${q.d?'<div class="qb-answer">✓ '+q.d+'</div>':''}</div></div>`).join('')}
+            </div>
+          </div>
+          <div class="qb-card">
+            <div class="qb-cat">Çalışan Kalite Kriterleri</div>
+            <div class="qb-body" style="padding:12px 14px">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="background:#ecfdf5;border-radius:9px;padding:10px 12px;border:1px solid #a7f3d0">
+                  <div style="font-size:11px;font-weight:700;color:#065f46;margin-bottom:4px">A Kalite Çalışan</div>
+                  <div style="font-size:10px;color:#047857;line-height:1.6">Sürekli olarak kendisinden beklenenin üstünde performans gösterir. Her yıl işletmeyi ileri götürecek birkaç proje yapar. B kalite çalışanlardan çok farklı bir seviyede. AHLAK, DİSİPLİN, AMAÇ.</div>
+                </div>
+                <div style="background:#fffbeb;border-radius:9px;padding:10px 12px;border:1px solid #fde68a">
+                  <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:4px">B Kalite Çalışan</div>
+                  <div style="font-size:10px;color:#b45309;line-height:1.6">İşin gerekliliklerini sürekli olarak yerine getiren başarılı kişidir. İşleri hep istediğiniz şekilde ve zamanında yapar.</div>
+                </div>
+                <div style="background:#fef2f2;border-radius:9px;padding:10px 12px;border:1px solid #fecaca">
+                  <div style="font-size:11px;font-weight:700;color:#991b1b;margin-bottom:4px">C Kalite Çalışan</div>
+                  <div style="font-size:10px;color:#b91c1c;line-height:1.6">İşin gerekliliklerini yerine getirmez. İş bitirme tarihlerine uyamaz. Sürekli hatalar yapar. Günü kurtarmak için çalışır.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEST SÜRÜŞÜ -->
+    <div id="panel-test" class="panel">
+      <div class="section-header">
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div>
+          <div style="font-weight:700;font-size:15px">Test Sürüşü — Adım 8</div>
+          <div style="font-size:11px;opacity:.85;margin-top:2px">IKTS-0300-132 · Adayın vaatleri ile gerçek kapasitesi arasındaki fark</div>
+        </div>
+      </div>
+      <div style="max-width:880px">
+        <div class="tip-box">⚠️ Üstteki testlerin büyük çoğunluğu ön eğitim ve bilgi vermeden yapılır. İste ve çekilip izle, neler yaptığını gözlemle.</div>
+        <div style="font-weight:600;font-size:12px;color:#4a1a6a;margin-bottom:10px">🔴 İlk 2 Ayda Yapılacak Testler</div>
+        <div class="td-grid" style="margin-bottom:20px">
+          ${[
+            {title:'Kahraman Bey Testi',desc:'Zor tedarikçiden ayrıcalık almak, özel indirim alma, isteneni yaptırabilme, süreci sonuna kadar götürebilme.',color:'#7c3aed',badge:'İkna',fase:'ilk2ay'},
+            {title:'Ofis Temizliği',desc:'Her hafta düzenli ofis temizliği yapılacak personelin ofisi gıcır gıcır yapmasını isteme ve ne yapacağını görme.',color:'#10b981',badge:'Detaycılık',fase:'ilk2ay'},
+            {title:'Zamansız Arama',desc:'Zamansız arama/mesaj gönderme. Dönüş hızı ve profesyonellik ölçümü.',color:'#f97316',badge:'Hız',fase:'ilk2ay'},
+            {title:'Uzak Yere Yollama',desc:'Aniden uzak bir yerden bir şey alıp gelmesini isteme. Gidiş dönüş süresi ve işi bitirme kapasitesi.',color:'#0ea5e9',badge:'Sabır',fase:'ilk2ay'},
+            {title:'Fikir Üretkenliği',desc:'Yeni müşteri kazanma, şirketi büyütme konusunda fikirlerini alma. İşi ne kadar önemsediği testi.',color:'#ec4899',badge:'Zeka',fase:'ilk2ay'},
+            {title:'Ürün Araştırması',desc:'Detayları iyi verilmiş ve detayları eksik verilmiş bir ürünü bulmasını isteme. Hangi yöntemleri kullandığını öğrenmek.',color:'#8b1a4a',badge:'Araştırma',fase:'ilk2ay'},
+          ].map(t=>`<div class="td-card">
+            <div class="td-icon" style="background:${t.color}18"><svg width="18" height="18" fill="none" stroke="${t.color}" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div><div style="font-weight:700;font-size:12px;color:#1a0a2e;margin-bottom:5px">${t.title}</div><div style="font-size:11px;color:#64748b;line-height:1.6">${t.desc}</div></div>
+            <span class="td-badge" style="background:${t.color}15;color:${t.color}">${t.badge}</span>
+          </div>`).join('')}
+        </div>
+        <div style="font-weight:600;font-size:12px;color:#4a1a6a;margin-bottom:10px">🟣 Son Mülakatta Yapılacak Zorlayıcı Testler</div>
+        <div class="td-grid" style="margin-bottom:16px">
+          ${[
+            {title:'İknacılık — Satış Eğitimi Satışı',desc:'Adaydan bir satış eğitimi "satmasını" isteyin.',color:'#7c3aed',badge:'İkna'},
+            {title:'İknacılık — Görsel Temin',desc:'Zor bir firmadan ürün görsellerini kaliteli şekilde göndermesini sağlama.',color:'#8b1a4a',badge:'İletişim'},
+            {title:'İknacılık — Yüksek İndirim',desc:'Çok yüksek bir fiyat indirimi almasını isteyin ve ne yapacağını izleyin.',color:'#ef4444',badge:'Pazarlık'},
+            {title:'Hız Testi — Çeyreklik Hedef',desc:'Şirketin çeyreklik hedeflerini ne kadar sürede gerçekleştireceği ve ne yöntemler kullanacağının ortaya çıkarılması.',color:'#f97316',badge:'Hız'},
+            {title:'Eksik Bilgi ile İş',desc:'Detayları tam ve eksik verilmiş bir ürünü bulmasını isteyin. Hangi yöntemleri kullandığını sorun.',color:'#0ea5e9',badge:'Pratiklik'},
+            {title:'Döküman Geliştirme',desc:'Şirket dökümanı verip kısa sürede çelişki, yazım hatası bulmasını ve yeni fikirler sunmasını isteyin.',color:'#10b981',badge:'Dikkat'},
+            {title:'Fuar Testi',desc:'Fuarda broşür dağıtma ve müşterilerden bilgi alma. Hedef net ama nasıl yapacağı bilgisi az verilecek.',color:'#ec4899',badge:'Üretkenlik'},
+            {title:'Uygulama Testi (30+30 dk)',desc:'3-4 iş zorluğunu yazın, 30 dk düşünsün, sonra 30 dk birlikte çalışarak nasıl düşündüğünü görün.',color:'#6366f1',badge:'Kapasite'},
+          ].map(t=>`<div class="td-card">
+            <div class="td-icon" style="background:${t.color}18"><svg width="18" height="18" fill="none" stroke="${t.color}" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div><div style="font-weight:700;font-size:12px;color:#1a0a2e;margin-bottom:5px">${t.title}</div><div style="font-size:11px;color:#64748b;line-height:1.6">${t.desc}</div></div>
+            <span class="td-badge" style="background:${t.color}15;color:${t.color}">${t.badge}</span>
+          </div>`).join('')}
+        </div>
+        <div class="qb-card">
+          <div class="qb-cat">Test Edilecek Yönler</div>
+          <div style="padding:12px 14px;display:flex;flex-wrap:wrap;gap:6px">
+            ${['Pratiklik','Kararlılık','Sabırlılık','Kıvrak Zeka','Dış Görünüş','Kendini Yönetme','Coşku','Dinamizm','Yeni Yollar Deneme','Ekip Çalışmasına Yatkınlık','Araştırmacılık','Detaycılık','Dikkat','Analitik Yetenek','Yenilikçilik','Hırs','Dakiklik','Yalan Söylememe','Pazarlık / İkna','Soğuk Kanlılık','Deneyim (miktar)','Karar Alma','Merak','Hızlı İş Yapma','Fedakarlık','İşi Küçük Görmeme','Deneyim (Kalite)','Öğrenci Zihniyeti','Öz Güven','İletişim','Çalışkanlık','Kaliteli İş Yapma']
+              .map(y=>`<span style="background:#f0e8f8;color:#4a1a6a;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500">${y}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEĞERLENDİRME -->
+    <div id="panel-evaluation" class="panel">
+      <div id="eval-content"></div>
+    </div>
+
+    <!-- REFERANS -->
+    <div id="panel-referans" class="panel">
+      <div class="section-header">
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        <div>
+          <div style="font-weight:700;font-size:15px">Referans Kontrol Formu</div>
+          <div style="font-size:11px;opacity:.85;margin-top:2px">Adayın eski işverenlerine danışma</div>
+        </div>
+      </div>
+      <div class="ref-form">
+        <div class="ref-title">Referans Kontrol Formatı</div>
+        <div class="ref-sub">Bu formu eski işveren/yöneticiyle görüşürken doldurun.</div>
+        <div class="ref-grid">
+          <div class="field"><label>Adayın Adı</label><input placeholder="Ad Soyad"/></div>
+          <div class="field"><label>Başvuru Tarihi</label><input type="date"/></div>
+          <div class="field"><label>Pozisyon</label><input placeholder="Başvurulan pozisyon"/></div>
+          <div class="field"><label>Referans Adı</label><input placeholder="Referansın adı"/></div>
+          <div class="field"><label>Firma</label><input placeholder="Eski çalıştığı firma"/></div>
+          <div class="field"><label>Telefon Numarası</label><input placeholder="+90 ..."/></div>
+          <div class="field"><label>İş Unvanı</label><input placeholder="Referansın unvanı"/></div>
+          <div class="field"><label>Yönetici mi / Yardımcı mı?</label><select><option>Yönetici</option><option>Yardımcı / Çalışan</option></select></div>
+          <div class="field"><label>Görüşme Tarihi</label><input type="date"/></div>
+          <div class="field"><label>Adayın Çalışma Tarihleri</label><input placeholder="2020-2023"/></div>
+          <div class="field"><label>Adayın İş Unvanı</label><input placeholder="Eski unvanı"/></div>
+          <div class="field"><label>Ayrılış Sebebi</label><input placeholder="Neden ayrıldı?"/></div>
+        </div>
+        <div class="field" style="margin-top:4px"><label>Maaş</label><input placeholder=""/></div>
+        <div class="field"><label>Çalışma Kalitesi</label><textarea style="min-height:60px" placeholder="Genel çalışma kalitesi..."></textarea></div>
+        <div class="field"><label>Eğitim Gereken Alanlar</label><textarea style="min-height:60px" placeholder="Gelişim alanları..."></textarea></div>
+        <div class="field"><label>Genel Yorumlar</label><textarea style="min-height:80px" placeholder="Referansın genel değerlendirmesi..."></textarea></div>
+        <button class="primary-btn" onclick="alert('Form kaydedildi!')">Formu Kaydet</button>
+      </div>
+    </div>
+
+    <!-- TEŞEKKÜR MEKTUBU -->
+    <div id="panel-tesekkur" class="panel">
+      <div class="section-header">
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <div>
+          <div style="font-weight:700;font-size:15px">Teşekkür Mektubu</div>
+          <div style="font-size:11px;opacity:.85;margin-top:2px">Görüşmeye gelen adaylara gönderilecek</div>
+        </div>
+      </div>
+      <div class="tsk-box" style="max-width:640px">
+        <div class="field"><label>Adayın Adı</label><input id="tsk-aday" placeholder="Adayın adı" oninput="updateTsk()"/></div>
+        <div class="field"><label>Gönderen Adı & Unvanı</label><input id="tsk-gonderen" placeholder="İsim Soyisim — Unvan" oninput="updateTsk()"/></div>
+        <div style="font-weight:600;font-size:11px;color:#4a1a6a;margin-bottom:6px">Önizleme</div>
+        <div class="tsk-preview" id="tsk-preview"></div>
+        <button class="primary-btn" style="margin-top:10px" onclick="copyTsk()">Metni Kopyala</button>
+      </div>
+    </div>
+
+    <!-- YZ ARAÇLARI -->
+    <div id="panel-ai-tools" class="panel">
+      <div class="section-header">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <div>
+          <div style="font-weight:700;font-size:15px">Yapay Zeka IK Araçları</div>
+          <div style="font-size:11px;opacity:.85;margin-top:2px">CV analizi · Mülakat sorusu üretme · İş ilanı oluşturma</div>
+        </div>
+      </div>
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchSub('ai','cv',this)">CV Analizi</button>
+        <button class="sub-tab" onclick="switchSub('ai','soru',this)">Mülakat Soruları</button>
+        <button class="sub-tab" onclick="switchSub('ai','ilan',this)">İş İlanı Oluştur</button>
+      </div>
+      <div id="ai-cv" class="sub-panel active">
+        <div class="field"><label>Pozisyon</label><input id="cv-pos" placeholder="ör. Satınalma Asistanı..."/></div>
         <div class="field"><label>CV Metni</label><textarea id="cv-text" placeholder="CV içeriğini buraya yapıştırın..."></textarea></div>
-        <div class="field"><label>Aranan Özellikler (isteğe bağlı)</label><input id="cv-krit" placeholder="ör. Python, liderlik, 5 yıl deneyim"/></div>
+        <div class="field"><label>Aranan Özellikler (isteğe bağlı)</label><input id="cv-krit" placeholder="ör. pazarlık, sertifika, 3 yıl deneyim"/></div>
         <div id="cv-err"></div>
         <button class="primary-btn" id="cv-btn" onclick="analyzeCV()">CV'yi Analiz Et</button>
         <div id="cv-result"></div>
       </div>
-      <div id="ai-soru" class="ai-panel">
-        <div class="field"><label>Pozisyon</label><input id="soru-pos" placeholder="ör. Ürün Müdürü..."/></div>
+      <div id="ai-soru" class="sub-panel">
+        <div class="field"><label>Pozisyon</label><input id="soru-pos" placeholder="ör. IK Yöneticisi..."/></div>
         <div class="field-row">
-          <div class="field"><label>Soru Türü</label>
-            <select id="soru-tur"><option value="teknik">Teknik</option><option value="davranissal">Davranışsal</option><option value="durum">Durum Bazlı</option><option value="karma" selected>Karma</option></select>
-          </div>
-          <div class="field"><label>Seviye</label>
-            <select id="soru-sev"><option value="junior">Junior</option><option value="mid" selected>Mid-level</option><option value="senior">Senior</option><option value="yonetici">Yönetici</option></select>
-          </div>
+          <div class="field"><label>Soru Türü</label><select id="soru-tur"><option value="teknik">Teknik</option><option value="davranissal">Davranışsal</option><option value="durum">Durum Bazlı</option><option value="karma" selected>Karma</option></select></div>
+          <div class="field"><label>Seviye</label><select id="soru-sev"><option value="junior">Junior</option><option value="mid" selected>Mid-level</option><option value="senior">Senior</option><option value="yonetici">Yönetici</option></select></div>
         </div>
-        <div class="field"><label>Odak Yetkinlikler (isteğe bağlı)</label><input id="soru-yet" placeholder="ör. problem çözme, iletişim..."/></div>
+        <div class="field"><label>Odak Yetkinlikler (isteğe bağlı)</label><input id="soru-yet" placeholder="ör. ikna, iletişim, analitik düşünme..."/></div>
         <div id="soru-err"></div>
         <button class="primary-btn" id="soru-btn" onclick="generateSorular()">Soru Üret</button>
         <div id="soru-result"></div>
       </div>
-      <div id="ai-ilan" class="ai-panel">
-        <div class="field"><label>Pozisyon Adı</label><input id="ilan-pos" placeholder="ör. Kıdemli UX Tasarımcısı..."/></div>
+      <div id="ai-ilan" class="sub-panel">
+        <div class="field"><label>Pozisyon Adı</label><input id="ilan-pos" placeholder="ör. Satınalma Asistanı..."/></div>
         <div class="field-row">
-          <div class="field"><label>Departman</label><input id="ilan-dep" placeholder="ör. Teknoloji..."/></div>
-          <div class="field"><label>Çalışma Modeli</label>
-            <select id="ilan-mod"><option value="ofis">Ofis</option><option value="remote">Remote</option><option value="hybrid" selected>Hibrit</option></select>
-          </div>
+          <div class="field"><label>Departman</label><input id="ilan-dep" placeholder="ör. Satınalma..."/></div>
+          <div class="field"><label>Çalışma Modeli</label><select id="ilan-mod"><option value="ofis">Ofis</option><option value="remote">Remote</option><option value="hybrid" selected>Hibrit</option></select></div>
         </div>
-        <div class="field"><label>Temel Gereksinimler</label><textarea id="ilan-ger" placeholder="Sorumluluklar..." style="min-height:80px"></textarea></div>
+        <div class="field"><label>Temel Gereksinimler</label><textarea id="ilan-ger" placeholder="Sorumluluklar ve nitelikler..." style="min-height:80px"></textarea></div>
         <div id="ilan-err"></div>
         <button class="primary-btn" id="ilan-btn" onclick="generateIlan()">İş İlanı Oluştur</button>
         <div id="ilan-result"></div>
       </div>
     </div>
 
-    <div id="panel-questions" class="panel">
-      <div class="qb-header">
+    <!-- ADAY KARŞILAŞTIRMA -->
+    <div id="panel-ozet" class="panel">
+      <div class="section-header">
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <div>
-          <div style="font-weight:700;font-size:17px;margin-bottom:3px">Mülakat Soru Bankası</div>
-          <div style="font-size:11px;opacity:.9">PDF rehberlerinizdeki Adım 6 &amp; 7 soruları</div>
+          <div style="font-weight:700;font-size:15px">Eleman Adayları Değerlendirme Özeti</div>
+          <div style="font-size:11px;opacity:.85;margin-top:2px">Tüm adayların görüşme sonuçlarını karşılaştırın</div>
         </div>
       </div>
-      <div class="qb-grid" id="qb-grid"></div>
-    </div>
-
-    <div id="panel-test-drive" class="panel">
-      <div style="margin-bottom:18px">
-        <div style="font-weight:700;font-size:17px;color:#0f172a;margin-bottom:3px">Test Sürüşü</div>
-        <div style="font-size:11px;color:#64748b">Adım 8 — Adayın vaatleri ile gerçek kapasitesi arasındaki fark.</div>
+      <div class="summary-wrap">
+        <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center">
+          <input id="ozet-pozisyon" placeholder="Pozisyon" style="border:1px solid #e0d0f0;border-radius:8px;padding:7px 11px;font-size:12px;color:#334155;background:#f8f5f2;font-family:'DM Sans',sans-serif"/>
+          <input id="ozet-bolum" placeholder="Bölüm" style="border:1px solid #e0d0f0;border-radius:8px;padding:7px 11px;font-size:12px;color:#334155;background:#f8f5f2;font-family:'DM Sans',sans-serif"/>
+          <button onclick="addOzetRow()" style="padding:7px 14px;background:#8b1a4a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">+ Aday Ekle</button>
+        </div>
+        <table class="summary-table" id="ozet-table">
+          <thead><tr><th>Adayın Adı</th><th>1. Görüşme</th><th>Test Sürüşü</th><th>2. Görüşme</th><th>Toplam Puan</th><th></th></tr></thead>
+          <tbody id="ozet-body"></tbody>
+        </table>
       </div>
-      <div class="td-grid" id="td-grid"></div>
-    </div>
-
-    <div id="panel-evaluation" class="panel">
-      <div id="eval-content"></div>
-    </div>
-
-    <div id="panel-personality" class="panel">
-      <div style="margin-bottom:18px">
-        <div style="font-weight:700;font-size:17px;color:#0f172a;margin-bottom:3px">DISC Kişilik Profilleri</div>
-        <div style="font-size:11px;color:#64748b">İşe alım kararlarınızı desteklemek için referans profilleri.</div>
-      </div>
-      <div class="disc-grid" id="disc-grid"></div>
     </div>
 
   </div>
 </div>
 
+<!-- MODAL -->
 <div id="modal-overlay" onclick="closeModalOverlay(event)">
   <div id="modal">
     <div class="modal-head">
       <div style="display:flex;align-items:center;gap:10px">
         <div class="modal-avatar" id="m-avatar"></div>
         <div>
-          <div style="font-weight:700;font-size:14px;color:#0f172a" id="m-name"></div>
-          <div style="font-size:11px;color:#64748b" id="m-pos"></div>
+          <div style="font-weight:700;font-size:14px;color:#1a0a2e" id="m-name"></div>
+          <div style="font-size:11px;color:#9a7ab0" id="m-pos"></div>
         </div>
       </div>
-      <button onclick="document.getElementById('modal-overlay').classList.remove('open')" style="border:none;background:transparent;color:#94a3b8;cursor:pointer;padding:4px;border-radius:50%;display:flex;align-items:center">
+      <button onclick="document.getElementById('modal-overlay').classList.remove('open')" style="border:none;background:transparent;color:#9a7ab0;cursor:pointer;padding:4px;border-radius:50%;display:flex;align-items:center">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -313,12 +640,12 @@ const STAGES=[
   {id:'onboarding',label:'Eğitim & Başlangıç'},
 ];
 let candidates=[
-  {id:1,name:'Ahmet Yılmaz',position:'Satınalma Asistanı',stage:'test-drive',score:4.2,phoneNotes:'Web sitesini incelemiş, istekli. İndirim hikayesi başarılı.',discType:'D (Dominant)',location:'Eyüpsultan (3km)'},
-  {id:2,name:'Ayşe Kaya',position:'IK Yöneticisi',stage:'interview',score:3.8,phoneNotes:'Sertifikaları tam, kariyer hedefi net.',discType:'S (Uyumlu)',location:'Beşiktaş (12km)'},
-  {id:3,name:'Mehmet Demir',position:'Satınalma Asistanı',stage:'phone-screening',score:0,phoneNotes:'Daha aranmadı.',discType:'N/A',location:'Kadıköy'},
+  {id:1,name:'Ahmet Yılmaz',position:'Satınalma Asistanı',stage:'test-drive',score:4.2,phoneNotes:'Web sitesini incelemiş, istekli. İndirim hikayesi çok başarılı. DISC: D tipi.',discType:'D (Dominant)',location:'Eyüpsultan (3km)'},
+  {id:2,name:'Ayşe Kaya',position:'IK Yöneticisi',stage:'interview',score:3.8,phoneNotes:'Sertifikaları tam, kariyer hedefi net. Ofis ortamını tercih ediyor.',discType:'S (Uyumlu)',location:'Beşiktaş (12km - Tek metro)'},
+  {id:3,name:'Mehmet Demir',position:'Satınalma Asistanı',stage:'phone-screening',score:0,phoneNotes:'Henüz aranmadı.',discType:'N/A',location:'Kadıköy'},
 ];
 let selectedCandidate=null;
-const FACTORS=['Dış görünüş','Dikkat','Deneyim (miktar)','Deneyim (kalite)','Merak','Hırs','Kararlılık','Yenilikçilik','Kendini yönetme','Analitik yetenek','Karar alma','Öğrenci Zihniyeti'];
+const FACTORS=['Dış görünüş','Dikkat','Deneyim (miktar)','Deneyim (kalite)','Merak','Hırs','Kararlılık','Yenilikçilik','Kendini yönetme','Analitik yetenek','Karar alma','Öğrenci Zihniyeti','Referanslar'];
 let evalScores=Object.fromEntries(FACTORS.map(f=>[f,3]));
 
 function goTab(id,btn,title){
@@ -334,6 +661,16 @@ function toggleSidebar(){
   sidebarCollapsed=!sidebarCollapsed;
   document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);
 }
+function switchSub(prefix,id,btn){
+  const allPanels=document.querySelectorAll('#panel-'+prefix+' .sub-panel');
+  const allTabs=document.querySelectorAll('#panel-'+prefix+' .sub-tab');
+  allPanels.forEach(p=>p.classList.remove('active'));
+  allTabs.forEach(t=>t.classList.remove('active'));
+  document.getElementById(prefix+'-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* Pipeline */
 function renderPipeline(){
   const board=document.getElementById('pipeline-board');
   board.innerHTML='';
@@ -348,7 +685,7 @@ function renderPipeline(){
         <div class="card-name">${c.name}</div>
         <div class="card-meta">3 gün önce · ${c.location}</div>
         <div class="card-footer">
-          <div style="display:flex">${[1,2,3].map(i=>`<div style="width:18px;height:18px;border-radius:50%;border:2px solid #fff;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#64748b;margin-left:${i>1?'-5px':'0'}">IK</div>`).join('')}</div>
+          <div style="display:flex">${[1,2,3].map(i=>`<div style="width:18px;height:18px;border-radius:50%;border:2px solid #fff;background:#e8d8f0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#6a4a7a;margin-left:${i>1?'-5px':'0'}">IK</div>`).join('')}</div>
           ${c.score>0?`<div class="card-score">★ ${c.score}</div>`:''}
         </div>
       </div>`).join('')}
@@ -374,6 +711,8 @@ function moveCandidate(id,dir){
   renderPipeline();
   document.getElementById('modal-overlay').classList.remove('open');
 }
+
+/* Modal */
 function openModal(id){
   const c=candidates.find(c=>c.id===id);
   if(!c) return;
@@ -385,26 +724,25 @@ function openModal(id){
   const curIdx=stageIds.indexOf(c.stage);
   document.getElementById('modal-body').innerHTML=`
     <div class="info-grid">
-      <div class="info-card"><div class="info-label">KONUM</div><div class="info-val">${c.location}</div></div>
-      <div class="info-card"><div class="info-label">DISC PROFİLİ</div><div class="info-val">${c.discType}</div></div>
+      <div class="info-card"><div class="info-lbl">KONUM</div><div class="info-val">${c.location}</div></div>
+      <div class="info-card"><div class="info-lbl">DISC PROFİLİ</div><div class="info-val">${c.discType}</div></div>
     </div>
     <div>
-      <div class="section-title">📞 Telefon Notları</div>
+      <div class="sec-title">📞 Telefon Görüşme Notları</div>
       <div class="phone-note">"${c.phoneNotes||'Not eklenmemiş.'}"</div>
     </div>
     <div>
-      <div class="section-title">✅ Kontrol Listesi</div>
+      <div class="sec-title">✅ Mülakat Kontrol Listesi</div>
       <div class="checklist">
-        ${['Mülakat takımı seçildi','Sessiz ortam hazırlandı','DISC profili incelendi','Tesis gezintisi yapıldı','Pozisyon bakışı sunuldu']
-          .map(item=>`<div class="check-item"><svg width="12" height="12" fill="none" stroke="#10b981" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>${item}</div>`).join('')}
+        ${['Mülakat takımı seçildi','Sessiz ortam hazırlandı','DISC profili incelendi','Tesis gezintisi yapıldı (çay/kahve teklif edildi)','Pozisyon genel bakışı sunuldu','Adaya başka sorusu olup olmadığı soruldu'].map(item=>`<div class="check-item"><input type="checkbox" style="flex-shrink:0;accent-color:#8b1a4a;width:13px;height:13px"><span>${item}</span></div>`).join('')}
       </div>
     </div>
     <div>
-      <div class="section-title">🔄 Aşamalar</div>
+      <div class="sec-title">🔄 Süreç Aşamaları</div>
       <div class="stage-steps">
         ${STAGES.map((s,i)=>`<div class="step ${s.id===c.stage?'current':''}">
-          <div class="step-num" style="background:${i<curIdx?'#10b981':s.id===c.stage?'#2563eb':'#e2e8f0'}">${i<curIdx?'✓':i+1}</div>
-          <span style="font-size:11px;font-weight:${s.id===c.stage?'600':'400'};color:${s.id===c.stage?'#1e40af':'#64748b'}">${s.label}</span>
+          <div class="step-num" style="background:${i<curIdx?'#10b981':s.id===c.stage?'#8b1a4a':'#e8d8f0'}">${i<curIdx?'✓':i+1}</div>
+          <span style="font-size:11px;font-weight:${s.id===c.stage?'600':'400'};color:${s.id===c.stage?'#4a1a6a':'#64748b'}">${s.label}</span>
         </div>`).join('')}
       </div>
     </div>`;
@@ -417,12 +755,54 @@ function closeModalOverlay(e){
   if(e.target===document.getElementById('modal-overlay'))
     document.getElementById('modal-overlay').classList.remove('open');
 }
-function switchSub(id,btn){
-  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.ai-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('ai-'+id).classList.add('active');
+
+/* Evaluation */
+function renderEval(){
+  const el=document.getElementById('eval-content');
+  if(!selectedCandidate){
+    el.innerHTML='<div class="empty-state"><svg width="44" height="44" fill="none" stroke="#9a7ab0" stroke-width="1.5" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Pipeline\'dan bir aday seçip buraya gelin.</span></div>';
+    return;
+  }
+  const avg=(Object.values(evalScores).reduce((a,b)=>a+b,0)/FACTORS.length).toFixed(1);
+  el.innerHTML='<div class="eval-wrap">'
+    +'<div class="eval-head"><div><div style="font-weight:700;font-size:15px;color:#1a0a2e">'+selectedCandidate.name+'</div><div style="font-size:11px;color:#9a7ab0;margin-top:2px">'+selectedCandidate.position+' · Eleman Adayı Değerlendirme Cetveli · Puanlama: 1–5</div></div>'
+    +'<div style="text-align:right"><div style="font-size:9px;font-weight:700;color:#9a7ab0;letter-spacing:.1em;margin-bottom:2px">TOPLAM PUAN</div><div style="font-size:26px;font-weight:800;color:#8b1a4a">'+avg+'</div></div></div>'
+    +'<div class="eval-grid">'
+    +FACTORS.map(f=>'<div class="factor"><div class="factor-header"><span class="factor-label">'+f+'</span><span class="factor-score-badge">'+evalScores[f]+'</span></div>'
+      +'<div class="factor-bars">'+[1,2,3,4,5].map(v=>'<button class="factor-bar" style="background:'+(v<=evalScores[f]?'#8b1a4a':'#e8d8f0')+'" onclick="setScore(\''+f+'\','+v+')"></button>').join('')+'</div></div>').join('')
+    +'</div>'
+    +'<div class="eval-foot"><div style="font-weight:600;font-size:11px;color:#4a1a6a;margin-bottom:6px">Diğer Bilgiler ve Gözlemler</div>'
+    +'<textarea placeholder="Kanaat notlarınızı buraya yazın..."></textarea>'
+    +'<div class="eval-actions"><button class="btn-green" onclick="alert(\'İşe alım onaylandı!\')">✓ İşe Alımı Onayla</button><button class="btn-outline" onclick="goTab(\'tesekkur\',document.querySelector(\'.nav-btn:nth-child(7)\'),\'Teşekkür Mektubu\')">✉ Teşekkür Mektubu</button></div></div></div>';
 }
+function setScore(factor,val){evalScores[factor]=val;renderEval();}
+
+/* Teşekkür */
+function updateTsk(){
+  const aday=document.getElementById('tsk-aday').value||'[Adayın Adı]';
+  const gonderen=document.getElementById('tsk-gonderen').value||'İsim Soyisim\nUnvan';
+  document.getElementById('tsk-preview').textContent=
+    'Sayın '+aday+',\n\nGeldiğiniz ve benimle tanıştığınız için teşekkür ederim. Sizinle görüşmekten memnunluk duyduğumu ve ilginize teşekkür ettiğimi belirtmek isterim.\n\nÇok sayıda nitelikli aday arasından bir karar vermek oldukça güç oldu. Pozisyonu size teklif edemediğimizden dolayı üzüntü duymaktayım ancak önümüzdeki altı aylık süre içerisinde boşalan diğer pozisyonlar için özgeçmişinizi saklayacağımızı bildirmek isterim.\n\nİş arayışınızda başarılar dilerim.\n\nSaygılarımla,\n'+gonderen+'\nDUAY Uluslararası Tic. Ltd. Şti.\nwww.duaycor.com | +90 212 625 5 444';
+}
+function copyTsk(){
+  const txt=document.getElementById('tsk-preview').textContent;
+  navigator.clipboard.writeText(txt).then(()=>alert('Metin kopyalandı!')).catch(()=>alert('Kopyalanamadı, manuel seçip kopyalayın.'));
+}
+
+/* Özet tablosu */
+function addOzetRow(){
+  const tbody=document.getElementById('ozet-body');
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td><input placeholder="Ad Soyad" style="border:none;background:transparent;font-size:11px;color:#334155;width:120px;font-family:DM Sans,sans-serif"></td>'
+    +'<td><input placeholder="—" style="border:none;background:transparent;font-size:11px;color:#334155;width:60px;font-family:DM Sans,sans-serif"></td>'
+    +'<td><input placeholder="—" style="border:none;background:transparent;font-size:11px;color:#334155;width:60px;font-family:DM Sans,sans-serif"></td>'
+    +'<td><input placeholder="—" style="border:none;background:transparent;font-size:11px;color:#334155;width:60px;font-family:DM Sans,sans-serif"></td>'
+    +'<td><input placeholder="—" style="border:none;background:transparent;font-size:11px;color:#334155;width:60px;font-family:DM Sans,sans-serif"></td>'
+    +'<td><button onclick="this.closest(\'tr\').remove()" style="border:none;background:transparent;color:#ef4444;cursor:pointer;font-size:12px">✕</button></td>';
+  tbody.appendChild(tr);
+}
+
+/* AI Tools */
 async function callClaude(userPrompt,sysPrompt,maxTokens){
   maxTokens=maxTokens||1024;
   const res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -437,13 +817,10 @@ async function analyzeCV(){
   const pos=document.getElementById('cv-pos').value.trim();
   const txt=document.getElementById('cv-text').value.trim();
   const krit=document.getElementById('cv-krit').value.trim();
-  const errEl=document.getElementById('cv-err');
-  const resEl=document.getElementById('cv-result');
-  const btn=document.getElementById('cv-btn');
+  const errEl=document.getElementById('cv-err'),resEl=document.getElementById('cv-result'),btn=document.getElementById('cv-btn');
   if(!pos||!txt){errEl.innerHTML='<div class="error-box">⚠ Pozisyon ve CV metni zorunludur.</div>';return;}
-  errEl.innerHTML='';
-  btn.disabled=true;btn.textContent='Analiz ediliyor...';
-  resEl.innerHTML='<div class="result-box" style="color:#94a3b8;font-size:12px">Yapay zeka CV\'yi inceliyor<span class="loading-dots"></span></div>';
+  errEl.innerHTML='';btn.disabled=true;btn.textContent='Analiz ediliyor...';
+  resEl.innerHTML='<div class="result-box" style="color:#9a7ab0;font-size:12px">Yapay zeka CV\'yi inceliyor<span class="loading-dots"></span></div>';
   try{
     const sys='Sen deneyimli bir IK uzmanısın. Sadece JSON döndür:\n{"uyum_skoru":0-100,"guclu_yonler":["..."],"eksik_yonler":["..."],"genel_yorum":"2-3 cümle","tavsiye":"işe al / değerlendirilebilir / uygun değil"}';
     const raw=await callClaude('Pozisyon: '+pos+'\n'+(krit?'Kriterler: '+krit+'\n':'')+'CV:\n'+txt,sys);
@@ -452,20 +829,13 @@ async function analyzeCV(){
     const bc=s>=70?'#10b981':s>=45?'#f59e0b':'#ef4444';
     const bb=s>=70?'#ecfdf5':s>=45?'#fffbeb':'#fef2f2';
     const bf=s>=70?'#065f46':s>=45?'#92400e':'#991b1b';
-    resEl.innerHTML='<div class="result-box">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
-      +'<span style="font-weight:600;font-size:13px">Uyum Skoru</span>'
-      +'<span style="font-size:10px;font-weight:700;background:'+bb+';color:'+bf+';padding:2px 10px;border-radius:20px">'+d.tavsiye+'</span></div>'
-      +'<div class="score-row"><span style="font-size:24px;font-weight:800;min-width:38px">'+s+'</span>'
-      +'<div class="score-bar"><div class="score-fill" style="width:'+s+'%;background:'+bc+'"></div></div>'
-      +'<span style="font-size:11px;color:#94a3b8">/100</span></div>'
-      +(d.guclu_yonler||[]).map(g=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#10b981;font-weight:700">+</span> '+g+'</div>').join('')
-      +((d.eksik_yonler||[]).length?'<div style="margin-top:8px">'+(d.eksik_yonler||[]).map(e=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#ef4444;font-weight:700">-</span> '+e+'</div>').join('')+'</div>':'')
-      +(d.genel_yorum?'<div class="yorum">'+d.genel_yorum+'</div>':'')
+    resEl.innerHTML='<div class="result-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-weight:600;font-size:13px">Uyum Skoru</span><span style="font-size:10px;font-weight:700;background:'+bb+';color:'+bf+';padding:2px 10px;border-radius:20px">'+d.tavsiye+'</span></div>'
+      +'<div class="score-row"><span style="font-size:24px;font-weight:800;min-width:38px">'+s+'</span><div class="score-bar"><div class="score-fill" style="width:'+s+'%;background:'+bc+'"></div></div><span style="font-size:11px;color:#9a7ab0">/100</span></div>'
+      +(d.guclu_yonler||[]).map(g=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#10b981;font-weight:700">+ </span>'+g+'</div>').join('')
+      +((d.eksik_yonler||[]).length?'<div style="margin-top:8px">'+(d.eksik_yonler||[]).map(e=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#ef4444;font-weight:700">- </span>'+e+'</div>').join('')+'</div>':'')
+      +(d.genel_yorum?'<div style="margin-top:10px;padding-top:10px;border-top:1px solid #e8d8f0;font-size:11px;color:#64748b;line-height:1.7">'+d.genel_yorum+'</div>':'')
       +'</div>';
-  }catch(e){
-    resEl.innerHTML='<div class="result-box" style="color:#94a3b8;font-size:12px">Sonuç alınamadı. Lütfen tekrar deneyin.</div>';
-  }
+  }catch(e){resEl.innerHTML='<div class="result-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı. Lütfen tekrar deneyin.</div>';}
   btn.disabled=false;btn.textContent="CV'yi Analiz Et";
 }
 async function generateSorular(){
@@ -473,28 +843,22 @@ async function generateSorular(){
   const tur=document.getElementById('soru-tur').value;
   const sev=document.getElementById('soru-sev').value;
   const yet=document.getElementById('soru-yet').value.trim();
-  const errEl=document.getElementById('soru-err');
-  const resEl=document.getElementById('soru-result');
-  const btn=document.getElementById('soru-btn');
+  const errEl=document.getElementById('soru-err'),resEl=document.getElementById('soru-result'),btn=document.getElementById('soru-btn');
   if(!pos){errEl.innerHTML='<div class="error-box">⚠ Pozisyon adı zorunludur.</div>';return;}
-  errEl.innerHTML='';
-  btn.disabled=true;btn.textContent='Üretiliyor...';
-  resEl.innerHTML='<div class="result-box" style="color:#94a3b8;font-size:12px">Sorular hazırlanıyor<span class="loading-dots"></span></div>';
+  errEl.innerHTML='';btn.disabled=true;btn.textContent='Üretiliyor...';
+  resEl.innerHTML='<div class="result-box" style="color:#9a7ab0;font-size:12px">Sorular hazırlanıyor<span class="loading-dots"></span></div>';
   try{
     const sys='IK mülakatçısısın. Tam 7 soru üret. Sadece JSON:\n{"sorular":[{"soru":"...","amac":"kısa","ipucu":"kısa"}]}';
     const raw=await callClaude('Pozisyon: '+pos+'\nSeviye: '+sev+'\nTür: '+tur+(yet?'\nYetkinlikler: '+yet:''),sys);
     const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
     resEl.innerHTML='<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">'
-      +(d.sorular||[]).map((s,i)=>'<div class="soru-card">'
-        +'<div style="font-size:9px;color:#94a3b8;font-weight:600;margin-bottom:3px">Soru '+(i+1)+'</div>'
-        +'<div style="font-size:12px;font-weight:600;color:#0f172a;margin-bottom:6px;line-height:1.5">'+s.soru+'</div>'
+      +(d.sorular||[]).map((s,i)=>'<div style="background:#f8f5f2;border-radius:9px;padding:11px 13px;border:1px solid #e8d8f0">'
+        +'<div style="font-size:9px;color:#9a7ab0;font-weight:600;margin-bottom:3px">Soru '+(i+1)+'</div>'
+        +'<div style="font-size:12px;font-weight:600;color:#1a0a2e;margin-bottom:6px;line-height:1.5">'+s.soru+'</div>'
         +'<div style="font-size:11px;color:#64748b"><strong>Amaç:</strong> '+s.amac+'</div>'
         +'<div style="font-size:11px;color:#64748b;margin-top:2px"><strong>İpucu:</strong> '+s.ipucu+'</div>'
-        +'</div>').join('')
-      +'</div>';
-  }catch(e){
-    resEl.innerHTML='<div class="result-box" style="color:#94a3b8;font-size:12px">Sonuç alınamadı. Lütfen tekrar deneyin.</div>';
-  }
+        +'</div>').join('')+'</div>';
+  }catch(e){resEl.innerHTML='<div class="result-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı.</div>';}
   btn.disabled=false;btn.textContent='Soru Üret';
 }
 async function generateIlan(){
@@ -502,77 +866,21 @@ async function generateIlan(){
   const dep=document.getElementById('ilan-dep').value.trim();
   const mod=document.getElementById('ilan-mod').value;
   const ger=document.getElementById('ilan-ger').value.trim();
-  const errEl=document.getElementById('ilan-err');
-  const resEl=document.getElementById('ilan-result');
-  const btn=document.getElementById('ilan-btn');
+  const errEl=document.getElementById('ilan-err'),resEl=document.getElementById('ilan-result'),btn=document.getElementById('ilan-btn');
   if(!pos){errEl.innerHTML='<div class="error-box">⚠ Pozisyon adı zorunludur.</div>';return;}
-  errEl.innerHTML='';
-  btn.disabled=true;btn.textContent='Oluşturuluyor...';
-  resEl.innerHTML='<div class="result-box" style="color:#94a3b8;font-size:12px">İş ilanı yazılıyor<span class="loading-dots"></span></div>';
+  errEl.innerHTML='';btn.disabled=true;btn.textContent='Oluşturuluyor...';
+  resEl.innerHTML='<div class="result-box" style="color:#9a7ab0;font-size:12px">İş ilanı yazılıyor<span class="loading-dots"></span></div>';
   try{
-    const sys='Profesyonel IK yazarısın. Çekici Türkçe iş ilanı oluştur. Format: başlık, hakkımızda, görev tanımı, nitelikler, imkânlar. Düz metin.';
+    const sys='Profesyonel IK yazarısın. DUAY Uluslararası Tic. Ltd. Şti. için Türkçe iş ilanı yaz. Çekici ve net. Formatı: başlık, hakkımızda (2 cümle), görev tanımı (maddeler), nitelikler (maddeler), imkânlar (maddeler). Düz metin.';
     const txt=await callClaude('Pozisyon: '+pos+'\n'+(dep?'Departman: '+dep+'\n':'')+'Çalışma: '+mod+'\n'+(ger?'Gereksinimler:\n'+ger:''),sys,1200);
     resEl.innerHTML='<div class="result-box"><div style="font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap">'+txt+'</div></div>';
-  }catch(e){
-    resEl.innerHTML='<div class="result-box" style="color:#94a3b8;font-size:12px">Sonuç alınamadı. Lütfen tekrar deneyin.</div>';
-  }
+  }catch(e){resEl.innerHTML='<div class="result-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı.</div>';}
   btn.disabled=false;btn.textContent='İş İlanı Oluştur';
 }
-function renderQuestions(){
-  const cats=[
-    {title:'Telefon Ön Görüşme',questions:['Web sitemizi incelediniz mi?','En iyi indirim aldığınız pazarlığınız?','Bu pozisyonu kariyer olarak görüyor musunuz?']},
-    {title:'Karakter & Adaptasyon',questions:['En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz?','Hedefinize ulaşamadığınızda ne yaptınız?','Bir işi bırakmanıza sebep olan şeyler nelerdir?']},
-    {title:'Zihin Yapısı & Başarı',questions:['En mükemmel iş dışı başarınız nedir?','Hayatta aldığınız en zor karar neydi?','Kendinizi başarılı hissettiğiniz bir işi anlatın.']},
-    {title:'Zorlayıcı Durumlar',questions:['Yöneticinizle aynı fikirde olmadığınız bir an?','Sahada mı yoksa ofiste mi çalışmak motive eder?','C kalite çalışanı nasıl yönetirsiniz?']},
-  ];
-  document.getElementById('qb-grid').innerHTML=cats.map(cat=>`<div class="qb-card"><div class="qb-cat">${cat.title}</div><div class="qb-body">${cat.questions.map((q,i)=>`<div class="qb-item"><div class="qb-num">${i+1}</div>${q}</div>`).join('')}</div></div>`).join('');
-}
-function renderTestDrive(){
-  const tests=[
-    {title:'Kahraman Bey Testi',desc:'Zor tedarikçiden ayrıcalık / indirim alma.',color:'#7c3aed'},
-    {title:'Ofis Temizliği Testi',desc:'İşi küçük görüp görmeme ve detaycılık testi.',color:'#10b981'},
-    {title:'Zamansız Arama',desc:'Dönüş hızı ve profesyonellik ölçümü.',color:'#f97316'},
-    {title:'Döküman Geliştirme',desc:'Çelişki yakalama ve yazım hatası bulma.',color:'#2563eb'},
-    {title:'Fuar Testi',desc:'Sınırlı bilgi ile maksimum verim.',color:'#ec4899'},
-  ];
-  document.getElementById('td-grid').innerHTML=tests.map(t=>`<div class="td-card"><div class="td-icon" style="background:${t.color}18"><svg width="18" height="18" fill="none" stroke="${t.color}" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="td-title">${t.title}</div><div class="td-desc">${t.desc}</div></div><button class="td-btn" style="color:${t.color}">Testi Başlat →</button></div>`).join('');
-}
-function renderEval(){
-  const el=document.getElementById('eval-content');
-  if(!selectedCandidate){
-    el.innerHTML='<div class="empty-state"><svg width="44" height="44" fill="none" stroke="#94a3b8" stroke-width="1.5" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Pipeline\'dan bir aday seçip buraya gelin.</span></div>';
-    return;
-  }
-  const avg=(Object.values(evalScores).reduce((a,b)=>a+b,0)/FACTORS.length).toFixed(1);
-  el.innerHTML='<div class="eval-wrap">'
-    +'<div class="eval-head"><div><div style="font-weight:700;font-size:15px;color:#0f172a">'+selectedCandidate.name+'</div><div style="font-size:11px;color:#64748b;margin-top:2px">'+selectedCandidate.position+' · Puanlama: 1–5</div></div>'
-    +'<div style="text-align:right"><div style="font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:.1em;margin-bottom:2px">TOPLAM PUAN</div><div style="font-size:26px;font-weight:800;color:#2563eb">'+avg+'</div></div></div>'
-    +'<div class="eval-grid">'
-    +FACTORS.map(f=>'<div class="factor"><div class="factor-header"><span class="factor-label">'+f+'</span><span class="factor-score-badge">'+evalScores[f]+'</span></div>'
-      +'<div class="factor-bars">'+[1,2,3,4,5].map(v=>'<button class="factor-bar" style="background:'+(v<=evalScores[f]?'#2563eb':'#e2e8f0')+'" onclick="setScore(\''+f+'\','+v+')"></button>').join('')+'</div></div>').join('')
-    +'</div>'
-    +'<div class="eval-foot"><div style="font-weight:600;font-size:11px;color:#334155;margin-bottom:6px">Gözlemler ve Karar</div>'
-    +'<textarea placeholder="Kanaat notlarınızı buraya yazın..."></textarea>'
-    +'<div class="eval-actions"><button class="btn-green">✓ İşe Alımı Onayla</button><button class="btn-outline">✉ Teşekkür Mektubu</button></div></div></div>';
-}
-function setScore(factor,val){
-  evalScores[factor]=val;
-  renderEval();
-}
-function renderDisc(){
-  const profiles=[
-    {type:'D',label:'Dominant',color:'#ef4444',desc:'Sonuç odaklı, doğrudan, kararlı ve rekabetçi. Hızlı karar alır, zorluklardan güç alır.'},
-    {type:'I',label:'Etkili',color:'#f59e0b',desc:'İlham verici, enerjik, iletişim odaklı, iyimser. İnsanları motive etmede güçlüdür.'},
-    {type:'S',label:'Uyumlu',color:'#10b981',desc:'Sabırlı, güvenilir, ekip odaklı, tutarlı. Değişime temkinli ama sadık çalışanlardır.'},
-    {type:'C',label:'Kurallı',color:'#2563eb',desc:'Analitik, dikkatli, kalite odaklı, sistematik. Detaylara önem verir, kurallara uyar.'},
-  ];
-  document.getElementById('disc-grid').innerHTML=profiles.map(p=>`<div class="disc-card" style="border-left:4px solid ${p.color}"><div class="disc-top"><div class="disc-letter" style="background:${p.color}18;color:${p.color}">${p.type}</div><div><div style="font-weight:700;font-size:12px;color:#0f172a">${p.type} — ${p.label}</div><div style="font-size:9px;color:#94a3b8;font-weight:500">DISC profili</div></div></div><div style="font-size:11px;color:#475569;line-height:1.6">${p.desc}</div></div>`).join('');
-}
+
+/* Init */
 renderPipeline();
-renderQuestions();
-renderTestDrive();
-renderEval();
-renderDisc();
+updateTsk();
 </script>
 </body>
 </html>
