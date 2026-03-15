@@ -520,7 +520,10 @@ nav{flex:1;padding:8px 6px;overflow-y:auto;display:flex;flex-direction:column;ga
   <div style="background:var(--bg2);border-radius:14px;width:560px;max-height:80vh;display:flex;flex-direction:column;border:1px solid var(--border)">
     <div style="padding:13px 17px;border-bottom:1px solid var(--border);font-weight:700;font-size:13px;color:var(--text);display:flex;justify-content:space-between;align-items:center">
       <span data-i18n="select_from_bank">Soru Bankasından Seç</span>
-      <button onclick="document.getElementById('bank-mo').style.display='none'" style="border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('bank-mo').style.display='none';const t=document.querySelectorAll('#panel-mulakat .tab')[1];if(t)st('mul','form',t);renderIQList();">Forma Git ✓</button>
+        <button onclick="document.getElementById('bank-mo').style.display='none'" style="border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
     </div>
     <div style="flex:1;overflow:auto;padding:13px 17px" id="bank-mo-list"></div>
   </div>
@@ -876,7 +879,19 @@ let candidates=[
 let selCand=null;
 const FACTORS=['Dış görünüş','Dikkat','Deneyim (miktar)','Deneyim (kalite)','Merak','Hırs','Kararlılık','Yenilikçilik','Kendini yönetme','Analitik yetenek','Karar alma','Öğrenci Zihniyeti','Referanslar'];
 let evalSc=Object.fromEntries(FACTORS.map(f=>[f,3]));
-let iqItems=[];
+const DEFAULT_SORULAR = [
+  'Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?',
+  'Bu pozisyonu kariyer olarak görüyor musunuz? Satınalma ile ilgili sertifikanız var mı?',
+  'En başarılı indirim aldığınız pazarlığı anlatır mısınız?',
+  'En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?',
+  'Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizde ne yaptınız?',
+  'Bir işi bırakmanıza sebep olan şeyler nelerdir?',
+  'Hayatta aldığınız en zor kararlardan biri nelerdi, neden aldınız?',
+  'Ofis ortamında mı yoksa sahada mı çalıştınız? Hangisi daha motive edici?',
+  'Kendinizi çok başarılı hissettiğiniz bir işi anlatabilir misiniz?',
+  'Bu görüşmeye sizi getiren şey ne?',
+];
+let iqItems = DEFAULT_SORULAR.map((s,i) => ({id:'iq_def_'+i, soru:s, yanit:''}));
 
 const SORU_BANKASI=[
   {cat:'Karakter & Adaptasyon',sorular:['Daha önce çalıştığınız işleri göz önünde bulundurarak, her birindeki performansınızı nasıl değerlendirirsiniz?','En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?','Amaçlarınıza ulaşırken karşılaştığınız engel ve zorluklardan bahsedin. Bunlarla nasıl başa çıktınız?','Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizi görünce ne yaptınız?','Bir işi bırakmanıza sebep olan şeyler nelerdir?']},
@@ -1007,27 +1022,82 @@ function addIQ(soruText){
 function removeIQ(id){iqItems=iqItems.filter(i=>i.id!==id);renderIQList();}
 function syncIQ(){iqItems.forEach(item=>{const q=document.getElementById('iq-q-'+item.id);const a=document.getElementById('iq-a-'+item.id);if(q) item.soru=q.value;if(a) item.yanit=a.value;});}
 
+// Bank sorularını data-idx ile eşle, tırnak sorununu önle
+let _bankFlat = [];
 function addFromBank(){
-  document.getElementById('bank-mo-list').innerHTML=SORU_BANKASI.map(cat=>`
-    <div style="margin-bottom:13px">
-      <div style="font-weight:700;font-size:11px;color:var(--accent);margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--border)">${cat.cat}</div>
-      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:7px;padding:5px 4px;border-radius:6px;cursor:pointer" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'" onclick="addIQ(${JSON.stringify(s)});document.getElementById('bank-mo').style.display='none'">
-        <svg width="12" height="12" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span style="font-size:11px;color:var(--text);line-height:1.5">${s}</span>
-      </div>`).join('')}
-    </div>`).join('');
+  _bankFlat = [];
+  SORU_BANKASI.forEach(cat => cat.sorular.forEach(s => _bankFlat.push({cat:cat.cat, soru:s})));
+  document.getElementById('bank-mo-list').innerHTML = SORU_BANKASI.map(cat => {
+    const rows = cat.sorular.map(s => {
+      const idx = _bankFlat.findIndex(x => x.soru === s && x.cat === cat.cat);
+      const already = iqItems.some(i => i.soru === s);
+      return `<div style="display:flex;align-items:flex-start;gap:9px;padding:6px 5px;border-radius:7px;cursor:pointer;transition:background .12s"
+        onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'"
+        onclick="bankAddItem(${idx})">
+        <div style="width:18px;height:18px;border-radius:5px;background:${already?'#ecfdf5':'var(--bg3)'};border:1px solid ${already?'#10b981':'var(--border)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
+          ${already
+            ? '<svg width="10" height="10" fill="none" stroke="#10b981" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>'
+            : '<svg width="10" height="10" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+        </div>
+        <span style="font-size:11px;color:var(--text);line-height:1.5;flex:1">${s}</span>
+        <span style="font-size:10px;font-weight:600;color:${already?'#10b981':'var(--accent)'};flex-shrink:0;margin-top:2px">${already?'Eklendi':'Ekle'}</span>
+      </div>`;
+    }).join('');
+    return `<div style="margin-bottom:14px">
+      <div style="font-weight:700;font-size:11px;color:var(--accent);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border)">${cat.cat}</div>
+      ${rows}
+    </div>`;
+  }).join('');
   document.getElementById('bank-mo').style.display='flex';
 }
+function bankAddItem(idx){
+  syncIQ();
+  const item = _bankFlat[idx];
+  if(!item) return;
+  // Zaten ekliyse çıkar (toggle)
+  const exists = iqItems.findIndex(i => i.soru === item.soru);
+  if(exists !== -1){
+    iqItems.splice(exists,1);
+  } else {
+    iqItems.push({id:'iq'+Date.now()+Math.random(), soru:item.soru, yanit:''});
+  }
+  renderIQList();
+  // Banka modalını güncelle (işaret göster)
+  addFromBank();
+}
 function renderSoruBankasi(){
-  document.getElementById('soru-bankasi-list').innerHTML=SORU_BANKASI.map(cat=>`
+  // Flat index için
+  let flat = [];
+  SORU_BANKASI.forEach(cat => cat.sorular.forEach(s => flat.push({cat:cat.cat, soru:s})));
+  window._bankFlatStatic = flat;
+  document.getElementById('soru-bankasi-list').innerHTML = SORU_BANKASI.map(cat => `
     <div class="card" style="margin-bottom:9px">
-      <div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:7px">${cat.cat}</div>
-      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:7px;padding:5px;border-radius:7px;margin-bottom:2px">
-        <span style="width:14px;height:14px;border-radius:4px;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;margin-top:1px">▸</span>
-        <span style="flex:1;font-size:11px;color:var(--text);line-height:1.5">${s}</span>
-        <button class="btn btn-outline btn-sm" style="flex-shrink:0;font-size:10px;padding:3px 8px" onclick="addIQ(${JSON.stringify(s)});st('mul','form',document.querySelectorAll('#panel-mulakat .tab')[1])">${T('add_to_form')}</button>
-      </div>`).join('')}
+      <div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:8px">${cat.cat}</div>
+      ${cat.sorular.map(s => {
+        const idx = flat.findIndex(x => x.soru === s);
+        return `<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 5px;border-radius:7px;margin-bottom:3px">
+          <span style="width:14px;height:14px;border-radius:4px;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;margin-top:1px">▸</span>
+          <span style="flex:1;font-size:11px;color:var(--text);line-height:1.5">${s}</span>
+          <button class="btn btn-outline btn-sm" style="flex-shrink:0;font-size:10px;padding:3px 9px"
+            onclick="bankStaticAdd(${idx})">${T('add_to_form')}</button>
+        </div>`;
+      }).join('')}
     </div>`).join('');
+}
+function bankStaticAdd(idx){
+  syncIQ();
+  const item = (window._bankFlatStatic||[])[idx];
+  if(!item) return;
+  if(iqItems.some(i => i.soru === item.soru)){
+    // zaten var, forma git
+  } else {
+    iqItems.push({id:'iq'+Date.now()+Math.random(), soru:item.soru, yanit:''});
+  }
+  renderIQList();
+  // Form tabına geç
+  const formTab = document.querySelectorAll('#panel-mulakat .tab')[1];
+  if(formTab) { st('mul','form',formTab); }
+  renderSoruBankasi();
 }
 function saveInterview(){
   syncIQ();
@@ -1048,7 +1118,8 @@ function saveInterview(){
 function clearForm(){
   ['mf-aday','mf-pozisyon','mf-gorusen','mf-not'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('mf-tarih').value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
-  iqItems=[];renderIQList();document.getElementById('save-msg').innerHTML='';
+  iqItems=DEFAULT_SORULAR.map((s,i)=>({id:'iq_def_reset_'+i+'_'+Date.now(), soru:s, yanit:''}));
+  renderIQList();document.getElementById('save-msg').innerHTML='';
 }
 function updateBadge(){
   const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
@@ -1298,12 +1369,16 @@ async function genSorular(){
     const raw=await callClaude('Pozisyon: '+pos+'\nSeviye: '+document.getElementById('s-sev').value+'\nTür: '+document.getElementById('s-tur').value+(document.getElementById('s-yet').value?'\nYetkinlikler: '+document.getElementById('s-yet').value:''),'IK mülakatçısısın. 7 soru üret. Sadece JSON:\n{"sorular":[{"soru":"...","amac":"kısa","ipucu":"kısa"}]}');
     const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
     re.innerHTML='<div style="display:flex;flex-direction:column;gap:7px;margin-top:7px">'
-      +(d.sorular||[]).map((s,i)=>`<div class="res-box" style="padding:10px 12px"><div style="font-size:9px;color:var(--text3);font-weight:600;margin-bottom:2px">Soru ${i+1}</div>
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.5">${s.soru}</div>
-      <div style="font-size:11px;color:var(--text2)"><strong>Amaç:</strong> ${s.amac}</div>
-      <div style="font-size:11px;color:var(--text2);margin-top:2px"><strong>İpucu:</strong> ${s.ipucu}</div>
-      <button class="btn btn-outline btn-sm" style="margin-top:7px;font-size:10px" onclick="addIQ(${JSON.stringify(s.soru)});go('mulakat',null,'${T('interview_form_nav')}');st('mul','form',document.querySelectorAll('#panel-mulakat .tab')[1])">${T('add_to_form')} →</button>
-      </div>`).join('')+'</div>';
+      +(d.sorular||[]).map((s,i)=>{
+        const safeIdx = i;
+        window._aiSorular = d.sorular;
+        return `<div class="res-box" style="padding:10px 12px"><div style="font-size:9px;color:var(--text3);font-weight:600;margin-bottom:2px">Soru ${i+1}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.5">${s.soru}</div>
+        <div style="font-size:11px;color:var(--text2)"><strong>Amaç:</strong> ${s.amac}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px"><strong>İpucu:</strong> ${s.ipucu}</div>
+        <button class="btn btn-outline btn-sm" style="margin-top:7px;font-size:10px" onclick="aiAddToForm(${safeIdx})">${T('add_to_form')} →</button>
+        </div>`;
+      }).join('')+'</div>';
   }catch(e){re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Sonuç alınamadı.</div>';}
   btn.disabled=false;btn.textContent=T('generate_questions');
 }
@@ -1318,6 +1393,18 @@ async function genIlan(){
     re.innerHTML='<div class="res-box"><div style="font-size:12px;color:var(--text);line-height:1.8;white-space:pre-wrap">'+txt+'</div></div>';
   }catch(e){re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Sonuç alınamadı.</div>';}
   btn.disabled=false;btn.textContent=T('generate_posting');
+}
+
+function aiAddToForm(idx){
+  syncIQ();
+  const s = (window._aiSorular||[])[idx];
+  if(!s) return;
+  if(!iqItems.some(i=>i.soru===s.soru)){
+    iqItems.push({id:'iq'+Date.now()+Math.random(), soru:s.soru, yanit:''});
+  }
+  renderIQList();
+  go('mulakat',null,T('interview_form_nav'));
+  setTimeout(()=>{ const t=document.querySelectorAll('#panel-mulakat .tab')[1]; if(t) st('mul','form',t); },50);
 }
 
 // ══════════════════════════════════════════════════
