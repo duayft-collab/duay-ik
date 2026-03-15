@@ -54,7 +54,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 .lang-sel button.active{background:#8b1a4a;border-color:#8b1a4a;color:#fff}
 
 /* ═══════════════ APP SHELL ═══════════════ */
-#app{display:none;height:100vh;display:flex;flex-direction:column}
+#app{height:100vh;display:none;flex-direction:column}
 #app.visible{display:flex}
 
 /* ═══════════════ TOP BAR ═══════════════ */
@@ -226,13 +226,6 @@ nav{flex:1;padding:8px 6px;overflow-y:auto;display:flex;flex-direction:column;ga
     <div class="login-err" id="login-err"></div>
     <div class="login-field"><label data-i18n="username">Kullanıcı Adı</label><input id="l-user" placeholder="admin" autocomplete="username"/></div>
     <div class="login-field"><label data-i18n="password">Şifre</label><input id="l-pass" type="password" placeholder="••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()"/></div>
-    <div class="login-field"><label data-i18n="login_as">Giriş Rolü</label>
-      <select id="l-role">
-        <option value="admin" data-i18n="role_admin">Yönetici (Admin)</option>
-        <option value="hr" data-i18n="role_hr">IK Uzmanı</option>
-        <option value="viewer" data-i18n="role_viewer">Görüntüleyici</option>
-      </select>
-    </div>
     <button class="login-btn" onclick="doLogin()" data-i18n="login_btn">Giriş Yap</button>
   </div>
   <div class="login-version" id="login-version-info"></div>
@@ -511,8 +504,95 @@ nav{flex:1;padding:8px 6px;overflow-y:auto;display:flex;flex-direction:column;ga
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /body-wrap -->
+      <!-- ADMIN PANELİ -->
+      <div id="panel-admin" class="panel">
+        <div class="sec-head">
+          <svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="22" y1="11" x2="16" y2="11"/><line x1="19" y1="8" x2="19" y2="14"/></svg>
+          <div><div class="sec-head-txt">Kullanıcı Yönetimi</div><div class="sec-head-sub">Kullanıcı ekle · Şifre güncelle · Yetki yönet · Aktif/Pasif</div></div>
+        </div>
+        <div style="max-width:900px">
+          <div class="tabs">
+            <button class="tab active" onclick="st('admin','list',this)">Kullanıcı Listesi</button>
+            <button class="tab" onclick="st('admin','new',this)">Yeni Kullanıcı</button>
+          </div>
+
+          <!-- Kullanıcı Listesi -->
+          <div id="admin-list" class="tpanel active">
+            <div id="admin-user-list"></div>
+          </div>
+
+          <!-- Yeni Kullanıcı -->
+          <div id="admin-new" class="tpanel">
+            <div class="card" style="max-width:560px">
+              <div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:14px">Yeni Kullanıcı Ekle</div>
+              <div class="frow">
+                <div class="field"><label>Kullanıcı Adı</label><input id="nu-user" placeholder="küçük harf, boşluksuz"/></div>
+                <div class="field"><label>Görünen Ad</label><input id="nu-display" placeholder="Ad Soyad"/></div>
+                <div class="field"><label>Şifre</label><input id="nu-pass" type="password" placeholder="Güçlü bir şifre"/></div>
+                <div class="field"><label>Rol</label>
+                  <select id="nu-role">
+                    <option value="hr">IK Uzmanı</option>
+                    <option value="viewer">Görüntüleyici</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+              <div style="font-weight:600;font-size:12px;color:var(--text);margin:12px 0 8px">Erişim İzinleri</div>
+              <div id="nu-perms" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px"></div>
+              <div style="display:flex;gap:7px;margin-bottom:14px">
+                <button class="btn btn-outline btn-sm" onclick="setAllPerms('nu',true)">Tümünü Seç</button>
+                <button class="btn btn-outline btn-sm" onclick="setAllPerms('nu',false)">Tümünü Kaldır</button>
+                <button class="btn btn-outline btn-sm" onclick="setRolePreset('nu')">Role Göre Uygula</button>
+              </div>
+              <div id="nu-err"></div>
+              <button class="btn btn-primary btn-full" onclick="createUser()">Kullanıcıyı Oluştur</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KULLANICI DÜZENLE MODAL -->
+      <div id="edit-mo" style="display:none;position:fixed;inset:0;background:rgba(10,5,24,.7);z-index:70;backdrop-filter:blur(5px);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+        <div style="background:var(--bg2);border-radius:16px;width:620px;max-height:88vh;display:flex;flex-direction:column;border:1px solid var(--border)">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-weight:700;font-size:13px;color:var(--text)" id="edit-mo-title">Kullanıcıyı Düzenle</span>
+            <button onclick="document.getElementById('edit-mo').style.display='none'" style="border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+          <div style="flex:1;overflow:auto;padding:16px 18px">
+            <input type="hidden" id="eu-id"/>
+            <div class="frow" style="margin-bottom:4px">
+              <div class="field"><label>Kullanıcı Adı</label><input id="eu-user" placeholder="kullanici_adi"/></div>
+              <div class="field"><label>Görünen Ad</label><input id="eu-display" placeholder="Ad Soyad"/></div>
+              <div class="field"><label>Yeni Şifre <span style="font-weight:400;color:var(--text3)">(boş = değiştirme)</span></label><input id="eu-pass" type="password" placeholder="••••••"/></div>
+              <div class="field"><label>Rol</label>
+                <select id="eu-role">
+                  <option value="hr">IK Uzmanı</option>
+                  <option value="viewer">Görüntüleyici</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px;background:var(--bg3);border-radius:9px;border:1px solid var(--border)">
+              <label style="font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" id="eu-active" style="accent-color:var(--accent);width:15px;height:15px"/>
+                Hesap Aktif
+              </label>
+              <span style="font-size:11px;color:var(--text3)">Pasif kullanıcılar sisteme giremez.</span>
+            </div>
+            <div style="font-weight:600;font-size:12px;color:var(--text);margin-bottom:8px">Erişim İzinleri</div>
+            <div id="eu-perms" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px"></div>
+            <div style="display:flex;gap:7px;margin-bottom:6px">
+              <button class="btn btn-outline btn-sm" onclick="setAllPerms('eu',true)">Tümünü Seç</button>
+              <button class="btn btn-outline btn-sm" onclick="setAllPerms('eu',false)">Tümünü Kaldır</button>
+              <button class="btn btn-outline btn-sm" onclick="setRolePreset('eu')">Role Göre Uygula</button>
+            </div>
+          </div>
+          <div style="padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px">
+            <button class="btn btn-primary btn-full" onclick="saveEditUser()">Değişiklikleri Kaydet</button>
+            <button class="btn btn-outline" onclick="document.getElementById('edit-mo').style.display='none'">İptal</button>
+          </div>
+        </div>
+      </div>
 </div><!-- /app -->
 
 <!-- BANKA MODAL -->
@@ -591,6 +671,7 @@ const TRANSLATIONS={
     reference:'Referans Kontrol',thanks:'Teşekkür Mektubu',ai_tools:'YZ Araçları',
     comparison:'Aday Karşılaştırma',resources:'IK Kaynakları',version_history:'Sürüm Geçmişi',
     suggest:'Güncelleme Öner',
+    admin_panel:'Kullanıcı Yönetimi',
     phone_title:'Telefon Ön Görüşme Rehberi',
     interview_form:'Mülakat Formu',interview_form_sub:'Soru ekle · Yanıt yaz · Kaydet',
     checklist_tab:'Kontrol Listesi',form_tab:'Mülakat Formu',bank_tab:'Soru Bankası',
@@ -639,6 +720,7 @@ const TRANSLATIONS={
     reference:'Reference Check',thanks:'Thank You Letter',ai_tools:'AI Tools',
     comparison:'Candidate Comparison',resources:'HR Resources',version_history:'Version History',
     suggest:'Suggest Update',
+    admin_panel:'User Management',
     phone_title:'Phone Screening Guide',
     interview_form:'Interview Form',interview_form_sub:'Add questions · Write answers · Save',
     checklist_tab:'Checklist',form_tab:'Interview Form',bank_tab:'Question Bank',
@@ -687,6 +769,7 @@ const TRANSLATIONS={
     reference:'Vérification des références',thanks:'Lettre de remerciement',ai_tools:'Outils IA',
     comparison:'Comparaison des candidats',resources:'Ressources RH',version_history:'Historique des versions',
     suggest:'Suggérer une mise à jour',
+    admin_panel:'Gestion des utilisateurs',
     phone_title:'Guide d\'entretien téléphonique',
     interview_form:'Formulaire d\'entretien',interview_form_sub:'Ajouter des questions · Écrire des réponses · Sauvegarder',
     checklist_tab:'Liste de contrôle',form_tab:'Formulaire',bank_tab:'Banque de questions',
@@ -748,36 +831,119 @@ function applyI18n(){
 // ══════════════════════════════════════════════════
 // USERS
 // ══════════════════════════════════════════════════
-const USERS=[
-  {user:'admin',pass:'duay2024',role:'admin',display:'Admin'},
-  {user:'ik',pass:'ik123',role:'hr',display:'IK Uzmanı'},
-  {user:'izleyici',pass:'izle',role:'viewer',display:'Görüntüleyici'},
+// ══════════════════════════════════════════════════
+// KULLANICI YÖNETİM SİSTEMİ
+// ══════════════════════════════════════════════════
+
+// Tüm izin tanımları
+const ALL_PERMISSIONS = [
+  {key:'pipeline',    label:'Aday Havuzu'},
+  {key:'telefon',     label:'Telefon Ön Eleme'},
+  {key:'mulakat',     label:'Mülakat Formu'},
+  {key:'kayitlar',    label:'Mülakat Kayıtları'},
+  {key:'test',        label:'Test Sürüşü'},
+  {key:'evaluation',  label:'Değerlendirme'},
+  {key:'referans',    label:'Referans Kontrol'},
+  {key:'tesekkur',    label:'Teşekkür Mektubu'},
+  {key:'ai',          label:'YZ Araçları'},
+  {key:'ozet',        label:'Aday Karşılaştırma'},
+  {key:'kaynaklar',   label:'IK Kaynakları'},
+  {key:'versions',    label:'Sürüm Geçmişi'},
+  {key:'suggest',     label:'Güncelleme Öner'},
+  {key:'admin',       label:'Kullanıcı Yönetimi'},
 ];
-let currentUser=null;
+
+// Default kullanıcılar — localStorage'a taşınacak
+const DEFAULT_USERS = [
+  {
+    id:'usr_admin',
+    user:'admin',
+    pass:'duay2024',
+    display:'Admin',
+    role:'admin',
+    active:true,
+    permissions: ALL_PERMISSIONS.map(p=>p.key), // tüm yetkiler
+    createdAt: new Date().toLocaleString('tr-TR'),
+  },
+  {
+    id:'usr_ik1',
+    user:'ik',
+    pass:'ik123',
+    display:'IK Uzmanı',
+    role:'hr',
+    active:true,
+    permissions:['pipeline','telefon','mulakat','kayitlar','test','evaluation','referans','tesekkur','ai','ozet','kaynaklar','versions','suggest'],
+    createdAt: new Date().toLocaleString('tr-TR'),
+  },
+  {
+    id:'usr_viewer',
+    user:'izleyici',
+    pass:'izle',
+    display:'Görüntüleyici',
+    role:'viewer',
+    active:true,
+    permissions:['pipeline','kayitlar','evaluation','kaynaklar','versions'],
+    createdAt: new Date().toLocaleString('tr-TR'),
+  },
+];
+
+let currentUser = null;
+
+// ── localStorage yardımcıları (her kullanıcı izole) ──
+function usrKey(key){
+  // Her kullanıcının verisi kendi ID'siyle izole
+  if(!currentUser) return 'duay-ik-'+key;
+  return 'duay-ik-'+currentUser.id+'-'+key;
+}
+function usrGet(key){ return JSON.parse(localStorage.getItem(usrKey(key))||'null'); }
+function usrSet(key,val){ localStorage.setItem(usrKey(key), JSON.stringify(val)); }
+
+// ── Kullanıcı listesi yönetimi ──
+function getUsers(){
+  const stored = localStorage.getItem('duay-ik-users');
+  if(!stored){
+    localStorage.setItem('duay-ik-users', JSON.stringify(DEFAULT_USERS));
+    return DEFAULT_USERS;
+  }
+  return JSON.parse(stored);
+}
+function saveUsers(users){ localStorage.setItem('duay-ik-users', JSON.stringify(users)); }
 
 function doLogin(){
-  const u=document.getElementById('l-user').value.trim();
-  const p=document.getElementById('l-pass').value;
-  const r=document.getElementById('l-role').value;
-  const found=USERS.find(x=>x.user===u&&x.pass===p);
-  const errEl=document.getElementById('login-err');
-  if(!found){errEl.style.display='block';errEl.textContent=T('login_err');return;}
+  const u = document.getElementById('l-user').value.trim().toLowerCase();
+  const p = document.getElementById('l-pass').value;
+  const errEl = document.getElementById('login-err');
+  const users = getUsers();
+  const found = users.find(x => x.user.toLowerCase()===u && x.pass===p);
+  if(!found){ errEl.style.display='block'; errEl.textContent=T('login_err'); return; }
+  if(!found.active){ errEl.style.display='block'; errEl.textContent='Bu hesap pasif durumda. Yöneticinizle iletişime geçin.'; return; }
   errEl.style.display='none';
-  currentUser={...found,role:r};
-  document.getElementById('user-name').textContent=found.display;
-  document.getElementById('user-av').textContent=found.display.slice(0,2).toUpperCase();
+  currentUser = {...found};
+  document.getElementById('user-name').textContent = found.display;
+  document.getElementById('user-av').textContent   = found.display.slice(0,2).toUpperCase();
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.add('visible');
   renderNavItems();
-  go('pipeline',null,'');
+  // İlk erişilebilir sayfaya git
+  const firstPage = (found.permissions||[])[0] || 'pipeline';
+  go(firstPage, null, '');
   applyI18n();
 }
+
 function logout(){
   if(!confirm(T('logout_confirm'))) return;
+  currentUser = null;
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('app').classList.remove('visible');
-  document.getElementById('l-pass').value='';
-  currentUser=null;
+  document.getElementById('l-pass').value = '';
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+// ── Yetki kontrolü ──
+function hasPerm(key){
+  if(!currentUser) return false;
+  if(currentUser.role==='admin') return true;
+  return (currentUser.permissions||[]).includes(key);
 }
 
 // ══════════════════════════════════════════════════
@@ -811,28 +977,34 @@ function renderLoginVersion(){
 // NAV
 // ══════════════════════════════════════════════════
 function renderNavItems(){
-  const navItems=[
-    {page:'pipeline',i18n:'pipeline',icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'},
-    {page:'telefon',i18n:'phone_screen',icon:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'},
-    {page:'mulakat',i18n:'interview_form_nav',icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
-    {page:'kayitlar',i18n:'records',icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',badge:'kayit-badge-sb'},
-    {page:'test',i18n:'test_drive_nav',icon:'<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'},
-    {page:'evaluation',i18n:'evaluation',icon:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'},
-    {page:'referans',i18n:'reference',icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'},
-    {page:'tesekkur',i18n:'thanks',icon:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>'},
-    {page:'ai',i18n:'ai_tools',icon:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>',badge:'yz-badge',badgeTxt:'YZ'},
-    {page:'ozet',i18n:'comparison',icon:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>'},
-    {page:'kaynaklar',i18n:'resources',icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
-    {page:'versions',i18n:'version_history',icon:'<polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/>'},
-    {page:'suggest',i18n:'suggest',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+  const navDefs=[
+    {page:'pipeline',   i18n:'pipeline',          icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'},
+    {page:'telefon',    i18n:'phone_screen',       icon:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'},
+    {page:'mulakat',    i18n:'interview_form_nav', icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
+    {page:'kayitlar',   i18n:'records',            icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',badge:'kayit-badge-sb'},
+    {page:'test',       i18n:'test_drive_nav',     icon:'<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'},
+    {page:'evaluation', i18n:'evaluation',         icon:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'},
+    {page:'referans',   i18n:'reference',          icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'},
+    {page:'tesekkur',   i18n:'thanks',             icon:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>'},
+    {page:'ai',         i18n:'ai_tools',           icon:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>',badge:'yz-badge',badgeTxt:'YZ'},
+    {page:'ozet',       i18n:'comparison',         icon:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>'},
+    {page:'kaynaklar',  i18n:'resources',          icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {page:'versions',   i18n:'version_history',    icon:'<polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/>'},
+    {page:'suggest',    i18n:'suggest',            icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {page:'admin',      i18n:'admin_panel',        icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="22" y1="11" x2="16" y2="11"/><line x1="19" y1="8" x2="19" y2="14"/>',adminOnly:true},
   ];
-  const nav=document.getElementById('nav-items');
-  nav.innerHTML=navItems.map(item=>`
-    <button class="nb" data-page="${item.page}" onclick="go('${item.page}',this,'${T(item.i18n)}')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${item.icon}</svg>
-      <span>${T(item.i18n)}</span>
-      ${item.badge?`<span class="nb-badge" id="${item.badge}">${item.badgeTxt||'0'}</span>`:''}
-    </button>`).join('');
+  const nav = document.getElementById('nav-items');
+  nav.innerHTML = navDefs
+    .filter(item => {
+      if(item.adminOnly) return currentUser?.role==='admin';
+      return hasPerm(item.page);
+    })
+    .map(item=>`
+      <button class="nb" data-page="${item.page}" onclick="go('${item.page}',this,'')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${item.icon}</svg>
+        <span>${T(item.i18n)||item.i18n}</span>
+        ${item.badge?`<span class="nb-badge" id="${item.badge}">${item.badgeTxt||'0'}</span>`:''}
+      </button>`).join('');
   updateBadge();
 }
 
@@ -840,18 +1012,24 @@ let sbCol=false;
 function toggleSB(){sbCol=!sbCol;document.getElementById('sidebar').classList.toggle('collapsed',sbCol);}
 
 function go(id,btn,title){
+  // Yetki kontrolü
+  if(id!=='admin' && !hasPerm(id) && id!=='pipeline'){
+    // yetkisiz sayfaya yönlendirmeyi engelle
+    return;
+  }
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   const panel=document.getElementById('panel-'+id);
   if(panel) panel.classList.add('active');
   if(btn) btn.classList.add('active');
   else{const found=document.querySelector(`.nb[data-page="${id}"]`);if(found) found.classList.add('active');}
-  document.getElementById('page-title').textContent=title||T(id);
-  if(id==='evaluation') renderEval();
-  if(id==='kayitlar') renderKayitlar();
-  if(id==='telefon') renderTelefon();
-  if(id==='versions') renderVersions();
-  if(id==='suggest') renderSuggestions();
+  document.getElementById('page-title').textContent = title || T(id) || '';
+  if(id==='evaluation')  renderEval();
+  if(id==='kayitlar')    renderKayitlar();
+  if(id==='telefon')     renderTelefon();
+  if(id==='versions')    renderVersions();
+  if(id==='suggest')     renderSuggestions();
+  if(id==='admin')       renderAdminPanel();
 }
 function st(pre,id,btn){
   document.querySelectorAll(`[id^="${pre}-"].tpanel`).forEach(p=>p.classList.remove('active'));
@@ -1109,8 +1287,8 @@ function saveInterview(){
     not:document.getElementById('mf-not').value.trim(),
     sorular:[...iqItems.map(i=>({soru:i.soru,yanit:i.yanit}))],
     savedAt:new Date().toLocaleString('tr-TR'),lang:LANG};
-  const mevcut=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
-  mevcut.unshift(kayit);localStorage.setItem('duay-ik-kayitlar',JSON.stringify(mevcut));
+  const mevcut = usrGet('kayitlar') || [];
+  mevcut.unshift(kayit); usrSet('kayitlar', mevcut);
   updateBadge();
   document.getElementById('save-msg').innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">✅ Görüşme kayıt edildi.</div>';
   setTimeout(()=>document.getElementById('save-msg').innerHTML='',5000);
@@ -1122,11 +1300,11 @@ function clearForm(){
   renderIQList();document.getElementById('save-msg').innerHTML='';
 }
 function updateBadge(){
-  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
+  const k = usrGet('kayitlar') || [];
   const b=document.getElementById('kayit-badge-sb');if(b) b.textContent=k.length;
 }
 function renderKayitlar(){
-  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
+  const k = usrGet('kayitlar') || [];
   const el=document.getElementById('kayit-listesi');
   if(!k.length){el.innerHTML='<div class="empty">'+T('no_records')+'</div>';return;}
   el.innerHTML=k.map((r,ri)=>`
@@ -1145,7 +1323,7 @@ function renderKayitlar(){
     </div>`).join('');
 }
 function viewKayit(idx){
-  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');const r=k[idx];if(!r) return;
+  const k = usrGet('kayitlar') || []; const r=k[idx];if(!r) return;
   const w=window.open('','_blank');
   w.document.write(`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Mülakat — ${r.aday}</title>
   <style>body{font-family:system-ui,sans-serif;max-width:680px;margin:40px auto;padding:0 20px;color:#1a1a2e}h1{color:#8b1a4a;margin-bottom:3px}h2{font-size:14px;color:#4a1a6a;margin:18px 0 7px;border-bottom:1px solid #e8dff5;padding-bottom:4px}.meta{font-size:12px;color:#6a4a7a;margin-bottom:18px}.qitem{margin-bottom:13px;border:1px solid #e8dff5;border-radius:8px;padding:11px}.qsoru{font-weight:600;font-size:13px;color:#1a0a2e;margin-bottom:5px}.qyanit{font-size:12px;color:#334155;line-height:1.6;background:#f0faf6;padding:7px;border-radius:6px}.not-box{background:#f0e8f8;border-radius:8px;padding:11px;font-size:12px;color:#4a1a6a;line-height:1.6}</style></head><body>
@@ -1158,8 +1336,8 @@ function viewKayit(idx){
 }
 function deleteKayit(idx){
   if(!confirm(T('delete')+'?')) return;
-  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');k.splice(idx,1);
-  localStorage.setItem('duay-ik-kayitlar',JSON.stringify(k));updateBadge();renderKayitlar();
+  const k = usrGet('kayitlar') || []; k.splice(idx,1);
+  usrSet('kayitlar', k); updateBadge(); renderKayitlar();
 }
 
 // ══════════════════════════════════════════════════
@@ -1292,19 +1470,19 @@ function submitSuggestion(){
   const msgEl=document.getElementById('sg-msg');
   if(!title||!desc){msgEl.innerHTML='<div class="err-box">'+T('suggestion_err')+'</div>';return;}
   const sug={id:Date.now(),name:name||'Anonim',cat,title,desc,votes:0,status:'beklemede',date:new Date().toLocaleString('tr-TR')};
-  const list=JSON.parse(localStorage.getItem('duay-ik-suggestions')||'[]');
-  list.unshift(sug);localStorage.setItem('duay-ik-suggestions',JSON.stringify(list));
+  const list = usrGet('suggestions') || [];
+  list.unshift(sug); usrSet('suggestions', list);
   msgEl.innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">'+T('suggestion_saved')+'</div>';
   document.getElementById('sg-title').value='';document.getElementById('sg-desc').value='';
   setTimeout(()=>{msgEl.innerHTML='';renderSuggestions();},2000);
 }
 function voteSuggestion(idx,dir){
-  const list=JSON.parse(localStorage.getItem('duay-ik-suggestions')||'[]');
+  const list = usrGet('suggestions') || [];
   if(list[idx]) list[idx].votes+=dir;
-  localStorage.setItem('duay-ik-suggestions',JSON.stringify(list));renderSuggestions();
+  usrSet('suggestions', list); renderSuggestions();
 }
 function renderSuggestions(){
-  const list=JSON.parse(localStorage.getItem('duay-ik-suggestions')||'[]');
+  const list = usrGet('suggestions') || [];
   const el=document.getElementById('suggest-list');if(!el) return;
   if(!list.length){el.innerHTML='<div class="empty" style="height:120px">Henüz öneri yok.</div>';return;}
   const catColors={Özellik:'#eff6ff:#1d4ed8',İyileştirme:'#f0fdf4:#166534',Hata:'#fef2f2:#b91c1c',Tasarım:'#fdf4ff:#7e22ce',Diğer:'#f8fafc:#334155'};
@@ -1395,6 +1573,203 @@ async function genIlan(){
   btn.disabled=false;btn.textContent=T('generate_posting');
 }
 
+// ══════════════════════════════════════════════════
+// ADMİN PANELİ
+// ══════════════════════════════════════════════════
+
+// Role göre default izinler
+const ROLE_PRESETS = {
+  admin:   ALL_PERMISSIONS.map(p=>p.key),
+  hr:      ['pipeline','telefon','mulakat','kayitlar','test','evaluation','referans','tesekkur','ai','ozet','kaynaklar','versions','suggest'],
+  viewer:  ['pipeline','kayitlar','evaluation','kaynaklar','versions'],
+};
+
+function renderAdminPanel(){
+  renderAdminUserList();
+  renderPermCheckboxes('nu', ROLE_PRESETS.hr); // default yeni kullanıcı için hr preset
+}
+
+function renderAdminUserList(){
+  const users = getUsers();
+  const el = document.getElementById('admin-user-list');
+  if(!el) return;
+  el.innerHTML = users.map((u,i) => `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;gap:13px">
+      <div style="width:38px;height:38px;border-radius:50%;background:${u.role==='admin'?'#f8e8f0':'var(--bg3)'};color:${u.role==='admin'?'var(--accent)':'var(--text2)'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${u.display.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+          <span style="font-weight:700;font-size:13px;color:var(--text)">${u.display}</span>
+          <span style="font-size:10px;font-weight:600;padding:1px 8px;border-radius:20px;background:${u.role==='admin'?'#f8e8f0':u.role==='hr'?'#eff6ff':'#f0fdf4'};color:${u.role==='admin'?'var(--accent)':u.role==='hr'?'#1d4ed8':'#166534'}">${u.role==='admin'?'Admin':u.role==='hr'?'IK Uzmanı':'Görüntüleyici'}</span>
+          <span style="font-size:10px;font-weight:600;padding:1px 8px;border-radius:20px;background:${u.active?'#ecfdf5':'#fef2f2'};color:${u.active?'#065f46':'#991b1b'}">${u.active?'Aktif':'Pasif'}</span>
+          ${u.id==='usr_admin'?'<span style="font-size:9px;color:var(--text3);padding:1px 6px;border-radius:20px;border:1px solid var(--border)">Sistem Admin</span>':''}
+        </div>
+        <div style="font-size:11px;color:var(--text3)">@${u.user} · ${u.permissions?.length||0} izin · Oluşturuldu: ${u.createdAt||'—'}</div>
+        <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">
+          ${(u.permissions||[]).map(p=>{
+            const def = ALL_PERMISSIONS.find(x=>x.key===p);
+            return `<span style="font-size:9px;background:var(--bg3);color:var(--text3);padding:1px 6px;border-radius:20px">${def?.label||p}</span>`;
+          }).join('')}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+        <button class="btn btn-outline btn-sm" onclick="openEditUser('${u.id}')">✏️ Düzenle</button>
+        ${u.id!=='usr_admin'?`<button class="btn btn-danger btn-sm" onclick="toggleUserActive('${u.id}')">${u.active?'Pasif Yap':'Aktif Yap'}</button>`:''}
+        ${u.id!=='usr_admin'?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑 Sil</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderPermCheckboxes(prefix, selectedPerms){
+  const el = document.getElementById(prefix+'-perms');
+  if(!el) return;
+  el.innerHTML = ALL_PERMISSIONS.map(p=>`
+    <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text);cursor:pointer;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--bg3)">
+      <input type="checkbox" id="${prefix}-perm-${p.key}" ${selectedPerms.includes(p.key)?'checked':''} style="accent-color:var(--accent);width:13px;height:13px"/>
+      ${p.label}
+    </label>`).join('');
+}
+
+function getCheckedPerms(prefix){
+  return ALL_PERMISSIONS.filter(p => document.getElementById(prefix+'-perm-'+p.key)?.checked).map(p=>p.key);
+}
+
+function setAllPerms(prefix, val){
+  ALL_PERMISSIONS.forEach(p=>{
+    const el = document.getElementById(prefix+'-perm-'+p.key);
+    if(el) el.checked = val;
+  });
+}
+
+function setRolePreset(prefix){
+  const roleEl = document.getElementById(prefix+'-role') || document.getElementById(prefix.replace('eu','eu')+'-role');
+  const role = document.getElementById(prefix+'-role')?.value || 'hr';
+  const preset = ROLE_PRESETS[role] || ROLE_PRESETS.hr;
+  ALL_PERMISSIONS.forEach(p=>{
+    const el = document.getElementById(prefix+'-perm-'+p.key);
+    if(el) el.checked = preset.includes(p.key);
+  });
+}
+
+function createUser(){
+  const uname   = document.getElementById('nu-user').value.trim().toLowerCase();
+  const display = document.getElementById('nu-display').value.trim();
+  const pass    = document.getElementById('nu-pass').value;
+  const role    = document.getElementById('nu-role').value;
+  const perms   = getCheckedPerms('nu');
+  const errEl   = document.getElementById('nu-err');
+
+  if(!uname||!display||!pass){ errEl.innerHTML='<div class="err-box">Kullanıcı adı, görünen ad ve şifre zorunludur.</div>'; return; }
+  if(pass.length < 4){ errEl.innerHTML='<div class="err-box">Şifre en az 4 karakter olmalıdır.</div>'; return; }
+
+  const users = getUsers();
+  if(users.find(u=>u.user===uname)){ errEl.innerHTML='<div class="err-box">Bu kullanıcı adı zaten kullanılıyor.</div>'; return; }
+
+  const newUser = {
+    id: 'usr_'+Date.now(),
+    user: uname,
+    pass,
+    display,
+    role,
+    active: true,
+    permissions: perms,
+    createdAt: new Date().toLocaleString('tr-TR'),
+  };
+  users.push(newUser);
+  saveUsers(users);
+
+  errEl.innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">✅ Kullanıcı oluşturuldu: <strong>'+display+'</strong></div>';
+  document.getElementById('nu-user').value='';
+  document.getElementById('nu-display').value='';
+  document.getElementById('nu-pass').value='';
+  renderAdminUserList();
+  setTimeout(()=>{ errEl.innerHTML=''; st('admin','list',document.querySelectorAll('#panel-admin .tab')[0]); },1800);
+}
+
+function openEditUser(uid){
+  const users = getUsers();
+  const u = users.find(x=>x.id===uid);
+  if(!u) return;
+  document.getElementById('eu-id').value      = u.id;
+  document.getElementById('eu-user').value    = u.user;
+  document.getElementById('eu-display').value = u.display;
+  document.getElementById('eu-pass').value    = '';
+  document.getElementById('eu-role').value    = u.role;
+  document.getElementById('eu-active').checked = u.active;
+  document.getElementById('edit-mo-title').textContent = u.display + ' — Düzenle';
+  renderPermCheckboxes('eu', u.permissions||[]);
+  // Admin kendi yetkilerini kısıtlayamasın
+  if(u.id==='usr_admin'){
+    ALL_PERMISSIONS.forEach(p=>{
+      const el=document.getElementById('eu-perm-'+p.key);
+      if(el) el.disabled=true;
+    });
+  }
+  document.getElementById('edit-mo').style.display='flex';
+}
+
+function saveEditUser(){
+  const uid = document.getElementById('eu-id').value;
+  const users = getUsers();
+  const idx = users.findIndex(u=>u.id===uid);
+  if(idx===-1) return;
+
+  const uname   = document.getElementById('eu-user').value.trim().toLowerCase();
+  const display = document.getElementById('eu-display').value.trim();
+  const pass    = document.getElementById('eu-pass').value;
+  const role    = document.getElementById('eu-role').value;
+  const active  = document.getElementById('eu-active').checked;
+  const perms   = uid==='usr_admin' ? ALL_PERMISSIONS.map(p=>p.key) : getCheckedPerms('eu');
+
+  if(!uname||!display){ alert('Kullanıcı adı ve görünen ad zorunludur.'); return; }
+
+  // Kullanıcı adı başkasıyla çakışıyor mu?
+  if(users.find((u,i)=>u.user===uname && i!==idx)){ alert('Bu kullanıcı adı başka bir kullanıcıya ait.'); return; }
+
+  users[idx] = {
+    ...users[idx],
+    user: uname,
+    display,
+    role,
+    active,
+    permissions: perms,
+    ...(pass ? {pass} : {}), // şifre boş ise değiştirme
+  };
+  saveUsers(users);
+
+  // Eğer kendini düzenliyorsa currentUser'ı güncelle
+  if(currentUser && currentUser.id===uid){
+    currentUser = {...users[idx]};
+    document.getElementById('user-name').textContent = users[idx].display;
+    document.getElementById('user-av').textContent   = users[idx].display.slice(0,2).toUpperCase();
+    renderNavItems();
+  }
+
+  document.getElementById('edit-mo').style.display='none';
+  renderAdminUserList();
+}
+
+function toggleUserActive(uid){
+  if(uid==='usr_admin'){ alert('Sistem admin pasif yapılamaz.'); return; }
+  const users = getUsers();
+  const u = users.find(x=>x.id===uid);
+  if(!u) return;
+  u.active = !u.active;
+  saveUsers(users);
+  renderAdminUserList();
+}
+
+function deleteUser(uid){
+  if(uid==='usr_admin'){ alert('Sistem admin silinemez.'); return; }
+  const users = getUsers();
+  const u = users.find(x=>x.id===uid);
+  if(!u) return;
+  if(!confirm(u.display+' adlı kullanıcıyı silmek istediğinize emin misiniz?\nBu kullanıcıya ait tüm kayıtlar da silinecektir.')) return;
+  // Kullanıcı verilerini temizle
+  Object.keys(localStorage).filter(k=>k.includes(uid)).forEach(k=>localStorage.removeItem(k));
+  saveUsers(users.filter(x=>x.id!==uid));
+  renderAdminUserList();
+}
+
 function aiAddToForm(idx){
   syncIQ();
   const s = (window._aiSorular||[])[idx];
@@ -1408,6 +1783,7 @@ function aiAddToForm(idx){
 }
 
 // ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
 renderLoginVersion();
@@ -1418,14 +1794,20 @@ renderSoruBankasi();
 renderTests();
 renderKaynaklar();
 updateTsk();
-updateBadge();
-document.getElementById('mf-tarih').value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
-document.getElementById('app').style.display='none';
+// Ensure users DB initialized
+getUsers();
+document.getElementById('mf-tarih').value = new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
 
-// demo: Login ekranı gözükmesin diye App'i baştan gizleyelim
-window.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('app').style.display='';
+// App başlangıçta gizli, login ekranı görünür
+window.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('app').classList.remove('visible');
+  // Admin panel perm checkboxes başlangıç değeri
+  renderPermCheckboxes('nu', ROLE_PRESETS.hr);
+});
+// Role seçimi değişince new-user perm preset güncelle
+document.addEventListener('change', e => {
+  if(e.target.id==='nu-role') setRolePreset('nu');
+  if(e.target.id==='eu-role') setRolePreset('eu');
 });
 </script>
 </body>
