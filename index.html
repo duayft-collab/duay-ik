@@ -1057,27 +1057,110 @@ let candidates=[
 let selCand=null;
 const FACTORS=['Dış görünüş','Dikkat','Deneyim (miktar)','Deneyim (kalite)','Merak','Hırs','Kararlılık','Yenilikçilik','Kendini yönetme','Analitik yetenek','Karar alma','Öğrenci Zihniyeti','Referanslar'];
 let evalSc=Object.fromEntries(FACTORS.map(f=>[f,3]));
-const DEFAULT_SORULAR = [
+// DEFAULT_SORULAR — SORU_BANKASI yüklendikten sonra buildBankFlat() ile zenginleştirilir
+// Başlangıç değeri: basit string listesi (SORU_BANKASI henüz tanımlanmadı)
+const DEFAULT_SORU_METINLERI = [
   'Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?',
-  'Bu pozisyonu kariyer olarak görüyor musunuz? Satınalma ile ilgili sertifikanız var mı?',
-  'En başarılı indirim aldığınız pazarlığı anlatır mısınız?',
-  'En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?',
-  'Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizde ne yaptınız?',
-  'Bir işi bırakmanıza sebep olan şeyler nelerdir?',
-  'Hayatta aldığınız en zor kararlardan biri nelerdi, neden aldınız?',
-  'Ofis ortamında mı yoksa sahada mı çalıştınız? Hangisi daha motive edici?',
-  'Kendinizi çok başarılı hissettiğiniz bir işi anlatabilir misiniz?',
-  'Bu görüşmeye sizi getiren şey ne?',
+  'Bu pozisyonu kariyer olarak mı görüyorsunuz, yoksa geçici mi?',
+  'Daha önce çalıştığınız işlerde en iyi ve en kötü performansı hangi koşullarda sergilediniz?',
+  'Bir hedefe ulaşamadığınızda ne yaparsınız? Somut bir örnek verir misiniz?',
+  'Hayatınızdaki en zor karar neydi? Neden o kararı aldınız?',
+  'Son 12 ayda kendinizi hangi konuda geliştirdiniz? Nasıl öğrendiniz?',
+  'Bir yöneticiyle aynı fikirde olmadığınız bir durumu anlatın. Ne yaptınız?',
+  'Bu pozisyon için başvurmanıza neden olan şey tam olarak neydi?',
+  'Şimdiye kadar yaptığınız en iyi pazarlık veya indirim aldığınız anı anlatır mısınız?',
+  'Bir sonraki 3 yılda kendinizi nerede görüyorsunuz?',
 ];
-let iqItems = DEFAULT_SORULAR.map((s,i) => ({id:'iq_def_'+i, soru:s, yanit:''}));
+// iqItems SORU_BANKASI yüklendikten sonra initDefaultIQ() ile doldurulacak
+let iqItems = DEFAULT_SORU_METINLERI.map((s,i) => ({id:'iq_def_'+i, soru:s, yanit:'', amac:'', ideal:'', kirmizi:''}));
 
-const SORU_BANKASI=[
-  {cat:'Karakter & Adaptasyon',sorular:['Daha önce çalıştığınız işleri göz önünde bulundurarak, her birindeki performansınızı nasıl değerlendirirsiniz?','En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?','Amaçlarınıza ulaşırken karşılaştığınız engel ve zorluklardan bahsedin. Bunlarla nasıl başa çıktınız?','Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizi görünce ne yaptınız?','Bir işi bırakmanıza sebep olan şeyler nelerdir?']},
-  {cat:'Zihin Yapısı & Başarı',sorular:['En mükemmel işiniz ve iş dışı başarınız nedir?','En büyük hayal kırıklıklarınız nelerdir? Onlarla nasıl başa çıktınız?','Potansiyelinizi zorlayan bir iş anlatır mısınız?','İkna yönünüzle ilgili hayatınızdan bir örnek verir misiniz?']},
-  {cat:'İlişkiler & İletişim',sorular:['Bir yönetici ya da müdürle aranızda geçen en olumlu ve olumsuz olayları anlatın.','Bir yöneticiyle aynı fikirde olmadığınız bir olaydan ve bu durumda ne yaptığınızdan bahsedin.','Birlikte çalıştığınız kişilerle ilişkilerinizde en sevdiğiniz ve sevmediğiniz yön nedir?']},
-  {cat:'Motivasyon & Beklentiler',sorular:['Bir işten beklentileriniz nelerdir?','Sabah koşa koşa geleceğiniz bir iş ve ortam nasıl olmalı?','Bu görüşmeye sizi getiren şey ne?']},
-  {cat:'IK Yöneticisi Özel',sorular:['En uzun süre çalıştığınız iş hangisiydi ve tam olarak neler yaptınız?','Karşılaştığınız en büyük zorlayıcı sorun neydi, nasıl çözdünüz?','Hayatta aldığınız en zor kararlardan biri nelerdi, neden aldınız?','Ofis ortamında mı yoksa sahada mı çalıştınız? Hangisi daha motive edici?','En başarılı indirim aldığınız pazarlığı anlatır mısınız?']},
+// ══════════════════════════════════════════════════
+// SORU BANKASI — Zenginleştirilmiş (soru + amaç + ideal yanıt + kırmızı bayrak)
+// ══════════════════════════════════════════════════
+const SORU_BANKASI = [
+  {
+    cat:'Telefon Ön Eleme', color:'#7c3aed',
+    sorular:[
+      {soru:'Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?',amac:'Araştırmacılık, proaktiflik ve şirkete gerçek ilgiyi ölçer.',ideal:'Siteyi gezmiş, bir ürün/hizmet/değer önerisini somutlaştırabilmiş. "Özellikle X bölümünüzdeki Y dikkatimi çekti çünkü…" — içerik spesifik olmalı.',kirmizi:'Siteyi açmamış ya da "genel olarak güzel görünüyor" gibi yüzeysel yanıt.'},
+      {soru:'Bu pozisyonu kariyer olarak mı görüyorsunuz, yoksa geçici mi?',amac:'Bağlılık niyetini ve uzun vadeli motivasyonu anlamak.',ideal:'"Bu alanda uzmanlaşmak istiyorum çünkü…" şeklinde gerekçeli ve pozisyonla bağlantılı.',kirmizi:'Tereddütlü, "şimdilik bakarım" tarzı veya maaş odaklı cevap.'},
+      {soru:'Satınalma/IK alanında aldığınız eğitim veya sertifikalar var mı?',amac:'Alana yatırım yapıp yapmadığını ve öğrenme disiplinini ölçer.',ideal:'Spesifik sertifika adları ya da aldığı eğitimler. Yoksa neden almadığını ve planını açıklayabilmeli.',kirmizi:'Hiç eğitim almamış ve önemsiz görmüş.'},
+      {soru:'Şimdiye kadar yaptığınız en iyi pazarlık veya indirim aldığınız anı anlatır mısınız?',amac:'İkna kabiliyeti, müzakere becerisi ve somut başarı geçmişini test eder.',ideal:'Rakamlar içeren, bağlamı net, süreci adım adım anlatan bir örnek. STAR formatında: "Durumda X vardı, %Y indirim aldım çünkü Z adımlarını izledim."',kirmizi:'Soyuk, belirsiz ya da örnek verememe. "İyi pazarlık yaparım" ama kanıt yok.'},
+      {soru:'DISC analizinizi yaptırdınız mı? Profilinizden haberdar mısınız?',amac:'Öz farkındalık ve kişisel gelişime yatırım yapıp yapmadığını anlamak.',ideal:'Profilini biliyor ve nasıl kullandığını açıklayabiliyor. "D profiliyim, hızlı karar alırım ama detayı atlayabilirim, bunu telafi etmek için şunu yapıyorum."',kirmizi:'Hiç duymamış veya "önemli bulmuyorum" tavrı.'},
+    ]
+  },
+  {
+    cat:'Karakter & Adaptasyon', color:'#0ea5e9',
+    sorular:[
+      {soru:'Daha önce çalıştığınız işlerde en iyi ve en kötü performansı hangi koşullarda sergilediniz?',amac:'Öz farkındalık ve dürüstlük. Kendi güçlü/zayıf yanlarını biliyor mu?',ideal:'Hem iyi hem kötü performansı somut örneklerle anlatabilmeli. "Kötü performanstan şunu öğrendim…" — ders çıkardığını göstermeli.',kirmizi:'Sadece iyi örnek verir, kötüyü gizler ya da dışsal faktörlere yükler.'},
+      {soru:'Bir hedefe ulaşamadığınızda ne yaparsınız? Somut bir örnek verir misiniz?',amac:'Dayanıklılık, problem çözme ve sorumluluk alma kapasitesini ölçer.',ideal:'"Hedefe ulaşamadım çünkü X oldu. Şunu değiştirdim ve Y sonucu aldım." Analiz eder, alternatif yol arar.',kirmizi:'Başkasını suçlama, pes etme, ya da "böyle bir durum olmadı" yanıtı.'},
+      {soru:'Akşamları veya hafta sonları çalışmanız gereken durumlar oldu mu? Nasıl karşıladınız?',amac:'Esneklik ve işe adanmışlık düzeyini anlamak.',ideal:'Gerektiğinde yapabildiğini ve bunu sürdürülebilir kılan kişisel dengeyi de anlattığını görmek.',kirmizi:'"Asla yapmam" ya da "her zaman yaparım" şeklinde aşırı uçlar.'},
+      {soru:'Görev tanımınızın dışına çıkmanız gereken bir durumla karşılaştınız mı? Ne yaptınız?',amac:'İş zekasını ve "bu benim işim değil" zihniyetinin olup olmadığını test eder.',ideal:'Görevi üstlenmiş, öğrenmiş ve fırsata çevirmiş. "Bilmiyordum ama araştırdım, hallettim."',kirmizi:'"Görev tanımımda yoktu, yapmadım" — kesin kırmızı bayrak.'},
+      {soru:'Bir işi bırakmanıza sebep olan şeyler nelerdir?',amac:'Değerleri, sınırları ve iş kültürü uyumunu anlamak.',ideal:'Dürüst ama profesyonel. "Büyüme fırsatı kalmadı" veya "değerlerimle çelişen karar alındı" gibi meşru nedenler. Eski işverenini yermez.',kirmizi:'Eski iş yerine sürekli şikayet, maaş dışında motivasyon belirtememek.'},
+    ]
+  },
+  {
+    cat:'Zihin Yapısı & Büyüme', color:'#10b981',
+    sorular:[
+      {soru:'İş dışında en gurur duyduğunuz başarınız nedir?',amac:'Karakteri, değerleri ve motivasyon kaynaklarını anlamak. İş dışında da hedef koyuyor mu?',ideal:'Spesifik, anlamlı, kendine özgü bir başarı. Önemli olan "bu beni zorladı ama bitirdim" mesajı.',kirmizi:'"Aklıma gelmiyor" veya çok yüzeysel bir yanıt.'},
+      {soru:'Hayatınızdaki en zor karar neydi? Neden o kararı aldınız?',amac:'Karar alma sürecini, değerleri ve baskı altında nasıl düşündüğünü anlamak.',ideal:'"X mi Y mi" ikilemini yaşadım, şu kriterleri kullandım, şu kararı aldım, şu sonucu gördüm. Süreç ve gerekçe önemli.',kirmizi:'Küçük bir karar anlatmak ya da hiç zorlanmamış gibi göstermek.'},
+      {soru:'Son 12 ayda kendinizi hangi konuda geliştirdiniz? Nasıl öğrendiniz?',amac:'Öğrenci zihniyetini ve sürekli gelişime olan bağlılığı ölçer.',ideal:'Spesifik konu, spesifik kaynak (kitap, kurs, mentor, deneyim). "X\'i öğrendim çünkü Y eksikliğimi fark ettim."',kirmizi:'Genel yanıt veya "öğrenecek bir şey kalmadı" tavrı.'},
+      {soru:'Potansiyelinizi zorlayan, "bittim ama boyumu uzattı" diyebileceğiniz bir deneyim anlatır mısınız?',amac:'Dayanıklılık, büyüme zihniyeti ve zorluklara yaklaşımını anlamak.',ideal:'Gerçekten zorlandığı, neredeyse pes ettiği ama geçtiği bir an. Öğrendiği somut şeyi söyleyebilmeli.',kirmizi:'Hafif bir zorluk anlatmak ya da abartılı dramatize etmek.'},
+      {soru:'Bir konuda yanıldığınızı fark ettiğinizde ne yaparsınız? Örnek verir misiniz?',amac:'Ego yönetimi, hesap verebilirlik ve öğrenme kapasitesi.',ideal:'Hızla kabul eder, özür diler, düzeltir ve öğrenir. "Yanıldım, şunu fark ettim, şöyle düzelttim."',kirmizi:'Savunmacı tutum, mazeret üretmek, hatayı başkasına yüklemek.'},
+    ]
+  },
+  {
+    cat:'İlişkiler & Liderlik', color:'#f59e0b',
+    sorular:[
+      {soru:'Bir yöneticiyle aynı fikirde olmadığınız bir durumu anlatın. Ne yaptınız?',amac:'Cesaret, iletişim kalitesi ve hiyerarşiyle başa çıkma becerisi.',ideal:'Görüşünü açık, saygılı ve verilerle dile getirmiş. Sonuçta kabul etmiş ya da ikna etmiş — ama kaçınmamış.',kirmizi:'Ya hiç itiraz etmemiş ("üstüme uydum") ya da agresif tartışmış.'},
+      {soru:'C kalite bir çalışanla çalışmak zorunda kaldınız mı? Nasıl yönettiniz?',amac:'Liderlik olgunluğunu, empatiyi ve sonuç odaklılığı ölçer.',ideal:'Önce durumu anlamaya çalışmış, geri bildirim vermiş, gelişim için fırsat tanımış. Sonuç alamazsa eskalasyon etmiş.',kirmizi:'"Direkt kovdurmaya çalıştım" ya da "görmezden geldim."'},
+      {soru:'Birini ikna etmek için çok uğraşmak zorunda kaldığınız bir durumu anlatın.',amac:'İkna kabiliyeti, ısrar kapasitesi ve iletişim stratejisi.',ideal:'Hangi argümanları kullandığını, itirazları nasıl karşıladığını somut anlatabilmeli. "Şu yaklaşım işe yaramadı, şuna geçtim…"',kirmizi:'"İkna edemedim, bıraktım" — kolayca vazgeçmek.'},
+      {soru:'Takımınızda çatışma çıktığında nasıl bir rol üstlenirsiniz?',amac:'Çatışma yönetimi stilini ve takım dinamiğine katkısını anlamak.',ideal:'Arabulucu veya yapıcı taraf. "Tarafları dinledim, ortak zemin aradım, çözüme yönlendirdim."',kirmizi:'Çatışmadan kaçmak, taraf tutmak, "benim sorunum değil" tutumu.'},
+    ]
+  },
+  {
+    cat:'Motivasyon & Değerler', color:'#ec4899',
+    sorular:[
+      {soru:'Sabah işe gelmek için ne sizi motive eder? Enerji aldığınız şey nedir?',amac:'İç motivasyon kaynaklarını anlamak. Para dışında ne var?',ideal:'Anlam, büyüme, etki, takım, başarı — içsel motivatörler. "X yaptığımda tatmin oluyorum çünkü…" özgün ve spesifik.',kirmizi:'Sadece maaş ve güvence. Dışsal motivasyona tamamen bağlı.'},
+      {soru:'İdeal çalışma ortamınız nasıl olmalı? Neyle performansınız artar?',amac:'Kültür uyumunu test eder. Şirkete uygun mu?',ideal:'Kendi çalışma tarzını biliyor. "Özerklik + net hedefler + öğrenme kültürü" gibi spesifik.',kirmizi:'"Her ortamda çalışırım" — öz farkındalık eksikliği işareti.'},
+      {soru:'Bu pozisyon için başvurmanıza neden olan şey tam olarak neydi?',amac:'Araştırmış mı? Gerçekten bu şirketi mi istiyor yoksa rastgele başvuru mu?',ideal:'Şirkete özel neden. "İlanınızda X gördüm, sizin Y değeriniz benim Z hedefimle örtüşüyor."',kirmizi:'Genel cevap: "İyi şirket gibi göründü." Araştırma yapmamış.'},
+      {soru:'Bir sonraki 3 yılda kendinizi nerede görüyorsunuz?',amac:'Uzun vadeli planını ve bağlılık potansiyelini anlamak.',ideal:'Gerçekçi, bu pozisyonla bağlantılı büyüme planı. "Bu rolde ustalaşıp X\'e doğru gelişmek istiyorum."',kirmizi:'"Bilmiyorum" veya tamamen farklı bir kariyer hedefi.'},
+    ]
+  },
+  {
+    cat:'Durum & Problem Çözme', color:'#8b1a4a',
+    sorular:[
+      {soru:'Çok az bilgiyle hızlı karar almanız gereken bir durumu anlatın.',amac:'Baskı altında karar alma kapasitesi ve risk toleransı.',ideal:'"Elimde sadece X vardı, Y kararını aldım çünkü Z." Hangi bilgiyle, hangi riski göze alarak karar aldığını somut anlatabiliyor.',kirmizi:'Karar vermekten kaçınmış ya da tüm bilgiyi beklemek için ertelemiş.'},
+      {soru:'Bir müşteri veya tedarikçi çok zor davrandığında nasıl tepki verirsiniz?',amac:'Soğukkanlılık, profesyonellik ve zor insanlarla başa çıkma kapasitesi.',ideal:'Empati kurmuş, durumu anlamaya çalışmış, çözüm odaklı ilerlemiş. Kişisel almamış.',kirmizi:'Karşılıklı sertleşmek, şikayet etmek ya da tamamen çekilmek.'},
+      {soru:'Aynı anda birden fazla acil görevi olduğunda nasıl önceliklendirirsiniz?',amac:'Zaman yönetimi, organizasyon ve stres altında performans.',ideal:'Net bir önceliklendirme çerçevesi (etki × aciliyet), paydaşlarla iletişim, şeffaf yönetim.',kirmizi:'"Her şeyi yaparım" — gerçekçi değil. Ya da tamamen çaresiz kalma.'},
+      {soru:'Daha önce hiç yapmadığınız bir görevi son derece kısa sürede teslim etmeniz istenseydi ne yapardınız?',amac:'Öğrenme hızı, kaynak kullanımı ve teslim etme kararlılığı.',ideal:'Hızlıca araştırır, uzman bulur, sorar, minimum viable ürünü çıkarır. "Önce şunu yapardım, şu kaynağa bakardım."',kirmizi:'"Yapamam" demek veya aşırı yavaş planlama.'},
+    ]
+  },
+  {
+    cat:'IK & Satınalma Özel', color:'#6366f1',
+    sorular:[
+      {soru:'Bir tedarikçiyle fiyat müzakeresinde nasıl hazırlık yaparsınız?',amac:'Müzakere metodolojisi ve profesyonel hazırlık sürecini anlamak.',ideal:'Piyasa araştırması yapmış, alternatif tedarikçi belirlemiş, BATNA hazırlamış, hedef fiyat koymuş. Sistematik yaklaşım.',kirmizi:'Hazırlıksız gitme ya da sadece "sert oldum" demek.'},
+      {soru:'Bir aday için teknik yetkinlik mi, kültürel uyum mu daha önemli? Neden?',amac:'IK felsefesini ve insan değerlendirme olgunluğunu anlamak.',ideal:'"İkisi birlikte önemli ama dengesi role göre değişir" — nüanslı düşünce. Neden öyle düşündüğünü örnekle desteklemeli.',kirmizi:'Sert ikili "ya biri ya diğeri" yanıtı, gerekçesiz.'},
+      {soru:'Bir çalışanın performansının düştüğünü fark ettiğinizde ilk adımınız ne olur?',amac:'Empati, süreç bilgisi ve insan yönetimi yaklaşımını ölçer.',ideal:'Önce birebir görüşme, durumu anlamak (kişisel mi, iş mi?), geri bildirim, destek planı. Hemen disiplin değil.',kirmizi:'Direkt disiplin ya da "HR\'a bildiririm ve gönderirler" tutumu.'},
+      {soru:'Sizi en çok zorlayan bir işe alım sürecini anlatın. Ne öğrendiniz?',amac:'Gerçek saha deneyimini ve öğrenme kapasitesini test eder.',ideal:'Spesifik bir süreç, yaşanan güçlük, alınan ders. "Bu süreçten şunu öğrendim ve artık şöyle yapıyorum."',kirmizi:'Zorluk yaşamamış gibi göstermek ya da öğrenme yok.'},
+    ]
+  },
 ];
+
+// initDefaultIQ — SORU_BANKASI'ndan amaç/ideal/kırmızı eşleştirerek iqItems doldur
+function initDefaultIQ(){
+  buildBankFlat();
+  iqItems = DEFAULT_SORU_METINLERI.map((sMetin,i) => {
+    const found = _bankFlat.find(x => x.soru === sMetin);
+    return {
+      id: 'iq_def_'+i,
+      soru: sMetin,
+      yanit: '',
+      amac: found ? found.amac : '',
+      ideal: found ? found.ideal : '',
+      kirmizi: found ? found.kirmizi : '',
+    };
+  });
+}
 
 const KONTROL_ITEMS=['Mülakat takımını seçin (diğer personel üyeleri katılacaksa).','Görüşme için sessiz bir ortam hazırlayın.','Adayın özgeçmişini, telefon görüşmesi notlarını ve DISC profil sonuçlarını inceleyin.','Aday için firmanız ve pozisyonla ilgili bir bilgi paketi hazırlayın.','Adayı selamlayın ve tesisinizde kısa gezintiye çıkarın. İçecek bir şeyler teklif edin.','Görüşmenin amacını açıklayın.','Pozisyonla ilgili açık bir genel bakış sunun.','Adayın özgeçmişi ve çalışma hayatıyla ilgili soruları sorun.','Deneyimler, eğitim ve becerilerle ilgili hazırladığınız soruları sorun.','Mülakatı bitirin. Sürecin bundan sonraki kısmını açıklayın.','Adaya başka bir sorusu olup olmadığını sorun ve teşekkür ettikten sonra kapıya kadar eşlik edin.'];
 
@@ -1180,17 +1263,27 @@ function renderKontrolList(){
 // ══════════════════════════════════════════════════
 function renderIQList(){
   const el=document.getElementById('iq-list');
-  if(iqItems.length===0){el.innerHTML=`<div style="color:var(--text3);font-size:12px;padding:14px 0;text-align:center">${T('add_question')} butonunu veya soru bankasını kullanın.</div>`;return;}
+  if(iqItems.length===0){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:14px 0;text-align:center">Soru eklemek için "+ Soru Ekle" veya "Bankadan" butonunu kullanın.</div>';return;}
   el.innerHTML=iqItems.map((item,i)=>`
-    <div class="iq-row">
+    <div class="iq-row" style="position:relative">
       <div class="iq-top"><div class="iq-num">${i+1}</div>
         <textarea class="iq-q" id="iq-q-${item.id}" rows="2" onchange="iqItems[${i}].soru=this.value">${item.soru}</textarea>
         <button class="iq-del" onclick="removeIQ('${item.id}')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
       </div>
-      <div class="iq-ans-lbl">✍️ ${T('interviewer_note')}</div>
-      <textarea class="iq-ans" id="iq-a-${item.id}" rows="3" onchange="iqItems[${i}].yanit=this.value">${item.yanit||''}</textarea>
+      ${item.amac||item.ideal||item.kirmizi ? `<div style="display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap">
+        ${item.amac?`<button class="iq-hint-btn" onclick="toggleHint('hint-amac-${item.id}')" style="font-size:9px;padding:2px 7px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:20px;cursor:pointer;font-weight:600">🎯 Amaç</button>`:''}
+        ${item.ideal?`<button class="iq-hint-btn" onclick="toggleHint('hint-ideal-${item.id}')" style="font-size:9px;padding:2px 7px;border:1px solid #a7f3d0;background:#f0fdf4;color:#065f46;border-radius:20px;cursor:pointer;font-weight:600">✅ İdeal Yanıt</button>`:''}
+        ${item.kirmizi?`<button class="iq-hint-btn" onclick="toggleHint('hint-kirmizi-${item.id}')" style="font-size:9px;padding:2px 7px;border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:20px;cursor:pointer;font-weight:600">🚩 Kırmızı Bayrak</button>`:''}
+      </div>
+      <div id="hint-amac-${item.id}" style="display:none;font-size:10px;color:#1d4ed8;background:#eff6ff;border-radius:6px;padding:6px 10px;margin-bottom:5px;line-height:1.6">${item.amac||''}</div>
+      <div id="hint-ideal-${item.id}" style="display:none;font-size:10px;color:#065f46;background:#f0fdf4;border-radius:6px;padding:6px 10px;margin-bottom:5px;line-height:1.6">${item.ideal||''}</div>
+      <div id="hint-kirmizi-${item.id}" style="display:none;font-size:10px;color:#991b1b;background:#fef2f2;border-radius:6px;padding:6px 10px;margin-bottom:5px;line-height:1.6">${item.kirmizi||''}</div>`:''}
+      <div class="iq-ans-lbl">✍️ Adayın Yanıtı</div>
+      <textarea class="iq-ans" id="iq-a-${item.id}" rows="3" placeholder="Adayın verdiği yanıtı buraya not alın…" onchange="iqItems[${i}].yanit=this.value">${item.yanit||''}</textarea>
     </div>`).join('');
 }
+function toggleHint(id){ const el=document.getElementById(id); if(el) el.style.display=el.style.display==='none'?'block':'none'; }
+
 function addIQ(soruText){
   const id='iq'+Date.now();
   iqItems.push({id,soru:soruText||'',yanit:''});
@@ -1201,30 +1294,40 @@ function removeIQ(id){iqItems=iqItems.filter(i=>i.id!==id);renderIQList();}
 function syncIQ(){iqItems.forEach(item=>{const q=document.getElementById('iq-q-'+item.id);const a=document.getElementById('iq-a-'+item.id);if(q) item.soru=q.value;if(a) item.yanit=a.value;});}
 
 // Bank sorularını data-idx ile eşle, tırnak sorununu önle
+// Bank flat array — soru nesneleri (obje formatı)
 let _bankFlat = [];
-function addFromBank(){
+function buildBankFlat(){
   _bankFlat = [];
-  SORU_BANKASI.forEach(cat => cat.sorular.forEach(s => _bankFlat.push({cat:cat.cat, soru:s})));
+  SORU_BANKASI.forEach(cat => cat.sorular.forEach(s => {
+    _bankFlat.push({cat:cat.cat, color:cat.color, soru:s.soru||s, amac:s.amac||'', ideal:s.ideal||'', kirmizi:s.kirmizi||''});
+  }));
+}
+function getSoruText(s){ return typeof s === 'string' ? s : s.soru; }
+
+function addFromBank(){
+  buildBankFlat();
   document.getElementById('bank-mo-list').innerHTML = SORU_BANKASI.map(cat => {
     const rows = cat.sorular.map(s => {
-      const idx = _bankFlat.findIndex(x => x.soru === s && x.cat === cat.cat);
-      const already = iqItems.some(i => i.soru === s);
-      return `<div style="display:flex;align-items:flex-start;gap:9px;padding:6px 5px;border-radius:7px;cursor:pointer;transition:background .12s"
-        onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'"
-        onclick="bankAddItem(${idx})">
-        <div style="width:18px;height:18px;border-radius:5px;background:${already?'#ecfdf5':'var(--bg3)'};border:1px solid ${already?'#10b981':'var(--border)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
-          ${already
-            ? '<svg width="10" height="10" fill="none" stroke="#10b981" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>'
-            : '<svg width="10" height="10" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+      const soruTxt = getSoruText(s);
+      const idx = _bankFlat.findIndex(x => x.soru === soruTxt);
+      const already = iqItems.some(i => i.soru === soruTxt);
+      return `<div style="margin-bottom:8px;border:1px solid ${already?'#a7f3d0':'var(--border)'};border-radius:9px;padding:10px 12px;background:${already?'#f0fdf4':'var(--bg2)'}">
+        <div style="display:flex;align-items:flex-start;gap:8px;cursor:pointer" onclick="bankAddItem(${idx})">
+          <div style="width:18px;height:18px;border-radius:5px;background:${already?'#10b981':'var(--bg3)'};border:1px solid ${already?'#10b981':'var(--border)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
+            ${already?'<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>':'<svg width="10" height="10" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+          </div>
+          <span style="font-size:12px;font-weight:600;color:var(--text);line-height:1.5;flex:1">${soruTxt}</span>
+          <span style="font-size:10px;font-weight:600;color:${already?'#10b981':'var(--accent)'};flex-shrink:0;margin-top:2px">${already?'✓ Eklendi':'+ Ekle'}</span>
         </div>
-        <span style="font-size:11px;color:var(--text);line-height:1.5;flex:1">${s}</span>
-        <span style="font-size:10px;font-weight:600;color:${already?'#10b981':'var(--accent)'};flex-shrink:0;margin-top:2px">${already?'Eklendi':'Ekle'}</span>
+        ${s.amac?`<div style="margin-top:6px;font-size:10px;color:#1d4ed8;background:#eff6ff;border-radius:5px;padding:4px 8px"><strong>🎯 Amaç:</strong> ${s.amac}</div>`:''}
+        ${s.ideal?`<div style="margin-top:3px;font-size:10px;color:#065f46;background:#f0fdf4;border-radius:5px;padding:4px 8px"><strong>✅ İdeal Yanıt:</strong> ${s.ideal}</div>`:''}
+        ${s.kirmizi?`<div style="margin-top:3px;font-size:10px;color:#991b1b;background:#fef2f2;border-radius:5px;padding:4px 8px"><strong>🚩 Kırmızı Bayrak:</strong> ${s.kirmizi}</div>`:''}
       </div>`;
     }).join('');
-    return `<div style="margin-bottom:14px">
-      <div style="font-weight:700;font-size:11px;color:var(--accent);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border)">${cat.cat}</div>
-      ${rows}
-    </div>`;
+    return `<div style="margin-bottom:16px">
+      <div style="font-weight:700;font-size:11px;color:${cat.color};margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${cat.color};display:inline-block"></span>${cat.cat}
+      </div>${rows}</div>`;
   }).join('');
   document.getElementById('bank-mo').style.display='flex';
 }
@@ -1232,32 +1335,35 @@ function bankAddItem(idx){
   syncIQ();
   const item = _bankFlat[idx];
   if(!item) return;
-  // Zaten ekliyse çıkar (toggle)
   const exists = iqItems.findIndex(i => i.soru === item.soru);
-  if(exists !== -1){
-    iqItems.splice(exists,1);
-  } else {
-    iqItems.push({id:'iq'+Date.now()+Math.random(), soru:item.soru, yanit:''});
-  }
+  if(exists !== -1){ iqItems.splice(exists,1); }
+  else { iqItems.push({id:'iq'+Date.now()+Math.random(), soru:item.soru, yanit:'', amac:item.amac, ideal:item.ideal, kirmizi:item.kirmizi}); }
   renderIQList();
-  // Banka modalını güncelle (işaret göster)
   addFromBank();
 }
 function renderSoruBankasi(){
-  // Flat index için
-  let flat = [];
-  SORU_BANKASI.forEach(cat => cat.sorular.forEach(s => flat.push({cat:cat.cat, soru:s})));
-  window._bankFlatStatic = flat;
+  buildBankFlat();
+  window._bankFlatStatic = _bankFlat;
   document.getElementById('soru-bankasi-list').innerHTML = SORU_BANKASI.map(cat => `
-    <div class="card" style="margin-bottom:9px">
-      <div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:8px">${cat.cat}</div>
-      ${cat.sorular.map(s => {
-        const idx = flat.findIndex(x => x.soru === s);
-        return `<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 5px;border-radius:7px;margin-bottom:3px">
-          <span style="width:14px;height:14px;border-radius:4px;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;margin-top:1px">▸</span>
-          <span style="flex:1;font-size:11px;color:var(--text);line-height:1.5">${s}</span>
-          <button class="btn btn-outline btn-sm" style="flex-shrink:0;font-size:10px;padding:3px 9px"
-            onclick="bankStaticAdd(${idx})">${T('add_to_form')}</button>
+    <div class="card" style="margin-bottom:12px;border-left:3px solid ${cat.color}">
+      <div style="font-weight:700;font-size:13px;color:${cat.color};margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${cat.color};display:inline-block"></span>
+        ${cat.cat}
+        <span style="font-size:10px;font-weight:500;color:var(--text3);margin-left:auto">${cat.sorular.length} soru</span>
+      </div>
+      ${cat.sorular.map((s,qi) => {
+        const soruTxt = getSoruText(s);
+        const idx = _bankFlat.findIndex(x => x.soru === soruTxt);
+        const already = iqItems.some(i => i.soru === soruTxt);
+        return `<div style="border:1px solid ${already?'#a7f3d0':'var(--border)'};border-radius:10px;padding:12px;margin-bottom:8px;background:${already?'#f0fdf4':'var(--bg3)'}">
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:${s.amac?'8px':'0'}">
+            <span style="width:20px;height:20px;border-radius:6px;background:${cat.color}20;color:${cat.color};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px">${qi+1}</span>
+            <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);line-height:1.5">${soruTxt}</span>
+            <button class="btn btn-sm" style="flex-shrink:0;background:${already?'#10b981':'var(--accent)'};color:#fff;font-size:10px;padding:4px 10px" onclick="bankStaticAdd(${idx})">${already?'✓':'+'} ${already?'Eklendi':T('add_to_form')}</button>
+          </div>
+          ${s.amac?`<div style="font-size:10px;color:#1d4ed8;background:#eff6ff;border-radius:6px;padding:5px 9px;margin-bottom:4px"><span style="font-weight:700">🎯 Amaç:</span> ${s.amac}</div>`:''}
+          ${s.ideal?`<div style="font-size:10px;color:#065f46;background:#f0fdf4;border-radius:6px;padding:5px 9px;margin-bottom:4px"><span style="font-weight:700">✅ İdeal Yanıt:</span> ${s.ideal}</div>`:''}
+          ${s.kirmizi?`<div style="font-size:10px;color:#991b1b;background:#fef2f2;border-radius:6px;padding:5px 9px"><span style="font-weight:700">🚩 Kırmızı Bayrak:</span> ${s.kirmizi}</div>`:''}
         </div>`;
       }).join('')}
     </div>`).join('');
@@ -1266,37 +1372,111 @@ function bankStaticAdd(idx){
   syncIQ();
   const item = (window._bankFlatStatic||[])[idx];
   if(!item) return;
-  if(iqItems.some(i => i.soru === item.soru)){
-    // zaten var, forma git
-  } else {
-    iqItems.push({id:'iq'+Date.now()+Math.random(), soru:item.soru, yanit:''});
+  if(!iqItems.some(i => i.soru === item.soru)){
+    iqItems.push({id:'iq'+Date.now()+Math.random(), soru:item.soru, yanit:'', amac:item.amac||'', ideal:item.ideal||'', kirmizi:item.kirmizi||''});
   }
   renderIQList();
-  // Form tabına geç
   const formTab = document.querySelectorAll('#panel-mulakat .tab')[1];
-  if(formTab) { st('mul','form',formTab); }
+  if(formTab){ st('mul','form',formTab); }
   renderSoruBankasi();
 }
-function saveInterview(){
+async function saveInterview(){
   syncIQ();
   const aday=document.getElementById('mf-aday').value.trim();
-  if(!aday){document.getElementById('save-msg').innerHTML='<div class="err-box">⚠ '+T('candidate_name')+' zorunludur.</div>';return;}
-  const kayit={id:Date.now(),aday,poz:document.getElementById('mf-pozisyon').value.trim(),
+  const poz=document.getElementById('mf-pozisyon').value.trim();
+  if(!aday){document.getElementById('save-msg').innerHTML='<div class="err-box">⚠ Adayın adı zorunludur.</div>';return;}
+
+  // Yanıtı olan sorular var mı kontrol et
+  const answeredCount = iqItems.filter(i=>i.yanit&&i.yanit.trim().length>10).length;
+
+  // Kaydet
+  const kayit={id:Date.now(),aday,poz,
     tarih:document.getElementById('mf-tarih').value?new Date(document.getElementById('mf-tarih').value).toLocaleString('tr-TR'):'—',
     gorusen:document.getElementById('mf-gorusen').value.trim()||'—',
     not:document.getElementById('mf-not').value.trim(),
-    sorular:[...iqItems.map(i=>({soru:i.soru,yanit:i.yanit}))],
+    sorular:[...iqItems.map(i=>({soru:i.soru,yanit:i.yanit,amac:i.amac||'',ideal:i.ideal||'',kirmizi:i.kirmizi||''}))],
     savedAt:new Date().toLocaleString('tr-TR'),lang:LANG};
   const mevcut = usrGet('kayitlar') || [];
   mevcut.unshift(kayit); usrSet('kayitlar', mevcut);
   updateBadge();
-  document.getElementById('save-msg').innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">✅ Görüşme kayıt edildi.</div>';
-  setTimeout(()=>document.getElementById('save-msg').innerHTML='',5000);
+
+  const msgEl = document.getElementById('save-msg');
+  msgEl.innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">✅ Görüşme kayıt edildi.</div>';
+
+  // YZ DEĞERLENDİRMESİ — yanıtlı sorular yeterliyse
+  if(answeredCount >= 2){
+    msgEl.innerHTML='<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 12px;font-size:11px;color:#1d4ed8">⏳ Yapay zeka yanıtları değerlendiriyor<span class="dot-load"></span></div>';
+    try{
+      const soruYanitBlok = iqItems
+        .filter(i=>i.yanit&&i.yanit.trim())
+        .map((i,n)=>`Soru ${n+1}: ${i.soru}\nAdayın Yanıtı: ${i.yanit}${i.ideal?'\nİdeal Yanıt: '+i.ideal:''}${i.kirmizi?'\nKırmızı Bayrak: '+i.kirmizi:''}`)
+        .join('\n\n');
+
+      const sys = `Sen çok deneyimli bir IK uzmanısın. Aşağıdaki mülakat yanıtlarını ideal yanıtlarla karşılaştırarak değerlendir.
+JSON formatında döndür — başka hiçbir şey yazma:
+{
+  "genel_puan": 1-10 arası sayı,
+  "genel_yorum": "2-3 cümle genel değerlendirme",
+  "guclu_yanlar": ["yanıt bazlı güçlü nokta 1", "..."],
+  "gelistirilmeli": ["yanıt bazlı zayıf/eksik nokta 1", "..."],
+  "kirmizi_bayraklar": ["varsa kırmızı bayrak 1 - yoksa boş dizi"],
+  "tavsiye": "kesinlikle davet et / görüşmeye çağır / değerlendirilebilir / dikkatli ol / uygun değil",
+  "sonraki_adim": "IK için önerilen somut sonraki adım"
+}`;
+
+      const prompt = `Aday: ${aday}\nPozisyon: ${poz||'Belirtilmemiş'}\n\n${soruYanitBlok}`;
+      const raw = await callClaude(prompt, sys, 1200);
+      const d = JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+      // Değerlendirmeyi kayda ekle
+      mevcut[0].ai_degerlendirme = d;
+      usrSet('kayitlar', mevcut);
+
+      // Skora göre renk
+      const puan = d.genel_puan || 5;
+      const [bg,border,fg] = puan>=7 ? ['#ecfdf5','#a7f3d0','#065f46'] : puan>=5 ? ['#fffbeb','#fde68a','#92400e'] : ['#fef2f2','#fecaca','#991b1b'];
+      const tavsiyeColors = {'kesinlikle davet et':'#10b981','görüşmeye çağır':'#2563eb','değerlendirilebilir':'#f59e0b','dikkatli ol':'#f97316','uygun değil':'#ef4444'};
+      const tc = tavsiyeColors[d.tavsiye] || '#64748b';
+
+      msgEl.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:4px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span style="font-weight:700;font-size:13px;color:var(--text)">🤖 YZ Değerlendirmesi — ${aday}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:22px;font-weight:800;color:${fg}">${puan}<span style="font-size:13px;color:var(--text3)">/10</span></span>
+            <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${tc}20;color:${tc};border:1px solid ${tc}40">${d.tavsiye}</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:12px;padding:10px;background:var(--bg3);border-radius:8px">${d.genel_yorum}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div style="background:#f0fdf4;border-radius:8px;padding:10px;border:1px solid #a7f3d0">
+            <div style="font-size:10px;font-weight:700;color:#065f46;margin-bottom:6px">✅ Güçlü Yanlar</div>
+            ${(d.guclu_yanlar||[]).map(g=>`<div style="font-size:11px;color:#334155;padding:2px 0;display:flex;gap:5px"><span style="color:#10b981">+</span>${g}</div>`).join('')}
+          </div>
+          <div style="background:#fffbeb;border-radius:8px;padding:10px;border:1px solid #fde68a">
+            <div style="font-size:10px;font-weight:700;color:#92400e;margin-bottom:6px">⚠️ Geliştirilmeli</div>
+            ${(d.gelistirilmeli||[]).map(g=>`<div style="font-size:11px;color:#334155;padding:2px 0;display:flex;gap:5px"><span style="color:#f59e0b">△</span>${g}</div>`).join('')}
+          </div>
+        </div>
+        ${d.kirmizi_bayraklar&&d.kirmizi_bayraklar.length?`<div style="background:#fef2f2;border-radius:8px;padding:10px;border:1px solid #fecaca;margin-bottom:10px">
+          <div style="font-size:10px;font-weight:700;color:#991b1b;margin-bottom:6px">🚩 Dikkat Edilecek Noktalar</div>
+          ${d.kirmizi_bayraklar.map(k=>`<div style="font-size:11px;color:#7f1d1d;padding:2px 0">${k}</div>`).join('')}
+        </div>`:''}
+        <div style="background:#eff6ff;border-radius:8px;padding:10px;border:1px solid #bfdbfe">
+          <div style="font-size:10px;font-weight:700;color:#1d4ed8;margin-bottom:4px">👉 Sonraki Adım</div>
+          <div style="font-size:11px;color:#1e40af">${d.sonraki_adim}</div>
+        </div>
+      </div>`;
+    } catch(e){
+      msgEl.innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">✅ Görüşme kayıt edildi. (YZ değerlendirmesi alınamadı)</div>';
+    }
+  } else {
+    setTimeout(()=>msgEl.innerHTML='',5000);
+  }
 }
 function clearForm(){
   ['mf-aday','mf-pozisyon','mf-gorusen','mf-not'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('mf-tarih').value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
-  iqItems=DEFAULT_SORULAR.map((s,i)=>({id:'iq_def_reset_'+i+'_'+Date.now(), soru:s, yanit:''}));
+  initDefaultIQ(); iqItems.forEach((item,i)=>{ item.id='iq_def_reset_'+i+'_'+Date.now(); });
   renderIQList();document.getElementById('save-msg').innerHTML='';
 }
 function updateBadge(){
@@ -1314,7 +1494,10 @@ function renderKayitlar(){
         <div style="font-weight:700;font-size:13px;color:var(--text)">${r.aday}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:2px">${r.poz||'—'} · ${r.tarih} · ${r.gorusen}</div>
         ${r.not?`<div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5">${r.not.slice(0,120)}${r.not.length>120?'…':''}</div>`:''}
-        <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">${(r.sorular||[]).slice(0,3).map(s=>`<span style="background:var(--bg3);color:var(--text3);font-size:10px;padding:2px 7px;border-radius:20px">${s.soru.slice(0,35)}…</span>`).join('')}${r.sorular?.length>3?`<span style="font-size:10px;color:var(--text3)">+${r.sorular.length-3}</span>`:''}</div>
+        <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+          ${r.ai_degerlendirme ? `<span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:${r.ai_degerlendirme.genel_puan>=7?'#ecfdf5':r.ai_degerlendirme.genel_puan>=5?'#fffbeb':'#fef2f2'};color:${r.ai_degerlendirme.genel_puan>=7?'#065f46':r.ai_degerlendirme.genel_puan>=5?'#92400e':'#991b1b'};border:1px solid ${r.ai_degerlendirme.genel_puan>=7?'#a7f3d0':r.ai_degerlendirme.genel_puan>=5?'#fde68a':'#fecaca'}">🤖 ${r.ai_degerlendirme.genel_puan}/10 · ${r.ai_degerlendirme.tavsiye}</span>` : ''}
+          ${(r.sorular||[]).slice(0,2).map(s=>`<span style="background:var(--bg3);color:var(--text3);font-size:10px;padding:2px 7px;border-radius:20px">${s.soru.slice(0,30)}…</span>`).join('')}${r.sorular?.length>2?`<span style="font-size:10px;color:var(--text3)">+${r.sorular.length-2} soru</span>`:''}
+        </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
         <button class="btn btn-outline btn-sm" onclick="viewKayit(${ri})">${T('view')}</button>
@@ -1330,7 +1513,25 @@ function viewKayit(idx){
   <h1>${r.aday}</h1><div class="meta">${r.poz||''} · ${r.tarih} · Görüşen: ${r.gorusen} · Kaydedildi: ${r.savedAt}</div>
   ${r.not?`<h2>Görüşen Notu</h2><div class="not-box">${r.not}</div>`:''}
   <h2>Sorular & Yanıtlar (${(r.sorular||[]).length})</h2>
-  ${(r.sorular||[]).map((s,i)=>`<div class="qitem"><div class="qsoru">${i+1}. ${s.soru}</div><div class="qyanit">${s.yanit||'<em style="color:#aaa">—</em>'}</div></div>`).join('')}
+  ${(r.sorular||[]).map((s,i)=>`<div class="qitem">
+    <div class="qsoru">${i+1}. ${s.soru}</div>
+    <div class="qyanit">${s.yanit||'<em style="color:#aaa">—</em>'}</div>
+    ${s.ideal?`<div style="font-size:11px;color:#065f46;background:#f0faf6;padding:5px 8px;border-radius:5px;margin-top:4px"><strong>✅ İdeal:</strong> ${s.ideal}</div>`:''}
+  </div>`).join('')}
+  ${r.ai_degerlendirme ? `<h2>🤖 YZ Değerlendirmesi</h2>
+  <div style="border:1px solid #e8dff5;border-radius:10px;padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <strong style="font-size:16px">${r.ai_degerlendirme.genel_puan}/10</strong>
+      <span style="padding:3px 10px;border-radius:20px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:700">${r.ai_degerlendirme.tavsiye}</span>
+    </div>
+    <p style="font-size:12px;color:#334155;margin-bottom:10px">${r.ai_degerlendirme.genel_yorum}</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div style="background:#f0fdf4;padding:9px;border-radius:7px"><strong style="font-size:11px;color:#065f46">✅ Güçlü Yanlar</strong><br>${(r.ai_degerlendirme.guclu_yanlar||[]).map(g=>`<div style="font-size:11px">+ ${g}</div>`).join('')}</div>
+      <div style="background:#fffbeb;padding:9px;border-radius:7px"><strong style="font-size:11px;color:#92400e">⚠️ Geliştirilmeli</strong><br>${(r.ai_degerlendirme.gelistirilmeli||[]).map(g=>`<div style="font-size:11px">△ ${g}</div>`).join('')}</div>
+    </div>
+    ${r.ai_degerlendirme.kirmizi_bayraklar&&r.ai_degerlendirme.kirmizi_bayraklar.length?`<div style="background:#fef2f2;padding:9px;border-radius:7px;margin-bottom:10px"><strong style="font-size:11px;color:#991b1b">🚩 Dikkat</strong><br>${r.ai_degerlendirme.kirmizi_bayraklar.map(k=>`<div style="font-size:11px">${k}</div>`).join('')}</div>`:''}
+    <div style="background:#eff6ff;padding:9px;border-radius:7px"><strong style="font-size:11px;color:#1d4ed8">👉 Sonraki Adım:</strong> ${r.ai_degerlendirme.sonraki_adim}</div>
+  </div>`: ''}
   <div style="margin-top:20px"><button onclick="window.print()" style="padding:8px 16px;background:#8b1a4a;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨 Yazdır / PDF</button></div>
   </body></html>`);w.document.close();
 }
@@ -1791,6 +1992,8 @@ renderPipe();
 renderKontrolList();
 renderIQList();
 renderSoruBankasi();
+initDefaultIQ();
+renderIQList();
 renderTests();
 renderKaynaklar();
 updateTsk();
