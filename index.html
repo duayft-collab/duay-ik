@@ -3,564 +3,870 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DUAY IK — İşe Alım Sistemi</title>
+<title>DUAY IK</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
+/* ═══════════════ TOKENS ═══════════════ */
+:root{
+  --bg:#f5f0fa;--bg2:#fff;--bg3:#ede6f8;
+  --sidebar:#1a0a2e;--sidebar2:#2d1a4a;--sidebar3:#3d2a5a;
+  --text:#1a0a2e;--text2:#475569;--text3:#9a7ab0;
+  --border:#e8dff5;--border2:#d0b8e8;
+  --accent:#8b1a4a;--accent2:#b02060;
+  --info:#2563eb;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --card-shadow:0 1px 4px rgba(26,10,46,.07);
+}
+[data-theme=dark]{
+  --bg:#0d0820;--bg2:#1a1030;--bg3:#251540;
+  --sidebar:#0a0518;--sidebar2:#180d30;--sidebar3:#251540;
+  --text:#e8dff5;--text2:#9a8ab0;--text3:#6a5a8a;
+  --border:#2d1a4a;--border2:#3d2a5a;
+  --card-shadow:0 1px 4px rgba(0,0,0,.3);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#f5f0fa;color:#1a0a2e;height:100vh;display:flex;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transition:background .2s,color .2s}
 button,input,textarea,select{font-family:'DM Sans',sans-serif}
-a{color:#8b1a4a;text-decoration:none}
-a:hover{text-decoration:underline}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-/* ── Sidebar ── */
-#sidebar{width:220px;background:#1a0a2e;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s;overflow:hidden}
-#sidebar.collapsed{width:56px}
-.logo{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2d1a4a;flex-shrink:0}
-.logo-icon{background:#8b1a4a;border-radius:8px;padding:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-txt{font-weight:700;font-size:14px;color:#fff;white-space:nowrap}
-.logo-sub{font-size:9px;color:#7c5a9a;font-weight:500;letter-spacing:.06em;white-space:nowrap}
-nav{flex:1;padding:8px 6px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
-.nb{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:transparent;color:#7c5a9a;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
-.nb:hover{background:#2d1a4a;color:#e2d4f0}
+/* ═══════════════ LOGIN ═══════════════ */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0a0518,#1a0a2e,#2d1060);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000}
+#login-screen.hidden{display:none}
+.login-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:36px 40px;width:380px;backdrop-filter:blur(20px)}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center}
+.login-logo-icon{background:#8b1a4a;border-radius:10px;padding:9px;display:flex;align-items:center;justify-content:center}
+.login-title{font-weight:800;font-size:22px;color:#fff;letter-spacing:-.01em}
+.login-sub{font-size:11px;color:#9a7ab0;font-weight:500;letter-spacing:.06em}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:10px;font-weight:600;color:#9a7ab0;margin-bottom:5px;letter-spacing:.05em;text-transform:uppercase}
+.login-field input,.login-field select{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:9px;padding:10px 13px;font-size:13px;color:#fff;outline:none}
+.login-field input::placeholder{color:#6a5a8a}
+.login-field input:focus{border-color:#8b1a4a;background:rgba(139,26,74,.15)}
+.login-field select option{background:#1a0a2e;color:#fff}
+.login-btn{width:100%;padding:11px;background:#8b1a4a;color:#fff;border:none;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;margin-top:4px;transition:opacity .15s}
+.login-btn:hover{opacity:.85}
+.login-err{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:7px 11px;font-size:11px;color:#fca5a5;margin-bottom:10px;display:none}
+.login-version{position:absolute;bottom:22px;text-align:center;color:rgba(255,255,255,.3);font-size:11px;line-height:1.7}
+.login-version strong{color:rgba(255,255,255,.6)}
+.lang-sel{display:flex;gap:6px;margin-bottom:20px;justify-content:center}
+.lang-sel button{padding:4px 12px;border:1px solid rgba(255,255,255,.2);border-radius:20px;background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.lang-sel button.active{background:#8b1a4a;border-color:#8b1a4a;color:#fff}
+
+/* ═══════════════ APP SHELL ═══════════════ */
+#app{display:none;height:100vh;display:flex;flex-direction:column}
+#app.visible{display:flex}
+
+/* ═══════════════ TOP BAR ═══════════════ */
+#topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0;transition:background .2s,border-color .2s}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-logo{display:flex;align-items:center;gap:8px}
+.topbar-logo-icon{background:#8b1a4a;border-radius:7px;padding:5px;display:flex;align-items:center;justify-content:center}
+.topbar-title{font-weight:700;font-size:13px;color:var(--text)}
+.version-chip{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;color:var(--text3);cursor:pointer}
+.version-chip:hover{border-color:var(--accent);color:var(--accent)}
+#page-title{font-weight:600;font-size:13px;color:var(--text);padding-left:14px;border-left:1px solid var(--border)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.tb-btn{padding:5px 8px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;display:flex;align-items:center;gap:5px;transition:all .15s}
+.tb-btn:hover{background:var(--bg3);border-color:var(--border2)}
+.user-chip{display:flex;align-items:center;gap:7px;padding:3px 10px 3px 5px;border:1px solid var(--border);border-radius:20px;cursor:pointer}
+.user-chip:hover{background:var(--bg3)}
+.user-av{width:26px;height:26px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:var(--accent)}
+.user-name{font-size:11px;font-weight:500;color:var(--text)}
+
+/* ═══════════════ BODY LAYOUT ═══════════════ */
+#body-wrap{flex:1;display:flex;overflow:hidden}
+
+/* ═══════════════ SIDEBAR ═══════════════ */
+#sidebar{width:210px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0;transition:width .25s,background .2s;overflow:hidden}
+#sidebar.collapsed{width:52px}
+nav{flex:1;padding:8px 6px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.nb{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:8px;border:none;background:transparent;color:#7c5a9a;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;width:100%;text-align:left;transition:all .15s}
+.nb:hover{background:var(--sidebar2);color:#e2d4f0}
 .nb.active{background:#8b1a4a;color:#fff}
 .nb svg{flex-shrink:0}
 .nb-badge{margin-left:auto;font-size:9px;font-weight:700;background:#4a0a2a;color:#f0a0c0;padding:1px 6px;border-radius:20px;flex-shrink:0}
 .nb.active .nb-badge{background:rgba(255,255,255,.2);color:#fff}
-.sb-toggle{padding:8px 6px;border-top:1px solid #2d1a4a;flex-shrink:0}
-.sb-toggle button{width:100%;padding:7px;border:none;background:transparent;color:#7c5a9a;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.sb-toggle button:hover{background:#2d1a4a}
+.sb-bot{padding:8px 6px;border-top:1px solid var(--sidebar2)}
+.sb-bot button{width:100%;padding:6px;border:none;background:transparent;color:#7c5a9a;cursor:pointer;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.sb-bot button:hover{background:var(--sidebar2)}
 
-/* ── Main ── */
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-header{height:52px;background:#fff;border-bottom:1px solid #e8dff5;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0}
-#page-title{font-weight:600;font-size:14px;color:#1a0a2e}
-.hdr-right{display:flex;align-items:center;gap:10px}
-.srch{position:relative}
-.srch input{padding:5px 10px 5px 28px;border:1px solid #e0d0f0;border-radius:20px;font-size:12px;color:#334155;background:#f5f0fa;width:190px}
-.srch svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:#9a7ab0;pointer-events:none}
-.avatar-btn{width:28px;height:28px;border-radius:50%;background:#f0e0ea;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:#8b1a4a;border:none;cursor:pointer}
+/* ═══════════════ CONTENT ═══════════════ */
 #content{flex:1;overflow:auto;padding:18px}
 .panel{display:none}.panel.active{display:block}
 
-/* ── Cards / Boxes ── */
-.sec-head{background:linear-gradient(135deg,#1a0a2e,#5a1a5a);border-radius:12px;padding:16px 20px;margin-bottom:18px;color:#fff;display:flex;align-items:center;gap:12px}
+/* ═══════════════ COMPONENTS ═══════════════ */
+.sec-head{background:linear-gradient(135deg,#1a0a2e,#5a1a5a);border-radius:12px;padding:14px 18px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:11px}
 .sec-head-txt{font-weight:700;font-size:14px}
-.sec-head-sub{font-size:11px;opacity:.8;margin-top:2px}
-.card{background:#fff;border-radius:12px;border:1px solid #e8dff5;padding:16px}
-.card+.card{margin-top:12px}
-.tip{background:#f0e8f8;border-left:3px solid #8b1a4a;border-radius:0 8px 8px 0;padding:8px 12px;font-size:11px;color:#4a1a6a;line-height:1.6;margin-bottom:12px}
-
-/* ── Tabs ── */
-.tabs{display:flex;gap:2px;border-bottom:1px solid #e8dff5;margin-bottom:16px;flex-wrap:wrap}
-.tab{padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:#9a7ab0;border-bottom:2px solid transparent;margin-bottom:-1px}
-.tab.active{color:#1a0a2e;border-bottom-color:#8b1a4a}
+.sec-head-sub{font-size:11px;opacity:.8;margin-top:1px}
+.card{background:var(--bg2);border-radius:11px;border:1px solid var(--border);padding:14px;box-shadow:var(--card-shadow);transition:background .2s,border-color .2s}
+.tip{background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 12px;font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .tpanel{display:none}.tpanel.active{display:block}
-
-/* ── Forms ── */
-.field{margin-bottom:11px}
-.field label,.flabel{display:block;font-size:10px;font-weight:600;color:#6a4a7a;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
-.field input,.field textarea,.field select,
-input[data-fi],textarea[data-fi],select[data-fi]{width:100%;border:1px solid #e0d0f0;border-radius:8px;padding:7px 10px;font-size:12px;color:#334155;background:#f8f5ff}
-.field input:focus,.field textarea:focus,.field select:focus,
-input[data-fi]:focus,textarea[data-fi]:focus{outline:none;border-color:#8b1a4a}
-.field textarea{resize:vertical;min-height:80px}
+.field{margin-bottom:10px}
+.field label,.flabel{display:block;font-size:10px;font-weight:600;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--text);background:var(--bg3);transition:border .15s,background .2s}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:75px}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
-.btn-primary{background:#1a0a2e;color:#fff}.btn-primary:hover{opacity:.85}
+.btn{padding:7px 14px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{opacity:.85}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.btn-rose{background:#8b1a4a;color:#fff}.btn-rose:hover{opacity:.85}
-.btn-outline{background:#fff;color:#6a4a7a;border:1px solid #d0b8e8}.btn-outline:hover{background:#f5f0fa}
+.btn-outline{background:var(--bg2);color:var(--text2);border:1px solid var(--border)}.btn-outline:hover{background:var(--bg3)}
 .btn-danger{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}.btn-danger:hover{background:#fee2e2}
-.btn-sm{padding:5px 10px;font-size:11px}
-.btn-full{width:100%}
+.btn-sm{padding:4px 9px;font-size:11px}
+.btn-full{width:100%;justify-content:center}
 .err-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:7px 11px;font-size:11px;color:#991b1b;margin-bottom:10px}
-.res-box{background:#f8f5ff;border-radius:10px;padding:14px;border:1px solid #e8dff5;margin-top:10px}
+.res-box{background:var(--bg3);border-radius:10px;padding:13px;border:1px solid var(--border);margin-top:10px}
 
-/* ── Pipeline ── */
+/* ═══════════════ PIPELINE ═══════════════ */
 .pipe-wrap{display:flex;gap:11px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
-.stage-col{min-width:240px;width:240px;flex-shrink:0}
+.stage-col{min-width:235px;width:235px;flex-shrink:0}
 .stage-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
-.stage-lbl{font-size:11px;font-weight:600;color:#6a4a7a}
-.stage-cnt{background:#e8d8f0;color:#6a4a7a;font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px}
-.stage-body{background:#ede6f8;border-radius:10px;padding:7px;min-height:160px;display:flex;flex-direction:column;gap:6px;border:1px dashed #c8a8e8}
-.pcard{background:#fff;padding:11px;border-radius:9px;border:1px solid #e8dff5;cursor:pointer;transition:all .15s}
-.pcard:hover{border-color:#8b1a4a;box-shadow:0 2px 8px rgba(139,26,74,.1)}
-.pcard-pos{font-size:9px;font-weight:700;color:#8b1a4a;letter-spacing:.04em;margin-bottom:2px}
-.pcard-name{font-weight:600;font-size:12px;color:#1a0a2e;margin-bottom:2px}
-.pcard-meta{font-size:10px;color:#9a8aaa;margin-bottom:7px}
+.stage-lbl{font-size:11px;font-weight:600;color:var(--text2)}
+.stage-cnt{background:var(--bg3);color:var(--text3);font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px}
+.stage-body{background:var(--bg3);border-radius:10px;padding:7px;min-height:150px;display:flex;flex-direction:column;gap:6px;border:1px dashed var(--border2)}
+.pcard{background:var(--bg2);padding:11px;border-radius:9px;border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.pcard:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(139,26,74,.12)}
+.pcard-pos{font-size:9px;font-weight:700;color:var(--accent);letter-spacing:.04em;margin-bottom:2px}
+.pcard-name{font-weight:600;font-size:12px;color:var(--text);margin-bottom:2px}
+.pcard-meta{font-size:10px;color:var(--text3);margin-bottom:7px}
 .pcard-foot{display:flex;justify-content:space-between;align-items:center}
-.pcard-score{display:flex;align-items:center;gap:3px;background:#fff8e0;color:#a06010;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid #f0d880}
-.add-btn{width:100%;padding:5px;background:transparent;border:none;color:#9a7ab0;font-size:11px;cursor:pointer;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px}
-.add-btn:hover{color:#8b1a4a;background:#f8e8f0}
+.pcard-score{background:#fff8e0;color:#a06010;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid #f0d880}
+.add-btn{width:100%;padding:5px;background:transparent;border:none;color:var(--text3);font-size:11px;cursor:pointer;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px}
+.add-btn:hover{color:var(--accent);background:var(--bg3)}
 
-/* ── Modal ── */
-#mo{display:none;position:fixed;inset:0;background:rgba(26,10,46,.6);z-index:50;backdrop-filter:blur(4px)}
+/* ═══════════════ MODAL ═══════════════ */
+#mo{display:none;position:fixed;inset:0;background:rgba(10,5,24,.65);z-index:50;backdrop-filter:blur(5px)}
 #mo.open{display:flex;align-items:stretch;justify-content:flex-end}
-#modal{width:100%;max-width:520px;background:#fff;display:flex;flex-direction:column;animation:sli .3s cubic-bezier(.22,1,.36,1)}
+#modal{width:100%;max-width:500px;background:var(--bg2);display:flex;flex-direction:column;animation:sli .3s cubic-bezier(.22,1,.36,1)}
 @keyframes sli{from{transform:translateX(100%)}to{transform:translateX(0)}}
-.mhead{padding:14px 18px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;justify-content:space-between}
-.mav{width:36px;height:36px;border-radius:50%;background:#f8e8f0;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
-.mbody{flex:1;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
-.mfoot{padding:11px 18px;background:#1a0a2e;display:flex;gap:7px}
-.ic{background:#f8f5ff;padding:8px 11px;border-radius:9px;border:1px solid #f0e8f0}
-.ic-l{font-size:8px;font-weight:700;color:#9a7ab0;letter-spacing:.1em;margin-bottom:2px}
-.ic-v{font-size:11px;font-weight:600;color:#334155}
-.slist{display:flex;flex-direction:column;gap:3px}
-.step{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;border:1px solid transparent}
-.step.cur{background:#f8e8f0;border-color:#d8a0c0}
-.step-n{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0}
+.mhead{padding:13px 17px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mav{width:35px;height:35px;border-radius:50%;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.mbody{flex:1;overflow:auto;padding:15px 17px;display:flex;flex-direction:column;gap:13px}
+.mfoot{padding:10px 17px;background:var(--sidebar);display:flex;gap:7px}
 
-/* ── Interview Form ── */
-.iq-row{background:#fff;border:1px solid #e8dff5;border-radius:10px;padding:12px;margin-bottom:8px}
-.iq-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
-.iq-num{width:22px;height:22px;border-radius:6px;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px}
-.iq-q{flex:1;border:1px solid #e0d0f0;border-radius:7px;padding:6px 9px;font-size:12px;color:#334155;background:#f8f5ff;resize:none;min-height:36px}
-.iq-q:focus{outline:none;border-color:#8b1a4a}
-.iq-del{border:none;background:transparent;color:#d0a0b0;cursor:pointer;padding:3px;border-radius:5px;flex-shrink:0}
-.iq-del:hover{color:#ef4444;background:#fef2f2}
-.iq-ans{width:100%;border:1px solid #d4ecd4;border-radius:7px;padding:6px 9px;font-size:12px;color:#334155;background:#f0faf0;resize:none;min-height:50px}
-.iq-ans:focus{outline:none;border-color:#10b981}
-.iq-ans-lbl{font-size:10px;font-weight:600;color:#065f46;margin-bottom:3px;letter-spacing:.03em}
+/* ═══════════════ INTERVIEW FORM ═══════════════ */
+.iq-row{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px;margin-bottom:7px}
+.iq-top{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px}
+.iq-num{width:20px;height:20px;border-radius:5px;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px}
+.iq-q{flex:1;border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:12px;color:var(--text);background:var(--bg3);resize:none;min-height:34px;outline:none}
+.iq-q:focus{border-color:var(--accent)}
+.iq-del{border:none;background:transparent;color:var(--text3);cursor:pointer;padding:3px;border-radius:5px;flex-shrink:0}
+.iq-del:hover{color:var(--danger);background:#fef2f2}
+.iq-ans-lbl{font-size:9px;font-weight:700;color:#065f46;margin-bottom:3px;letter-spacing:.04em;text-transform:uppercase}
+.iq-ans{width:100%;border:1px solid #a7f3d0;border-radius:7px;padding:6px 9px;font-size:12px;color:var(--text);background:#f0faf6;resize:none;min-height:48px;outline:none}
+.iq-ans:focus{border-color:#10b981}
+[data-theme=dark] .iq-ans{background:#0d2a1a;border-color:#1a5a35;color:#a0e8c0}
 
-/* ── Eval ── */
-.eval-wrap{max-width:800px;background:#fff;border-radius:12px;border:1px solid #e8dff5;overflow:hidden}
-.eval-hd{padding:16px 20px;border-bottom:1px solid #f0e8f0;background:#f8f5ff;display:flex;justify-content:space-between;align-items:center}
-.eval-grid{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
-.fac{display:flex;flex-direction:column;gap:4px}
-.fac-hd{display:flex;justify-content:space-between;align-items:center}
-.fac-lbl{font-size:11px;font-weight:600;color:#334155}
-.fac-sc{font-size:10px;font-weight:700;color:#8b1a4a;background:#f8e8f0;padding:1px 7px;border-radius:20px}
+/* ═══════════════ EVAL ═══════════════ */
+.eval-wrap{max-width:800px;background:var(--bg2);border-radius:12px;border:1px solid var(--border);overflow:hidden}
+.eval-hd{padding:15px 19px;border-bottom:1px solid var(--border);background:var(--bg3);display:flex;justify-content:space-between;align-items:center}
+.eval-grid{padding:15px 19px;display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.fac-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.fac-lbl{font-size:11px;font-weight:600;color:var(--text)}
+.fac-sc{font-size:10px;font-weight:700;color:var(--accent);background:var(--bg3);padding:1px 7px;border-radius:20px}
 .fac-bars{display:flex;gap:3px}
 .fbar{flex:1;height:4px;border-radius:2px;border:none;cursor:pointer;transition:background .1s}
 
-/* ── DB records ── */
-.db-row{background:#fff;border:1px solid #e8dff5;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
-.db-av{width:34px;height:34px;border-radius:50%;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
-.db-meta{font-size:10px;color:#9a7ab0;margin-top:2px}
-.db-preview{font-size:11px;color:#475569;margin-top:5px;line-height:1.5}
-.db-actions{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+/* ═══════════════ DB RECORDS ═══════════════ */
+.db-row{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 13px;margin-bottom:7px;display:flex;align-items:flex-start;gap:11px}
+.db-av{width:33px;height:33px;border-radius:50%;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
 
-/* ── Table ── */
-.tbl{width:100%;border-collapse:collapse;font-size:11px}
-.tbl th{background:#1a0a2e;color:#fff;padding:8px 11px;text-align:left;font-weight:600;white-space:nowrap}
-.tbl td{padding:7px 11px;border-bottom:1px solid #f0e8f0;color:#334155}
-.tbl tr:hover td{background:#f8f5ff}
-.tbl input{border:none;background:transparent;font-size:11px;color:#334155;width:90px}
+/* ═══════════════ RESOURCES ═══════════════ */
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;max-width:900px}
+.res-card{background:var(--bg2);border-radius:11px;border:1px solid var(--border);padding:13px;display:flex;flex-direction:column;gap:7px}
 
-/* ── Resources ── */
-.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:900px}
-.res-card{background:#fff;border-radius:11px;border:1px solid #e8dff5;padding:14px;display:flex;flex-direction:column;gap:8px}
-.res-cat{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;align-self:flex-start}
-.res-title{font-size:12px;font-weight:700;color:#1a0a2e;line-height:1.4}
-.res-desc{font-size:11px;color:#64748b;line-height:1.5;flex:1}
+/* ═══════════════ VERSION PANEL ═══════════════ */
+.ver-entry{border-left:2px solid var(--border2);padding:10px 14px;margin-bottom:10px;position:relative}
+.ver-entry::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--accent);position:absolute;left:-6px;top:12px}
+.ver-badge{display:inline-block;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px;margin-bottom:4px}
+.ver-time{font-size:10px;color:var(--text3);margin-bottom:6px}
+.ver-list{font-size:11px;color:var(--text2);line-height:1.8}
 
-/* ── Score bar ── */
-.sbar-wrap{flex:1;height:5px;background:#e8dff5;border-radius:3px;overflow:hidden}
+/* ═══════════════ UPDATE SUGGEST ═══════════════ */
+.sug-row{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px}
+.sug-vote{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+.sug-vote button{border:1px solid var(--border);background:var(--bg3);border-radius:6px;width:26px;height:22px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.sug-vote button:hover{border-color:var(--accent);color:var(--accent)}
+.sug-vote span{font-size:11px;font-weight:700;color:var(--accent)}
+.sug-cat{font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px;display:inline-block;margin-bottom:3px}
+.sug-status{font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px;margin-left:5px}
+
+/* ═══════════════ MISC ═══════════════ */
+.sbar-wrap{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
 .sbar-fill{height:100%;border-radius:3px;transition:width .5s}
-
-/* ── DISC badges ── */
-.disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:640px}
-.disc-card{background:#fff;border-radius:11px;padding:14px;border:1px solid #e8dff5}
-
-/* ── Misc ── */
-.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:220px;color:#9a7ab0;gap:8px;font-size:12px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text3);gap:8px;font-size:12px}
 .dot-load::after{content:'.';animation:dotani 1.2s infinite}
 @keyframes dotani{0%{content:'.'}33%{content:'..'}66%{content:'...'}100%{content:'.'}}
 .score-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{background:var(--sidebar);color:#fff;padding:8px 11px;text-align:left;font-weight:600;white-space:nowrap}
+.tbl td{padding:7px 11px;border-bottom:1px solid var(--border);color:var(--text)}
+.tbl tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
 </style>
 </head>
 <body>
 
-<!-- ════ SIDEBAR ════ -->
-<div id="sidebar">
-  <div class="logo">
-    <div class="logo-icon"><svg width="17" height="17" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-    <div><div class="logo-txt">DUAY IK</div><div class="logo-sub">İŞE ALIM SİSTEMİ</div></div>
+<!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="lang-sel">
+      <button onclick="setLang('tr',this)" class="active">🇹🇷 TR</button>
+      <button onclick="setLang('en',this)">🇬🇧 EN</button>
+      <button onclick="setLang('fr',this)">🇫🇷 FR</button>
+    </div>
+    <div class="login-logo">
+      <div class="login-logo-icon"><svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div><div class="login-title">DUAY IK</div><div class="login-sub" data-i18n="app_sub">İŞE ALIM SİSTEMİ</div></div>
+    </div>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-field"><label data-i18n="username">Kullanıcı Adı</label><input id="l-user" placeholder="admin" autocomplete="username"/></div>
+    <div class="login-field"><label data-i18n="password">Şifre</label><input id="l-pass" type="password" placeholder="••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()"/></div>
+    <div class="login-field"><label data-i18n="login_as">Giriş Rolü</label>
+      <select id="l-role">
+        <option value="admin" data-i18n="role_admin">Yönetici (Admin)</option>
+        <option value="hr" data-i18n="role_hr">IK Uzmanı</option>
+        <option value="viewer" data-i18n="role_viewer">Görüntüleyici</option>
+      </select>
+    </div>
+    <button class="login-btn" onclick="doLogin()" data-i18n="login_btn">Giriş Yap</button>
   </div>
-  <nav>
-    <button class="nb active" onclick="go('pipeline',this,'Aday Havuzu')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Aday Havuzu</span>
-    </button>
-    <button class="nb" onclick="go('telefon',this,'Telefon Ön Eleme')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      <span>Telefon Ön Eleme</span>
-    </button>
-    <button class="nb" onclick="go('mulakat',this,'Mülakat Formu')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      <span>Mülakat Formu</span>
-    </button>
-    <button class="nb" onclick="go('kayitlar',this,'Mülakat Kayıtları')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      <span>Mülakat Kayıtları</span>
-      <span class="nb-badge" id="kayit-badge">0</span>
-    </button>
-    <button class="nb" onclick="go('test',this,'Test Sürüşü')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      <span>Test Sürüşü</span>
-    </button>
-    <button class="nb" onclick="go('evaluation',this,'Değerlendirme')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span>Değerlendirme</span>
-    </button>
-    <button class="nb" onclick="go('referans',this,'Referans Kontrol')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="23,11 17,11 19,13"/><polyline points="23,11 17,11 19,9"/></svg>
-      <span>Referans Kontrol</span>
-    </button>
-    <button class="nb" onclick="go('tesekkur',this,'Teşekkür Mektubu')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      <span>Teşekkür Mektubu</span>
-    </button>
-    <button class="nb" onclick="go('ai',this,'YZ Araçları')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-      <span>YZ Araçları</span>
-      <span class="nb-badge">YZ</span>
-    </button>
-    <button class="nb" onclick="go('ozet',this,'Aday Karşılaştırma')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      <span>Aday Karşılaştırma</span>
-    </button>
-    <button class="nb" onclick="go('kaynaklar',this,'IK Kaynakları')">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span>IK Kaynakları</span>
-    </button>
-  </nav>
-  <div class="sb-toggle">
-    <button onclick="toggleSB()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>
+  <div class="login-version" id="login-version-info"></div>
 </div>
 
-<!-- ════ MAIN ════ -->
-<div id="main">
-  <header>
-    <div id="page-title">Aday Havuzu</div>
-    <div class="hdr-right">
-      <div class="srch">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input placeholder="Aday ara..." oninput="filterCandidates(this.value)"/>
+<!-- ═══════════════════════════ APP ═══════════════════════════ -->
+<div id="app">
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">
+        <div class="topbar-logo-icon"><svg width="15" height="15" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="topbar-title">DUAY IK</span>
       </div>
-      <div class="avatar-btn">IK</div>
+      <span class="version-chip" onclick="go('versions',document.querySelector('.nb[data-page=versions]'),'Sürüm Geçmişi')" id="ver-chip">v1.3.0</span>
+      <span id="page-title"></span>
     </div>
-  </header>
-
-  <div id="content">
-
-    <!-- ── PIPELINE ── -->
-    <div id="panel-pipeline" class="panel active">
-      <div class="pipe-wrap" id="pipe-board"></div>
-    </div>
-
-    <!-- ── TELEFON ÖN ELEME ── -->
-    <div id="panel-telefon" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <div><div class="sec-head-txt">Telefon Ön Görüşme Rehberi</div><div class="sec-head-sub">IKMG-0300-243 · Satınalma Asistanı Pozisyonu</div></div>
+    <div class="topbar-right">
+      <!-- Language -->
+      <div style="display:flex;gap:3px">
+        <button class="tb-btn btn-sm" onclick="setLang('tr',null)">TR</button>
+        <button class="tb-btn btn-sm" onclick="setLang('en',null)">EN</button>
+        <button class="tb-btn btn-sm" onclick="setLang('fr',null)">FR</button>
       </div>
-      <div style="max-width:820px">
-        <div class="tip">💡 Aday kaçamak yanıt veriyorsa, samimi görünmüyorsa ve net konuşmuyorsa görüşmeye çağırmayın. <strong>%10 siz konuşun, %90 adayı konuşturun.</strong></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-          <div class="card">
-            <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:10px;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg> Sorulacak Sorular</div>
-            ${[
-              {n:1,q:'Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?'},
-              {n:2,q:'Bu pozisyonu kariyer olarak görüyor musunuz?',sub:['Satınalma sertifikanız var mı?','İlham aldığınız biri var mı?','Bu pozisyon hangi yönlerinizle örtüşüyor?']},
-              {n:3,q:'İlanı okudunuz — başvurunuza en çok ne sebep oldu?'},
-              {n:4,q:'DISC analiz raporunuzu iletebilir misiniz?'},
-              {n:5,q:'En başarılı indirim aldığınız pazarlığı anlatır mısınız?'},
-            ].map(i=>`<div style="margin-bottom:7px"><div style="display:flex;gap:7px;font-size:11px;color:#334155"><span style="width:16px;height:16px;border-radius:5px;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${i.n}</span><span>${i.q}</span></div>${(i.sub||[]).map(s=>`<div style="font-size:10px;color:#9a7ab0;padding-left:23px;margin-top:2px">↳ ${s}</div>`).join('')}</div>`).join('')}
-          </div>
-          <div class="card">
-            <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:10px;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Adaydan Gelen Sorulara Yanıtlar</div>
-            ${[
-              {s:'İş ne?',c:'Satınalma asistanlığı.'},
-              {s:'Online görüşebilir miyiz?',c:'Evet — ilk görüşme online, olumlu geçerse ikincisi yüz yüze.'},
-              {s:'Maaş nedir?',c:'Görüşmede konuşuluyor.'},
-              {s:'Diğer sorular',c:'Bu hususlar görüşmede sormanız durumunda iletilecek.'},
-            ].map(r=>`<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:600;color:#1a0a2e">${r.s}</div><div style="font-size:11px;color:#10b981;padding-left:8px;margin-top:2px">→ ${r.c}</div></div>`).join('')}
-          </div>
-        </div>
-        <div class="card" style="margin-bottom:12px">
-          <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:8px">📍 Ulaşım & Konum Kontrolü</div>
-          <div style="font-size:11px;color:#334155;line-height:1.9">
-            <div>✅ Ofise <strong>maksimum 5–6 km</strong> uzaklıkta olmalı.</div>
-            <div>✅ Metro ile <strong>aktarmasız</strong> gelebiliyorsa 10 km de kabul edilebilir.</div>
-            <div>✅ Uzaktan çalışma sistemi aktif olana kadar bu kural geçerli.</div>
-            <div style="font-size:10px;color:#9a7ab0;font-style:italic;margin-top:6px">1 gün kalacağın otele özenmezsin, ama içinde yaşayacağın evi seçerken çok daha dikkatli olursun.</div>
-          </div>
-        </div>
-        <div class="card">
-          <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:8px">📨 IK Yöneticisine İletilecek Bilgiler</div>
-          <div style="font-size:11px;color:#334155;line-height:1.9">
-            <div>• Adayın CV'si (PDF formatında)</div>
-            <div>• Telefon görüşmesi notları ve verilen yanıtlar</div>
-            <div>• Kanaat notu: <em>mutlaka görüşmeliyiz / iyi / fena değil / emin değilim</em></div>
-            <div>• Her görüşme max <strong>30 dakika</strong> — aralarında <strong>15 dakika</strong> ara</div>
-            <div>• Zoom / Google Meet linki WhatsApp üzerinden gönderilir</div>
-          </div>
-        </div>
+      <!-- Dark mode -->
+      <button class="tb-btn" id="theme-btn" onclick="toggleTheme()" title="Gece/Gündüz">
+        <svg id="theme-icon-sun" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <!-- Clock -->
+      <span id="live-clock" style="font-size:11px;color:var(--text3);font-weight:500;min-width:120px;text-align:right"></span>
+      <!-- User -->
+      <div class="user-chip" onclick="logout()">
+        <div class="user-av" id="user-av">IK</div>
+        <span class="user-name" id="user-name">Admin</span>
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div id="body-wrap">
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+      <nav id="nav-items"></nav>
+      <div class="sb-bot">
+        <button onclick="toggleSB()"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
     </div>
 
-    <!-- ── MÜLAKAT FORMU ── -->
-    <div id="panel-mulakat" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <div><div class="sec-head-txt">Mülakat Formu</div><div class="sec-head-sub">Soru ekle · Yanıt yaz · Kaydet</div></div>
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- PIPELINE -->
+      <div id="panel-pipeline" class="panel active">
+        <div class="pipe-wrap" id="pipe-board"></div>
       </div>
-      <div style="max-width:800px">
-        <div class="tabs">
-          <button class="tab active" onclick="st('mul','kontrol',this)">Kontrol Listesi</button>
-          <button class="tab" onclick="st('mul','form',this)">Mülakat Formu</button>
-          <button class="tab" onclick="st('mul','sorubankasi',this)">Soru Bankası</button>
-        </div>
 
-        <!-- Kontrol listesi -->
-        <div id="mul-kontrol" class="tpanel active">
-          <div class="tip">📌 Görüşmeden önce tüm maddeler hazır olmalı.</div>
-          <div id="kontrol-list"></div>
-        </div>
+      <!-- TELEFON -->
+      <div id="panel-telefon" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div><div class="sec-head-txt" data-i18n="phone_title">Telefon Ön Görüşme Rehberi</div><div class="sec-head-sub">IKMG-0300-243</div></div></div>
+        <div style="max-width:820px" id="telefon-content"></div>
+      </div>
 
-        <!-- Mülakat Formu -->
-        <div id="mul-form" class="tpanel">
-          <div class="card" style="margin-bottom:12px">
-            <div style="font-weight:700;font-size:13px;color:#1a0a2e;margin-bottom:12px">Görüşme Bilgileri</div>
-            <div class="frow">
-              <div class="field"><label>Adayın Adı Soyadı</label><input id="mf-aday" placeholder="Ad Soyad"/></div>
-              <div class="field"><label>Pozisyon</label><input id="mf-pozisyon" placeholder="ör. Satınalma Asistanı"/></div>
-              <div class="field"><label>Görüşme Tarihi & Saati</label><input id="mf-tarih" type="datetime-local"/></div>
-              <div class="field"><label>Görüşen Kişi</label><input id="mf-gorusen" placeholder="IK Yöneticisi adı"/></div>
-            </div>
+      <!-- MÜLAKAT FORMU -->
+      <div id="panel-mulakat" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <div><div class="sec-head-txt" data-i18n="interview_form">Mülakat Formu</div><div class="sec-head-sub" data-i18n="interview_form_sub">Soru ekle · Yanıt yaz · Kaydet</div></div></div>
+        <div style="max-width:800px">
+          <div class="tabs">
+            <button class="tab active" onclick="st('mul','kontrol',this)" data-i18n="checklist_tab">Kontrol Listesi</button>
+            <button class="tab" onclick="st('mul','form',this)" data-i18n="form_tab">Mülakat Formu</button>
+            <button class="tab" onclick="st('mul','sorubankasi',this)" data-i18n="bank_tab">Soru Bankası</button>
           </div>
-          <div class="card" style="margin-bottom:12px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <div style="font-weight:700;font-size:13px;color:#1a0a2e">Sorular ve Yanıtlar</div>
-              <div style="display:flex;gap:6px">
-                <button class="btn btn-outline btn-sm" onclick="addFromBank()">+ Bankadan Ekle</button>
-                <button class="btn btn-rose btn-sm" onclick="addIQ()">+ Soru Ekle</button>
+          <div id="mul-kontrol" class="tpanel active"><div id="kontrol-list"></div></div>
+          <div id="mul-form" class="tpanel">
+            <div class="card" style="margin-bottom:11px">
+              <div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:11px" data-i18n="interview_info">Görüşme Bilgileri</div>
+              <div class="frow">
+                <div class="field"><label data-i18n="candidate_name">Adayın Adı Soyadı</label><input id="mf-aday" placeholder="Ad Soyad"/></div>
+                <div class="field"><label data-i18n="position">Pozisyon</label><input id="mf-pozisyon" placeholder="ör. Satınalma Asistanı"/></div>
+                <div class="field"><label data-i18n="interview_datetime">Görüşme Tarihi &amp; Saati</label><input id="mf-tarih" type="datetime-local"/></div>
+                <div class="field"><label data-i18n="interviewer">Görüşen Kişi</label><input id="mf-gorusen" placeholder="IK Yöneticisi adı"/></div>
               </div>
             </div>
-            <div id="iq-list"></div>
+            <div class="card" style="margin-bottom:11px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+                <div style="font-weight:700;font-size:13px;color:var(--text)" data-i18n="qa_title">Sorular ve Yanıtlar</div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn btn-outline btn-sm" onclick="addFromBank()" data-i18n="from_bank">+ Bankadan</button>
+                  <button class="btn btn-primary btn-sm" onclick="addIQ()" data-i18n="add_question">+ Soru Ekle</button>
+                </div>
+              </div>
+              <div id="iq-list"></div>
+            </div>
+            <div class="card" style="margin-bottom:11px">
+              <div class="field"><label data-i18n="interviewer_note">Görüşen Kişinin Notu</label><textarea id="mf-not" style="min-height:80px" placeholder="Genel izlenim, karar önerisi..."></textarea></div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary btn-full" onclick="saveInterview()">💾 <span data-i18n="save_interview">Görüşmeyi Kaydet</span></button>
+              <button class="btn btn-outline" onclick="clearForm()" data-i18n="clear_form">Temizle</button>
+            </div>
+            <div id="save-msg" style="margin-top:8px"></div>
           </div>
-          <div class="card" style="margin-bottom:12px">
-            <div class="field"><label>Görüşen Kişinin Notu (Özet Kanaat)</label><textarea id="mf-not" placeholder="Aday hakkındaki genel izlenimler, karar önerisi (mutlaka görüşelim / iyi / fena değil / uygun değil)..." style="min-height:90px"></textarea></div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-primary" style="flex:1" onclick="saveInterview()">💾 Görüşmeyi Kaydet</button>
-            <button class="btn btn-outline" onclick="clearForm()">Formu Temizle</button>
-          </div>
-          <div id="save-msg" style="margin-top:8px"></div>
+          <div id="mul-sorubankasi" class="tpanel"><div id="soru-bankasi-list"></div></div>
         </div>
+      </div>
 
-        <!-- Soru Bankası -->
-        <div id="mul-sorubankasi" class="tpanel">
-          <div class="tip">Herhangi bir soruyu forma eklemek için <strong>"Forma Ekle"</strong> butonuna tıklayın.</div>
-          <div id="soru-bankasi-list"></div>
+      <!-- KAYITLAR -->
+      <div id="panel-kayitlar" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <div><div class="sec-head-txt" data-i18n="records_title">Mülakat Kayıtları</div><div class="sec-head-sub" data-i18n="records_sub">Kaydedilen tüm görüşmeler</div></div></div>
+        <div style="max-width:820px"><div id="kayit-listesi"></div></div>
+      </div>
+
+      <!-- TEST SÜRÜŞÜ -->
+      <div id="panel-test" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <div><div class="sec-head-txt" data-i18n="test_title">Test Sürüşü — Adım 8</div><div class="sec-head-sub">IKTS-0300-132</div></div></div>
+        <div style="max-width:880px">
+          <div class="tabs">
+            <button class="tab active" onclick="st('test','ilk2ay',this)" data-i18n="first2months">İlk 2 Ay</button>
+            <button class="tab" onclick="st('test','sonmulakat',this)" data-i18n="last_interview">Son Mülakat</button>
+            <button class="tab" onclick="st('test','yonler',this)" data-i18n="aspects">Test Edilen Yönler</button>
+          </div>
+          <div id="test-ilk2ay" class="tpanel active"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" id="tg1"></div></div>
+          <div id="test-sonmulakat" class="tpanel"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" id="tg2"></div></div>
+          <div id="test-yonler" class="tpanel"><div class="card"><div id="yonler-wrap" style="display:flex;flex-wrap:wrap;gap:6px"></div></div></div>
         </div>
       </div>
-    </div>
 
-    <!-- ── KAYITLAR ── -->
-    <div id="panel-kayitlar" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-        <div><div class="sec-head-txt">Mülakat Kayıtları</div><div class="sec-head-sub">Kaydedilen tüm görüşmeler</div></div>
-      </div>
-      <div style="max-width:820px">
-        <div id="kayit-listesi"></div>
-      </div>
-    </div>
+      <!-- DEĞERLENDİRME -->
+      <div id="panel-evaluation" class="panel"><div id="eval-content"></div></div>
 
-    <!-- ── TEST SÜRÜŞÜ ── -->
-    <div id="panel-test" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-        <div><div class="sec-head-txt">Test Sürüşü — Adım 8</div><div class="sec-head-sub">IKTS-0300-132 · Adayın vaatleri ile gerçek kapasitesi arasındaki fark</div></div>
+      <!-- REFERANS -->
+      <div id="panel-referans" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <div><div class="sec-head-txt" data-i18n="ref_title">Referans Kontrol Formu</div></div></div>
+        <div style="max-width:660px">
+          <div class="card">
+            <div class="frow">
+              <div class="field"><label data-i18n="candidate_name">Adayın Adı</label><input/></div>
+              <div class="field"><label data-i18n="app_date">Başvuru Tarihi</label><input type="date"/></div>
+              <div class="field"><label data-i18n="position">Pozisyon</label><input/></div>
+              <div class="field"><label data-i18n="ref_name">Referans Adı</label><input/></div>
+              <div class="field"><label data-i18n="company">Firma</label><input/></div>
+              <div class="field"><label data-i18n="phone">Telefon</label><input placeholder="+90 ..."/></div>
+              <div class="field"><label data-i18n="ref_title_lbl">Referansın Unvanı</label><input/></div>
+              <div class="field"><label data-i18n="interview_date">Görüşme Tarihi</label><input type="date"/></div>
+              <div class="field"><label data-i18n="work_dates">Çalışma Tarihleri</label><input placeholder="2020–2023"/></div>
+              <div class="field"><label data-i18n="sep_reason">Ayrılış Sebebi</label><input/></div>
+            </div>
+            <div class="field"><label data-i18n="work_quality">Çalışma Kalitesi</label><textarea style="min-height:55px"></textarea></div>
+            <div class="field"><label data-i18n="training_needed">Eğitim Gereken Alanlar</label><textarea style="min-height:55px"></textarea></div>
+            <div class="field"><label data-i18n="general_comments">Genel Yorumlar</label><textarea style="min-height:70px"></textarea></div>
+            <button class="btn btn-primary btn-full" onclick="alert(T('ref_saved'))" data-i18n="save_form">Formu Kaydet</button>
+          </div>
+        </div>
       </div>
-      <div style="max-width:880px">
-        <div class="tip">⚠️ Testlerin büyük çoğunluğu ön eğitim ve bilgi vermeden yapılır. <strong>İste ve çekilip izle.</strong></div>
+
+      <!-- TEŞEKKÜR -->
+      <div id="panel-tesekkur" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <div><div class="sec-head-txt" data-i18n="thanks_title">Teşekkür Mektubu</div></div></div>
+        <div style="max-width:600px">
+          <div class="card">
+            <div class="frow" style="margin-bottom:8px">
+              <div class="field"><label data-i18n="candidate_name">Adayın Adı</label><input id="tsk-aday" oninput="updateTsk()"/></div>
+              <div class="field"><label data-i18n="sender">Gönderen Adı &amp; Unvanı</label><input id="tsk-gonderen" oninput="updateTsk()"/></div>
+            </div>
+            <div class="flabel" style="margin-bottom:5px" data-i18n="preview">Önizleme</div>
+            <div id="tsk-preview" style="background:var(--bg3);border-radius:9px;padding:13px;font-size:12px;color:var(--text);line-height:1.8;white-space:pre-wrap;border:1px solid var(--border);min-height:170px"></div>
+            <button class="btn btn-primary btn-full" style="margin-top:9px" onclick="copyTsk()" data-i18n="copy_text">Metni Kopyala</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- YZ ARAÇLARI -->
+      <div id="panel-ai" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <div><div class="sec-head-txt" data-i18n="ai_title">Yapay Zeka IK Araçları</div><div class="sec-head-sub">CV · Mülakat Soruları · İş İlanı</div></div></div>
         <div class="tabs">
-          <button class="tab active" onclick="st('test','ilk2ay',this)">İlk 2 Ay Testleri</button>
-          <button class="tab" onclick="st('test','sonmulakat',this)">Son Mülakat Testleri</button>
-          <button class="tab" onclick="st('test','yonler',this)">Test Edilecek Yönler</button>
+          <button class="tab active" onclick="st('ai','cv',this)" data-i18n="cv_analysis">CV Analizi</button>
+          <button class="tab" onclick="st('ai','soru',this)" data-i18n="gen_questions">Mülakat Soruları</button>
+          <button class="tab" onclick="st('ai','ilan',this)" data-i18n="gen_posting">İş İlanı</button>
         </div>
-        <div id="test-ilk2ay" class="tpanel active">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" id="test-grid-1"></div>
+        <div id="ai-cv" class="tpanel active" style="max-width:680px">
+          <div class="field"><label data-i18n="position">Pozisyon</label><input id="cv-pos"/></div>
+          <div class="field"><label data-i18n="cv_text">CV Metni</label><textarea id="cv-text" style="min-height:110px"></textarea></div>
+          <div class="field"><label data-i18n="desired_skills">Aranan Özellikler (isteğe bağlı)</label><input id="cv-krit"/></div>
+          <div id="cv-err"></div>
+          <button class="btn btn-primary btn-full" id="cv-btn" onclick="analyzeCV()" data-i18n="analyze_cv">CV'yi Analiz Et</button>
+          <div id="cv-result"></div>
         </div>
-        <div id="test-sonmulakat" class="tpanel">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" id="test-grid-2"></div>
-        </div>
-        <div id="test-yonler" class="tpanel">
-          <div class="card"><div id="yonler-wrap" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── DEĞERLENDİRME ── -->
-    <div id="panel-evaluation" class="panel">
-      <div id="eval-content"></div>
-    </div>
-
-    <!-- ── REFERANS ── -->
-    <div id="panel-referans" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        <div><div class="sec-head-txt">Referans Kontrol Formu</div><div class="sec-head-sub">Eski işveren / yöneticiyle görüşme formu</div></div>
-      </div>
-      <div style="max-width:680px">
-        <div class="card">
-          <div style="font-weight:700;font-size:13px;color:#1a0a2e;margin-bottom:14px">Referans Kontrol Formatı</div>
+        <div id="ai-soru" class="tpanel" style="max-width:680px">
+          <div class="field"><label data-i18n="position">Pozisyon</label><input id="s-pos"/></div>
           <div class="frow">
-            <div class="field"><label>Adayın Adı</label><input placeholder="Ad Soyad"/></div>
-            <div class="field"><label>Başvuru Tarihi</label><input type="date"/></div>
-            <div class="field"><label>Pozisyon</label><input placeholder="Başvurulan pozisyon"/></div>
-            <div class="field"><label>Referans Adı</label><input placeholder="Referansın adı"/></div>
-            <div class="field"><label>Firma</label><input placeholder="Eski çalıştığı firma"/></div>
-            <div class="field"><label>Telefon</label><input placeholder="+90 ..."/></div>
-            <div class="field"><label>Referansın Unvanı</label><input placeholder="Yönetici / Çalışan"/></div>
-            <div class="field"><label>Görüşme Tarihi</label><input type="date"/></div>
-            <div class="field"><label>Adayın Çalışma Tarihleri</label><input placeholder="2020–2023"/></div>
-            <div class="field"><label>Adayın Eski Unvanı</label><input placeholder="Unvan"/></div>
-            <div class="field"><label>Ayrılış Sebebi</label><input placeholder="Neden ayrıldı?"/></div>
-            <div class="field"><label>Maaş</label><input placeholder=""/></div>
+            <div class="field"><label data-i18n="question_type">Soru Türü</label><select id="s-tur"><option value="teknik" data-i18n="technical">Teknik</option><option value="davranissal" data-i18n="behavioral">Davranışsal</option><option value="durum" data-i18n="situational">Durum Bazlı</option><option value="karma" selected data-i18n="mixed">Karma</option></select></div>
+            <div class="field"><label data-i18n="level">Seviye</label><select id="s-sev"><option value="junior">Junior</option><option value="mid" selected>Mid-level</option><option value="senior">Senior</option><option value="yonetici" data-i18n="manager">Yönetici</option></select></div>
           </div>
-          <div class="field"><label>Çalışma Kalitesi</label><textarea placeholder="Genel çalışma kalitesi..." style="min-height:60px"></textarea></div>
-          <div class="field"><label>Eğitim Gereken Alanlar</label><textarea placeholder="Gelişim alanları..." style="min-height:55px"></textarea></div>
-          <div class="field"><label>Genel Yorumlar</label><textarea placeholder="Referansın genel değerlendirmesi..." style="min-height:75px"></textarea></div>
-          <button class="btn btn-primary btn-full" onclick="alert('Referans formu kaydedildi!')">Formu Kaydet</button>
+          <div class="field"><label data-i18n="focus_skills">Odak Yetkinlikler (isteğe bağlı)</label><input id="s-yet"/></div>
+          <div id="s-err"></div>
+          <button class="btn btn-primary btn-full" id="s-btn" onclick="genSorular()" data-i18n="generate_questions">Soru Üret</button>
+          <div id="s-result"></div>
         </div>
-      </div>
-    </div>
-
-    <!-- ── TEŞEKKÜR ── -->
-    <div id="panel-tesekkur" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <div><div class="sec-head-txt">Teşekkür Mektubu</div><div class="sec-head-sub">Görüşmeye gelen adaylara gönderilecek mektup</div></div>
-      </div>
-      <div style="max-width:600px">
-        <div class="card">
-          <div class="frow" style="margin-bottom:8px">
-            <div class="field"><label>Adayın Adı</label><input id="tsk-aday" oninput="updateTsk()" placeholder="Ad Soyad"/></div>
-            <div class="field"><label>Gönderen Adı & Unvanı</label><input id="tsk-gonderen" oninput="updateTsk()" placeholder="İsim Soyisim — Unvan"/></div>
+        <div id="ai-ilan" class="tpanel" style="max-width:680px">
+          <div class="field"><label data-i18n="position_name">Pozisyon Adı</label><input id="i-pos"/></div>
+          <div class="frow">
+            <div class="field"><label data-i18n="department">Departman</label><input id="i-dep"/></div>
+            <div class="field"><label data-i18n="work_model">Çalışma Modeli</label><select id="i-mod"><option value="ofis" data-i18n="office">Ofis</option><option value="remote">Remote</option><option value="hybrid" selected data-i18n="hybrid">Hibrit</option></select></div>
           </div>
-          <div class="flabel" style="margin-bottom:6px">Önizleme</div>
-          <div id="tsk-preview" style="background:#f8f5ff;border-radius:9px;padding:14px;font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap;border:1px solid #e8dff5;min-height:180px"></div>
-          <button class="btn btn-primary btn-full" style="margin-top:10px" onclick="copyTsk()">Metni Kopyala</button>
+          <div class="field"><label data-i18n="requirements">Temel Gereksinimler</label><textarea id="i-ger" style="min-height:70px"></textarea></div>
+          <div id="i-err"></div>
+          <button class="btn btn-primary btn-full" id="i-btn" onclick="genIlan()" data-i18n="generate_posting">İş İlanı Oluştur</button>
+          <div id="i-result"></div>
         </div>
       </div>
-    </div>
 
-    <!-- ── YZ ARAÇLARI ── -->
-    <div id="panel-ai" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        <div><div class="sec-head-txt">Yapay Zeka IK Araçları</div><div class="sec-head-sub">CV analizi · Mülakat soruları üretme · İş ilanı oluşturma</div></div>
-      </div>
-      <div class="tabs">
-        <button class="tab active" onclick="st('ai','cv',this)">CV Analizi</button>
-        <button class="tab" onclick="st('ai','soru',this)">Mülakat Soruları</button>
-        <button class="tab" onclick="st('ai','ilan',this)">İş İlanı Oluştur</button>
-      </div>
-      <div id="ai-cv" class="tpanel active" style="max-width:680px">
-        <div class="field"><label>Pozisyon</label><input id="cv-pos" placeholder="ör. Satınalma Asistanı..."/></div>
-        <div class="field"><label>CV Metni</label><textarea id="cv-text" placeholder="CV içeriğini buraya yapıştırın..."></textarea></div>
-        <div class="field"><label>Aranan Özellikler (isteğe bağlı)</label><input id="cv-krit" placeholder="ör. pazarlık, sertifika, 3 yıl deneyim"/></div>
-        <div id="cv-err"></div>
-        <button class="btn btn-primary btn-full" id="cv-btn" onclick="analyzeCV()">CV'yi Analiz Et</button>
-        <div id="cv-result"></div>
-      </div>
-      <div id="ai-soru" class="tpanel" style="max-width:680px">
-        <div class="field"><label>Pozisyon</label><input id="s-pos" placeholder="ör. IK Yöneticisi..."/></div>
-        <div class="frow">
-          <div class="field"><label>Soru Türü</label><select id="s-tur"><option value="teknik">Teknik</option><option value="davranissal">Davranışsal</option><option value="durum">Durum Bazlı</option><option value="karma" selected>Karma</option></select></div>
-          <div class="field"><label>Seviye</label><select id="s-sev"><option value="junior">Junior</option><option value="mid" selected>Mid-level</option><option value="senior">Senior</option><option value="yonetici">Yönetici</option></select></div>
+      <!-- ÖZET -->
+      <div id="panel-ozet" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <div><div class="sec-head-txt" data-i18n="comparison_title">Aday Karşılaştırma</div></div></div>
+        <div style="max-width:900px">
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <input id="oz-poz" placeholder="Pozisyon" style="border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);background:var(--bg3)"/>
+            <button class="btn btn-primary" onclick="addOzetRow()" data-i18n="add_candidate">+ Aday Ekle</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="tbl"><thead><tr><th data-i18n="candidate_name">Adayın Adı</th><th data-i18n="interview1">1. Görüşme</th><th data-i18n="test_drive">Test Sürüşü</th><th data-i18n="interview2">2. Görüşme</th><th data-i18n="total_score">Toplam Puan</th><th></th></tr></thead>
+            <tbody id="ozet-body"></tbody></table>
+          </div>
         </div>
-        <div class="field"><label>Odak Yetkinlikler (isteğe bağlı)</label><input id="s-yet" placeholder="ör. ikna, iletişim, analitik..."/></div>
-        <div id="s-err"></div>
-        <button class="btn btn-primary btn-full" id="s-btn" onclick="genSorular()">Soru Üret</button>
-        <div id="s-result"></div>
       </div>
-      <div id="ai-ilan" class="tpanel" style="max-width:680px">
-        <div class="field"><label>Pozisyon Adı</label><input id="i-pos" placeholder="ör. Satınalma Asistanı..."/></div>
-        <div class="frow">
-          <div class="field"><label>Departman</label><input id="i-dep" placeholder="ör. Satınalma..."/></div>
-          <div class="field"><label>Çalışma Modeli</label><select id="i-mod"><option value="ofis">Ofis</option><option value="remote">Remote</option><option value="hybrid" selected>Hibrit</option></select></div>
-        </div>
-        <div class="field"><label>Temel Gereksinimler</label><textarea id="i-ger" placeholder="Sorumluluklar ve nitelikler..." style="min-height:75px"></textarea></div>
-        <div id="i-err"></div>
-        <button class="btn btn-primary btn-full" id="i-btn" onclick="genIlan()">İş İlanı Oluştur</button>
-        <div id="i-result"></div>
-      </div>
-    </div>
 
-    <!-- ── ADAY KARŞILAŞTIRMA ── -->
-    <div id="panel-ozet" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <div><div class="sec-head-txt">Eleman Adayları Değerlendirme Özeti</div><div class="sec-head-sub">Tüm adayların görüşme sonuçlarını karşılaştırın</div></div>
+      <!-- KAYNAKLAR -->
+      <div id="panel-kaynaklar" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <div><div class="sec-head-txt" data-i18n="resources_title">IK Kaynakları</div><div class="sec-head-sub" data-i18n="resources_sub">Kitaplar · Web Siteleri · Araçlar · Yöntemler</div></div></div>
+        <div class="res-grid" id="kaynak-grid"></div>
       </div>
-      <div style="max-width:900px">
-        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
-          <input id="oz-poz" placeholder="Pozisyon" style="border:1px solid #e0d0f0;border-radius:8px;padding:6px 10px;font-size:12px;color:#334155;background:#f8f5ff"/>
-          <input id="oz-bol" placeholder="Bölüm" style="border:1px solid #e0d0f0;border-radius:8px;padding:6px 10px;font-size:12px;color:#334155;background:#f8f5ff"/>
-          <button class="btn btn-rose" onclick="addOzetRow()">+ Aday Ekle</button>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="tbl"><thead><tr><th>Adayın Adı</th><th>1. Görüşme</th><th>Test Sürüşü</th><th>2. Görüşme</th><th>Toplam Puan</th><th></th></tr></thead>
-          <tbody id="ozet-body"></tbody></table>
-        </div>
-      </div>
-    </div>
 
-    <!-- ── KAYNAKLAR ── -->
-    <div id="panel-kaynaklar" class="panel">
-      <div class="sec-head">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        <div><div class="sec-head-txt">IK Kaynakları</div><div class="sec-head-sub">En iyi kitaplar · Araçlar · Web siteleri · Yöntemler</div></div>
+      <!-- VERSİYON GEÇMİŞİ -->
+      <div id="panel-versions" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
+          <div><div class="sec-head-txt" data-i18n="version_history">Sürüm Geçmişi</div><div class="sec-head-sub" data-i18n="version_sub">Tüm güncellemeler ve değişiklik notları</div></div></div>
+        <div style="max-width:720px" id="version-list"></div>
       </div>
-      <div id="kaynak-grid" class="res-grid"></div>
-    </div>
 
+      <!-- GÜNCELLEMELERİ ÖNER -->
+      <div id="panel-suggest" class="panel">
+        <div class="sec-head"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div><div class="sec-head-txt" data-i18n="suggest_title">Güncelleme Önerileri</div><div class="sec-head-sub" data-i18n="suggest_sub">Yeni özellik veya iyileştirme önerin</div></div></div>
+        <div style="max-width:760px">
+          <div class="card" style="margin-bottom:14px">
+            <div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:11px" data-i18n="new_suggestion">Yeni Öneri Gönder</div>
+            <div class="frow">
+              <div class="field"><label data-i18n="your_name">Adınız</label><input id="sg-name" placeholder="Ad Soyad"/></div>
+              <div class="field"><label data-i18n="category">Kategori</label>
+                <select id="sg-cat">
+                  <option value="Özellik" data-i18n="cat_feature">Yeni Özellik</option>
+                  <option value="İyileştirme" data-i18n="cat_improvement">İyileştirme</option>
+                  <option value="Hata" data-i18n="cat_bug">Hata Bildirimi</option>
+                  <option value="Tasarım" data-i18n="cat_design">Tasarım</option>
+                  <option value="Diğer" data-i18n="cat_other">Diğer</option>
+                </select>
+              </div>
+            </div>
+            <div class="field"><label data-i18n="suggestion_title">Başlık</label><input id="sg-title" placeholder="Kısa bir başlık..."/></div>
+            <div class="field"><label data-i18n="description">Açıklama</label><textarea id="sg-desc" style="min-height:80px" placeholder="Detaylı açıklama, neden gerekli, nasıl çalışmalı..."></textarea></div>
+            <button class="btn btn-primary btn-full" onclick="submitSuggestion()" data-i18n="submit_suggestion">Öneriyi Gönder</button>
+            <div id="sg-msg" style="margin-top:7px"></div>
+          </div>
+          <div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:10px" data-i18n="all_suggestions">Tüm Öneriler</div>
+          <div id="suggest-list"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /body-wrap -->
+</div><!-- /app -->
+
+<!-- BANKA MODAL -->
+<div id="bank-mo" style="display:none;position:fixed;inset:0;background:rgba(10,5,24,.65);z-index:60;backdrop-filter:blur(5px);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--bg2);border-radius:14px;width:560px;max-height:80vh;display:flex;flex-direction:column;border:1px solid var(--border)">
+    <div style="padding:13px 17px;border-bottom:1px solid var(--border);font-weight:700;font-size:13px;color:var(--text);display:flex;justify-content:space-between;align-items:center">
+      <span data-i18n="select_from_bank">Soru Bankasından Seç</span>
+      <button onclick="document.getElementById('bank-mo').style.display='none'" style="border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="flex:1;overflow:auto;padding:13px 17px" id="bank-mo-list"></div>
   </div>
 </div>
 
-<!-- ════ MODAL ════ -->
+<!-- MODAL -->
 <div id="mo" onclick="closeMO(event)">
   <div id="modal">
     <div class="mhead">
-      <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:9px">
         <div class="mav" id="m-av"></div>
-        <div><div style="font-weight:700;font-size:13px;color:#1a0a2e" id="m-name"></div><div style="font-size:11px;color:#9a7ab0" id="m-pos"></div></div>
+        <div><div style="font-weight:700;font-size:13px;color:var(--text)" id="m-name"></div><div style="font-size:11px;color:var(--text3)" id="m-pos"></div></div>
       </div>
-      <button onclick="document.getElementById('mo').classList.remove('open')" style="border:none;background:transparent;color:#9a7ab0;cursor:pointer;padding:3px;border-radius:50%;display:flex"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <button onclick="document.getElementById('mo').classList.remove('open')" style="border:none;background:transparent;color:var(--text3);cursor:pointer;padding:3px;border-radius:50%;display:flex"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="mbody" id="m-body"></div>
     <div class="mfoot" id="m-foot"></div>
   </div>
 </div>
 
-<!-- ════ BANKA MODAL ════ -->
-<div id="bank-mo" style="display:none;position:fixed;inset:0;background:rgba(26,10,46,.6);z-index:60;backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
-  <div style="background:#fff;border-radius:14px;width:560px;max-height:80vh;display:flex;flex-direction:column">
-    <div style="padding:14px 18px;border-bottom:1px solid #f0e8f0;font-weight:700;font-size:13px;color:#1a0a2e;display:flex;justify-content:space-between;align-items:center">
-      Soru Bankasından Seç
-      <button onclick="document.getElementById('bank-mo').style.display='none'" style="border:none;background:transparent;color:#9a7ab0;cursor:pointer;display:flex"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div style="flex:1;overflow:auto;padding:14px 18px" id="bank-mo-list"></div>
-  </div>
-</div>
-
 <script>
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// VERSION & APP META
+// ══════════════════════════════════════════════════
+const APP_VERSION = '1.3.0';
+const APP_VERSIONS = [
+  {
+    ver:'1.3.0',
+    ts:'2026-03-16T18:45:00',
+    changes:['Çok dil desteği eklendi (TR / EN / FR)','Login ekranı ve kullanıcı rolleri (Admin, IK Uzmanı, Görüntüleyici)','Gece / Gündüz modu','Sürüm geçmişi paneli','Güncelleme öneri sistemi (oy verme, kategori, durum)','Login ekranında canlı saat ve versiyon bilgisi','Her sayfada versiyon chip\'i','Soru bankasından forma tek tıkla ekleme','YZ sorularını forma aktar butonu','Kaydedilmiş mülakatları görüntüle / yazdır / sil']
+  },
+  {
+    ver:'1.2.0',
+    ts:'2026-03-15T16:04:00',
+    changes:['GitHub Pages\'e HTML tek dosya olarak yayınlandı','IK Kaynakları modülü (18 kaynak: kitap, araç, yöntem, Türkçe kaynaklar)','Mülakat formu — soru ekle/çıkar, yanıt kutusu','LocalStorage ile görüşme kaydetme veritabanı','Kayıt görüntüleme ve PDF yazdırma','Aday Karşılaştırma tablosu']
+  },
+  {
+    ver:'1.1.0',
+    ts:'2026-03-15T14:00:00',
+    changes:['PDF dökümanlarından tüm içerik programa entegre edildi','Telefon ön eleme rehberi (IKMG-0300-243)','Mülakat kontrol listesi (tık kutularıyla)','Test sürüşü modülü (ilk 2 ay + son mülakat testleri)','Değerlendirme cetveli (13 faktör, 1-5 puanlama)','Referans kontrol formu','Teşekkür mektubu önizleme ve kopyalama','DISC profil rehberi']
+  },
+  {
+    ver:'1.0.0',
+    ts:'2026-03-15T10:30:00',
+    changes:['İlk sürüm yayınlandı','Aday havuzu Kanban pipeline (5 aşama)','YZ araçları: CV analizi, mülakat sorusu üretme, iş ilanı oluşturma','Claude API entegrasyonu']
+  },
+];
+
+function fmtTs(ts){
+  const d=new Date(ts);
+  return d.toLocaleDateString('tr-TR')+' '+d.toLocaleTimeString('tr-TR');
+}
+
+// ══════════════════════════════════════════════════
+// I18N
+// ══════════════════════════════════════════════════
+let LANG='tr';
+const TRANSLATIONS={
+  tr:{
+    app_sub:'İŞE ALIM SİSTEMİ',username:'Kullanıcı Adı',password:'Şifre',login_as:'Giriş Rolü',
+    role_admin:'Yönetici (Admin)',role_hr:'IK Uzmanı',role_viewer:'Görüntüleyici',
+    login_btn:'Giriş Yap',login_err:'Kullanıcı adı veya şifre hatalı.',
+    pipeline:'Aday Havuzu',phone_screen:'Telefon Ön Eleme',interview_form_nav:'Mülakat Formu',
+    records:'Mülakat Kayıtları',test_drive_nav:'Test Sürüşü',evaluation:'Değerlendirme',
+    reference:'Referans Kontrol',thanks:'Teşekkür Mektubu',ai_tools:'YZ Araçları',
+    comparison:'Aday Karşılaştırma',resources:'IK Kaynakları',version_history:'Sürüm Geçmişi',
+    suggest:'Güncelleme Öner',
+    phone_title:'Telefon Ön Görüşme Rehberi',
+    interview_form:'Mülakat Formu',interview_form_sub:'Soru ekle · Yanıt yaz · Kaydet',
+    checklist_tab:'Kontrol Listesi',form_tab:'Mülakat Formu',bank_tab:'Soru Bankası',
+    interview_info:'Görüşme Bilgileri',candidate_name:'Adayın Adı Soyadı',position:'Pozisyon',
+    interview_datetime:'Görüşme Tarihi & Saati',interviewer:'Görüşen Kişi',
+    qa_title:'Sorular ve Yanıtlar',from_bank:'+ Bankadan',add_question:'+ Soru Ekle',
+    interviewer_note:'Görüşen Kişinin Notu',save_interview:'Görüşmeyi Kaydet',clear_form:'Temizle',
+    records_title:'Mülakat Kayıtları',records_sub:'Kaydedilen tüm görüşmeler',
+    test_title:'Test Sürüşü — Adım 8',first2months:'İlk 2 Ay',last_interview:'Son Mülakat',aspects:'Test Edilen Yönler',
+    ref_title:'Referans Kontrol Formu',ref_name:'Referans Adı',company:'Firma',phone:'Telefon',
+    ref_title_lbl:'Referansın Unvanı',app_date:'Başvuru Tarihi',interview_date:'Görüşme Tarihi',
+    work_dates:'Çalışma Tarihleri',sep_reason:'Ayrılış Sebebi',work_quality:'Çalışma Kalitesi',
+    training_needed:'Eğitim Gereken Alanlar',general_comments:'Genel Yorumlar',
+    save_form:'Formu Kaydet',ref_saved:'Referans formu kaydedildi!',
+    thanks_title:'Teşekkür Mektubu',sender:'Gönderen Adı & Unvanı',preview:'Önizleme',copy_text:'Metni Kopyala',
+    ai_title:'Yapay Zeka IK Araçları',cv_analysis:'CV Analizi',gen_questions:'Mülakat Soruları',gen_posting:'İş İlanı',
+    cv_text:'CV Metni',desired_skills:'Aranan Özellikler (isteğe bağlı)',analyze_cv:"CV'yi Analiz Et",
+    question_type:'Soru Türü',level:'Seviye',focus_skills:'Odak Yetkinlikler',generate_questions:'Soru Üret',
+    position_name:'Pozisyon Adı',department:'Departman',work_model:'Çalışma Modeli',
+    requirements:'Temel Gereksinimler',generate_posting:'İş İlanı Oluştur',
+    technical:'Teknik',behavioral:'Davranışsal',situational:'Durum Bazlı',mixed:'Karma',manager:'Yönetici',
+    office:'Ofis',hybrid:'Hibrit',
+    comparison_title:'Aday Karşılaştırma',add_candidate:'+ Aday Ekle',
+    interview1:'1. Görüşme',test_drive:'Test Sürüşü',interview2:'2. Görüşme',total_score:'Toplam Puan',
+    resources_title:'IK Kaynakları',resources_sub:'Kitaplar · Web Siteleri · Araçlar · Yöntemler',
+    version_sub:'Tüm güncellemeler ve değişiklik notları',
+    suggest_title:'Güncelleme Önerileri',suggest_sub:'Yeni özellik veya iyileştirme önerin',
+    new_suggestion:'Yeni Öneri Gönder',your_name:'Adınız',category:'Kategori',
+    suggestion_title:'Başlık',description:'Açıklama',submit_suggestion:'Öneriyi Gönder',
+    all_suggestions:'Tüm Öneriler',cat_feature:'Yeni Özellik',cat_improvement:'İyileştirme',
+    cat_bug:'Hata Bildirimi',cat_design:'Tasarım',cat_other:'Diğer',
+    select_from_bank:'Soru Bankasından Seç',
+    view:'Görüntüle',delete:'Sil',add_to_form:'Forma Ekle',
+    no_records:'Henüz kaydedilmiş mülakat yok.',
+    suggestion_saved:'Öneriniz kaydedildi, teşekkürler!',suggestion_err:'Lütfen başlık ve açıklama alanlarını doldurun.',
+    logout_confirm:'Çıkış yapmak istediğinize emin misiniz?',
+    select_candidate:'Aday Havuzu\'ndan bir aday seçin.',
+    thanks_letter:(a,g)=>`Sayın ${a},\n\nGeldiğiniz ve benimle tanıştığınız için teşekkür ederim. Sizinle görüşmekten memnunluk duyduğumu ve ilginize teşekkür ettiğimi belirtmek isterim.\n\nÇok sayıda nitelikli aday arasından bir karar vermek oldukça güç oldu. Pozisyonu size teklif edemediğimizden dolayı üzüntü duymaktayım; ancak önümüzdeki altı aylık süre içerisinde boşalan diğer pozisyonlar için özgeçmişinizi saklayacağımızı bildirmek isterim.\n\nİş arayışınızda başarılar dilerim.\n\nSaygılarımla,\n${g}\nDUAY Uluslararası Tic. Ltd. Şti.\nwww.duaycor.com | +90 212 625 5 444`,
+  },
+  en:{
+    app_sub:'RECRUITMENT SYSTEM',username:'Username',password:'Password',login_as:'Login Role',
+    role_admin:'Administrator (Admin)',role_hr:'HR Specialist',role_viewer:'Viewer',
+    login_btn:'Log In',login_err:'Invalid username or password.',
+    pipeline:'Candidate Pool',phone_screen:'Phone Screening',interview_form_nav:'Interview Form',
+    records:'Interview Records',test_drive_nav:'Test Drive',evaluation:'Evaluation',
+    reference:'Reference Check',thanks:'Thank You Letter',ai_tools:'AI Tools',
+    comparison:'Candidate Comparison',resources:'HR Resources',version_history:'Version History',
+    suggest:'Suggest Update',
+    phone_title:'Phone Screening Guide',
+    interview_form:'Interview Form',interview_form_sub:'Add questions · Write answers · Save',
+    checklist_tab:'Checklist',form_tab:'Interview Form',bank_tab:'Question Bank',
+    interview_info:'Interview Details',candidate_name:'Candidate Name',position:'Position',
+    interview_datetime:'Interview Date & Time',interviewer:'Interviewer',
+    qa_title:'Questions & Answers',from_bank:'+ From Bank',add_question:'+ Add Question',
+    interviewer_note:'Interviewer Note',save_interview:'Save Interview',clear_form:'Clear',
+    records_title:'Interview Records',records_sub:'All saved interviews',
+    test_title:'Test Drive — Step 8',first2months:'First 2 Months',last_interview:'Final Interview',aspects:'Tested Aspects',
+    ref_title:'Reference Check Form',ref_name:'Reference Name',company:'Company',phone:'Phone',
+    ref_title_lbl:'Reference Title',app_date:'Application Date',interview_date:'Interview Date',
+    work_dates:'Employment Dates',sep_reason:'Reason for Leaving',work_quality:'Work Quality',
+    training_needed:'Areas Needing Training',general_comments:'General Comments',
+    save_form:'Save Form',ref_saved:'Reference form saved!',
+    thanks_title:'Thank You Letter',sender:'Sender Name & Title',preview:'Preview',copy_text:'Copy Text',
+    ai_title:'AI HR Tools',cv_analysis:'CV Analysis',gen_questions:'Interview Questions',gen_posting:'Job Posting',
+    cv_text:'CV Text',desired_skills:'Desired Skills (optional)',analyze_cv:'Analyze CV',
+    question_type:'Question Type',level:'Level',focus_skills:'Focus Skills',generate_questions:'Generate Questions',
+    position_name:'Position Name',department:'Department',work_model:'Work Model',
+    requirements:'Key Requirements',generate_posting:'Generate Job Posting',
+    technical:'Technical',behavioral:'Behavioral',situational:'Situational',mixed:'Mixed',manager:'Manager',
+    office:'Office',hybrid:'Hybrid',
+    comparison_title:'Candidate Comparison',add_candidate:'+ Add Candidate',
+    interview1:'Interview 1',test_drive:'Test Drive',interview2:'Interview 2',total_score:'Total Score',
+    resources_title:'HR Resources',resources_sub:'Books · Websites · Tools · Methods',
+    version_sub:'All updates and change notes',
+    suggest_title:'Update Suggestions',suggest_sub:'Suggest a new feature or improvement',
+    new_suggestion:'Submit New Suggestion',your_name:'Your Name',category:'Category',
+    suggestion_title:'Title',description:'Description',submit_suggestion:'Submit Suggestion',
+    all_suggestions:'All Suggestions',cat_feature:'New Feature',cat_improvement:'Improvement',
+    cat_bug:'Bug Report',cat_design:'Design',cat_other:'Other',
+    select_from_bank:'Select from Question Bank',
+    view:'View',delete:'Delete',add_to_form:'Add to Form',
+    no_records:'No saved interviews yet.',
+    suggestion_saved:'Your suggestion was submitted, thank you!',suggestion_err:'Please fill in the title and description fields.',
+    logout_confirm:'Are you sure you want to log out?',
+    select_candidate:'Select a candidate from the Pipeline.',
+    thanks_letter:(a,g)=>`Dear ${a},\n\nThank you for coming in and meeting with me. I wanted to let you know how much I enjoyed speaking with you and appreciated your interest in the position.\n\nWhile it was a difficult decision given the strength of our candidates, we are unable to offer you this position at this time. However, we will keep your resume on file for future openings over the next six months.\n\nWe wish you the best in your job search.\n\nSincerely,\n${g}\nDUAY International Trading Ltd.\nwww.duaycor.com | +90 212 625 5 444`,
+  },
+  fr:{
+    app_sub:'SYSTÈME DE RECRUTEMENT',username:'Nom d\'utilisateur',password:'Mot de passe',login_as:'Rôle de connexion',
+    role_admin:'Administrateur (Admin)',role_hr:'Spécialiste RH',role_viewer:'Observateur',
+    login_btn:'Se connecter',login_err:'Nom d\'utilisateur ou mot de passe incorrect.',
+    pipeline:'Vivier de candidats',phone_screen:'Présélection téléphonique',interview_form_nav:'Formulaire d\'entretien',
+    records:'Enregistrements d\'entretiens',test_drive_nav:'Test pratique',evaluation:'Évaluation',
+    reference:'Vérification des références',thanks:'Lettre de remerciement',ai_tools:'Outils IA',
+    comparison:'Comparaison des candidats',resources:'Ressources RH',version_history:'Historique des versions',
+    suggest:'Suggérer une mise à jour',
+    phone_title:'Guide d\'entretien téléphonique',
+    interview_form:'Formulaire d\'entretien',interview_form_sub:'Ajouter des questions · Écrire des réponses · Sauvegarder',
+    checklist_tab:'Liste de contrôle',form_tab:'Formulaire',bank_tab:'Banque de questions',
+    interview_info:'Détails de l\'entretien',candidate_name:'Nom du candidat',position:'Poste',
+    interview_datetime:'Date et heure de l\'entretien',interviewer:'Intervieweur',
+    qa_title:'Questions et réponses',from_bank:'+ De la banque',add_question:'+ Ajouter une question',
+    interviewer_note:'Note de l\'intervieweur',save_interview:'Sauvegarder l\'entretien',clear_form:'Effacer',
+    records_title:'Enregistrements d\'entretiens',records_sub:'Tous les entretiens enregistrés',
+    test_title:'Test pratique — Étape 8',first2months:'2 premiers mois',last_interview:'Dernier entretien',aspects:'Aspects testés',
+    ref_title:'Formulaire de vérification des références',ref_name:'Nom de la référence',company:'Entreprise',phone:'Téléphone',
+    ref_title_lbl:'Titre de la référence',app_date:'Date de candidature',interview_date:'Date d\'entretien',
+    work_dates:'Dates d\'emploi',sep_reason:'Raison du départ',work_quality:'Qualité du travail',
+    training_needed:'Domaines nécessitant une formation',general_comments:'Commentaires généraux',
+    save_form:'Sauvegarder le formulaire',ref_saved:'Formulaire de référence sauvegardé!',
+    thanks_title:'Lettre de remerciement',sender:'Nom et titre de l\'expéditeur',preview:'Aperçu',copy_text:'Copier le texte',
+    ai_title:'Outils RH IA',cv_analysis:'Analyse CV',gen_questions:'Questions d\'entretien',gen_posting:'Offre d\'emploi',
+    cv_text:'Texte du CV',desired_skills:'Compétences souhaitées (optionnel)',analyze_cv:'Analyser le CV',
+    question_type:'Type de question',level:'Niveau',focus_skills:'Compétences clés',generate_questions:'Générer des questions',
+    position_name:'Nom du poste',department:'Département',work_model:'Modèle de travail',
+    requirements:'Exigences principales',generate_posting:'Créer l\'offre d\'emploi',
+    technical:'Technique',behavioral:'Comportemental',situational:'Situationnel',mixed:'Mixte',manager:'Manager',
+    office:'Bureau',hybrid:'Hybride',
+    comparison_title:'Comparaison des candidats',add_candidate:'+ Ajouter un candidat',
+    interview1:'Entretien 1',test_drive:'Test pratique',interview2:'Entretien 2',total_score:'Score total',
+    resources_title:'Ressources RH',resources_sub:'Livres · Sites web · Outils · Méthodes',
+    version_sub:'Toutes les mises à jour et notes de changement',
+    suggest_title:'Suggestions de mise à jour',suggest_sub:'Suggérer une nouvelle fonctionnalité ou amélioration',
+    new_suggestion:'Soumettre une nouvelle suggestion',your_name:'Votre nom',category:'Catégorie',
+    suggestion_title:'Titre',description:'Description',submit_suggestion:'Soumettre la suggestion',
+    all_suggestions:'Toutes les suggestions',cat_feature:'Nouvelle fonctionnalité',cat_improvement:'Amélioration',
+    cat_bug:'Rapport de bug',cat_design:'Design',cat_other:'Autre',
+    select_from_bank:'Sélectionner dans la banque de questions',
+    view:'Voir',delete:'Supprimer',add_to_form:'Ajouter au formulaire',
+    no_records:'Aucun entretien enregistré.',
+    suggestion_saved:'Votre suggestion a été soumise, merci!',suggestion_err:'Veuillez remplir les champs titre et description.',
+    logout_confirm:'Êtes-vous sûr de vouloir vous déconnecter?',
+    select_candidate:'Sélectionnez un candidat dans le Pipeline.',
+    thanks_letter:(a,g)=>`Cher(e) ${a},\n\nJe vous remercie de vous être déplacé(e) et de m'avoir rencontré. Je souhaitais vous faire savoir combien j'ai apprécié notre échange et votre intérêt pour le poste.\n\nBien que la décision ait été difficile étant donné la qualité de nos candidats, nous ne sommes pas en mesure de vous proposer ce poste pour le moment. Cependant, nous conserverons votre candidature pour les prochaines opportunités au cours des six mois à venir.\n\nNous vous souhaitons beaucoup de succès dans votre recherche d'emploi.\n\nCordialement,\n${g}\nDUAY International Trading Ltd.\nwww.duaycor.com | +90 212 625 5 444`,
+  },
+};
+
+function T(key){return TRANSLATIONS[LANG]?.[key]||TRANSLATIONS['tr'][key]||key;}
+function setLang(lang,btn){
+  LANG=lang;
+  if(btn){document.querySelectorAll('.lang-sel button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  applyI18n();
+  updateTsk();
+  renderNavItems();
+  renderLoginVersion();
+}
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    const v=T(k);
+    if(typeof v==='string') el.textContent=v;
+  });
+}
+
+// ══════════════════════════════════════════════════
+// USERS
+// ══════════════════════════════════════════════════
+const USERS=[
+  {user:'admin',pass:'duay2024',role:'admin',display:'Admin'},
+  {user:'ik',pass:'ik123',role:'hr',display:'IK Uzmanı'},
+  {user:'izleyici',pass:'izle',role:'viewer',display:'Görüntüleyici'},
+];
+let currentUser=null;
+
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value;
+  const r=document.getElementById('l-role').value;
+  const found=USERS.find(x=>x.user===u&&x.pass===p);
+  const errEl=document.getElementById('login-err');
+  if(!found){errEl.style.display='block';errEl.textContent=T('login_err');return;}
+  errEl.style.display='none';
+  currentUser={...found,role:r};
+  document.getElementById('user-name').textContent=found.display;
+  document.getElementById('user-av').textContent=found.display.slice(0,2).toUpperCase();
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  renderNavItems();
+  go('pipeline',null,'');
+  applyI18n();
+}
+function logout(){
+  if(!confirm(T('logout_confirm'))) return;
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('l-pass').value='';
+  currentUser=null;
+}
+
+// ══════════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════════
+let darkMode=false;
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.documentElement.setAttribute('data-theme',darkMode?'dark':'');
+  document.getElementById('theme-icon-sun').style.display=darkMode?'none':'block';
+  document.getElementById('theme-icon-moon').style.display=darkMode?'block':'none';
+}
+
+// ══════════════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════════════
+function updateClock(){
+  const now=new Date();
+  const s=now.toLocaleDateString('tr-TR')+' '+now.toLocaleTimeString('tr-TR');
+  const el=document.getElementById('live-clock');
+  if(el) el.textContent=s;
+}
+setInterval(updateClock,1000);updateClock();
+
+function renderLoginVersion(){
+  const v=APP_VERSIONS[0];
+  document.getElementById('login-version-info').innerHTML=`<strong>v${v.ver}</strong> &nbsp;·&nbsp; ${fmtTs(v.ts)}`;
+}
+
+// ══════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════
+function renderNavItems(){
+  const navItems=[
+    {page:'pipeline',i18n:'pipeline',icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'},
+    {page:'telefon',i18n:'phone_screen',icon:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'},
+    {page:'mulakat',i18n:'interview_form_nav',icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
+    {page:'kayitlar',i18n:'records',icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',badge:'kayit-badge-sb'},
+    {page:'test',i18n:'test_drive_nav',icon:'<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'},
+    {page:'evaluation',i18n:'evaluation',icon:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'},
+    {page:'referans',i18n:'reference',icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'},
+    {page:'tesekkur',i18n:'thanks',icon:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>'},
+    {page:'ai',i18n:'ai_tools',icon:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>',badge:'yz-badge',badgeTxt:'YZ'},
+    {page:'ozet',i18n:'comparison',icon:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>'},
+    {page:'kaynaklar',i18n:'resources',icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {page:'versions',i18n:'version_history',icon:'<polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/>'},
+    {page:'suggest',i18n:'suggest',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+  ];
+  const nav=document.getElementById('nav-items');
+  nav.innerHTML=navItems.map(item=>`
+    <button class="nb" data-page="${item.page}" onclick="go('${item.page}',this,'${T(item.i18n)}')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${item.icon}</svg>
+      <span>${T(item.i18n)}</span>
+      ${item.badge?`<span class="nb-badge" id="${item.badge}">${item.badgeTxt||'0'}</span>`:''}
+    </button>`).join('');
+  updateBadge();
+}
+
+let sbCol=false;
+function toggleSB(){sbCol=!sbCol;document.getElementById('sidebar').classList.toggle('collapsed',sbCol);}
+
+function go(id,btn,title){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  const panel=document.getElementById('panel-'+id);
+  if(panel) panel.classList.add('active');
+  if(btn) btn.classList.add('active');
+  else{const found=document.querySelector(`.nb[data-page="${id}"]`);if(found) found.classList.add('active');}
+  document.getElementById('page-title').textContent=title||T(id);
+  if(id==='evaluation') renderEval();
+  if(id==='kayitlar') renderKayitlar();
+  if(id==='telefon') renderTelefon();
+  if(id==='versions') renderVersions();
+  if(id==='suggest') renderSuggestions();
+}
+function st(pre,id,btn){
+  document.querySelectorAll(`[id^="${pre}-"].tpanel`).forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById(pre+'-'+id);if(el) el.classList.add('active');
+  const parentPanel=el?.closest('.panel');
+  if(parentPanel) parentPanel.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════
 // DATA
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 const STAGES=[
-  {id:'phone-screening',label:'Telefon Ön Eleme'},
-  {id:'interview',label:'Mülakat'},
-  {id:'test-drive',label:'Test Sürüşü'},
-  {id:'evaluation',label:'Değerlendirme'},
-  {id:'onboarding',label:'Eğitim & Başlangıç'},
+  {id:'phone-screening',i18n:'phone_screen'},
+  {id:'interview',i18n:'interview_form_nav'},
+  {id:'test-drive',i18n:'test_drive_nav'},
+  {id:'evaluation',i18n:'evaluation'},
+  {id:'onboarding',i18n:'thanks'},
 ];
 let candidates=[
   {id:1,name:'Ahmet Yılmaz',position:'Satınalma Asistanı',stage:'test-drive',score:4.2,notes:'Web sitesini incelemiş, istekli. İndirim hikayesi başarılı.',disc:'D (Dominant)',loc:'Eyüpsultan (3km)'},
@@ -570,510 +876,470 @@ let candidates=[
 let selCand=null;
 const FACTORS=['Dış görünüş','Dikkat','Deneyim (miktar)','Deneyim (kalite)','Merak','Hırs','Kararlılık','Yenilikçilik','Kendini yönetme','Analitik yetenek','Karar alma','Öğrenci Zihniyeti','Referanslar'];
 let evalSc=Object.fromEntries(FACTORS.map(f=>[f,3]));
-
-const SORU_BANKASI=[
-  {cat:'Karakter & Adaptasyon',sorular:['Daha önce çalıştığınız işleri göz önünde bulundurarak, her birindeki performansınızı nasıl değerlendirirsiniz?','En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?','Akşamları ve hafta sonları dahil uzun saatler çalışmak zorunda kaldınız mı? Bu durumlarda nasıl hissettiniz?','Amaçlarınıza ulaşırken karşılaştığınız engel ve zorluklardan bahsedin. Bunlarla nasıl başa çıktınız?','Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizi görünce ne yaptınız?','Karşılaştığınız en kötü problem neydi? Bu problemlere yaklaşımınız bugün daha farklı olur mu?','Kişileri ya da çalışmaları organize etmek zorunda kaldığınız bir işten bahsedin.','Bir işi bırakmanıza sebep olan şeyler nelerdir?']},
-  {cat:'Zihin Yapısı & Başarı',sorular:['En mükemmel işiniz ve iş dışı başarınız nedir?','En büyük hayal kırıklıklarınız nelerdir? Onlarla nasıl başa çıktınız?','Şu anki hedefleriniz ve bunları başarmak için hazırladığınız plan nedir?','Yeni beceriler öğrenmek ve kullanmak zorunda kaldığınız bir işinizden bahsedin.','Potansiyelinizi zorlayan — bittim, ama bu benim boyumu uzattı diyebileceğiniz bir iş anlatır mısınız?']},
-  {cat:'İlişkiler & İletişim',sorular:['Bir yönetici ya da müdürle aranızda geçen en olumlu ve olumsuz olayları anlatın.','Bir yöneticiyle aynı fikirde olmadığınız bir olaydan ve bu durumda ne yaptığınızdan bahsedin.','Birlikte çalıştığınız kişilerle ilişkilerinizde en sevdiğiniz ve sevmediğiniz yön nedir?','İkna yönünüzle ilgili hayatınızdan bir örnek verebilir misiniz?']},
-  {cat:'Motivasyon & Beklentiler',sorular:['Bir işten beklentileriniz nelerdir — maaş, eğitim, iş öğretme vb.?','Sevdiğiniz işte 1 şeyi düzeltebilseydiniz neyi düzeltirdiniz? Siz nasıl yapardınız?','Sabah koşa koşa geleceğiniz bir iş ve ortam nasıl olmalı?','Bu görüşmeye sizi getiren şey ne?']},
-  {cat:'IK Yöneticisi Özel',sorular:['En uzun süre çalıştığınız iş hangisiydi ve tam olarak neler yaptınız?','Karşılaştığınız en büyük zorlayıcı sorun neydi, nasıl çözdünüz?','Hayatta aldığınız en zor kararlardan biri nelerdi, neden aldınız?','Ofis ortamında mı yoksa sahada mı çalıştınız? Hangisi daha motive edici?','Firmamıza verebileceğiniz özel bir yönünüz var mı? (grafik, tasarım, güzel yazı vb.)','İyi indirim aldığınız veya iyi pazarlık yaptığınız bir anınızı anlatabilir misiniz?']},
-  {cat:'Telefon Ön Eleme',sorular:['Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?','Bu pozisyonu kariyer olarak görüyor musunuz?','Satınalma ile ilgili aldığınız sertifika/eğitim var mı?','İlandaki başvurunuza en çok ne sebep oldu?','En başarılı indirim aldığınız pazarlığı anlatır mısınız?']},
-];
-
-const KONTROL_ITEMS=['Mülakat takımını seçin (diğer personel üyeleri katılacaksa).','Görüşme için sessiz bir ortam hazırlayın.','Adayın özgeçmişini, telefon görüşmesi notlarını ve DISC profil sonuçlarını inceleyin.','Aday için firmanız ve pozisyonla ilgili bir bilgi paketi hazırlayın.','Adayı selamlayın ve tesisinizde kısa gezintiye çıkarın. İçecek bir şeyler teklif edin (çay/kahve + kuruyemiş + çikolata).','Görüşmenin amacını açıklayın.','Pozisyonla ilgili açık bir genel bakış sunun.','Adayın özgeçmişi ve çalışma hayatıyla ilgili soruları sorun.','Deneyimler, eğitim, beceriler ve kişisel özelliklerle ilgili hazırladığınız soruları sorun.','Mülakatı bitirin. Sürecin bundan sonraki kısmını açıklayın.','Adaya başka bir sorusu olup olmadığını sorun ve teşekkür ettikten sonra kapıya kadar eşlik edin.','Ofisin tüm ışıkları açık olmalı, güzel bir koku sürülmeli, panjurlar açık, mutfak bölümü kapalı olmalı.'];
-
-// mülakat soruları state
 let iqItems=[];
 
-// ═══════════════════════════════════════════════════════
-// NAV
-// ═══════════════════════════════════════════════════════
-function go(id,btn,title){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  btn.classList.add('active');
-  document.getElementById('page-title').textContent=title;
-  if(id==='evaluation') renderEval();
-  if(id==='kayitlar') renderKayitlar();
-}
-let sbCol=false;
-function toggleSB(){sbCol=!sbCol;document.getElementById('sidebar').classList.toggle('collapsed',sbCol);}
-function st(pre,id,btn){
-  document.querySelectorAll('#mul-'+pre+' .tpanel, #test-'+pre+' .tpanel, #ai-'+pre+' .tpanel, #panel-'+pre+' .tpanel').forEach(p=>p.classList.remove('active'));
-  const panels=document.querySelectorAll('[id^="'+pre+'-"]');
-  panels.forEach(p=>{if(p.classList.contains('tpanel')) p.classList.remove('active');});
-  document.querySelectorAll('[id^="'+pre+'"] .tab, #panel-'+pre+' .tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(pre+'-'+id).classList.add('active');
-  btn.classList.add('active');
-}
+const SORU_BANKASI=[
+  {cat:'Karakter & Adaptasyon',sorular:['Daha önce çalıştığınız işleri göz önünde bulundurarak, her birindeki performansınızı nasıl değerlendirirsiniz?','En iyi ve en kötü performanslarınızı hangi işlerde sergilediniz? Neden?','Amaçlarınıza ulaşırken karşılaştığınız engel ve zorluklardan bahsedin. Bunlarla nasıl başa çıktınız?','Geçmişteki işlerinizde hedefinizi karşılamaya doğru ilerlemediğinizi görünce ne yaptınız?','Bir işi bırakmanıza sebep olan şeyler nelerdir?']},
+  {cat:'Zihin Yapısı & Başarı',sorular:['En mükemmel işiniz ve iş dışı başarınız nedir?','En büyük hayal kırıklıklarınız nelerdir? Onlarla nasıl başa çıktınız?','Potansiyelinizi zorlayan bir iş anlatır mısınız?','İkna yönünüzle ilgili hayatınızdan bir örnek verir misiniz?']},
+  {cat:'İlişkiler & İletişim',sorular:['Bir yönetici ya da müdürle aranızda geçen en olumlu ve olumsuz olayları anlatın.','Bir yöneticiyle aynı fikirde olmadığınız bir olaydan ve bu durumda ne yaptığınızdan bahsedin.','Birlikte çalıştığınız kişilerle ilişkilerinizde en sevdiğiniz ve sevmediğiniz yön nedir?']},
+  {cat:'Motivasyon & Beklentiler',sorular:['Bir işten beklentileriniz nelerdir?','Sabah koşa koşa geleceğiniz bir iş ve ortam nasıl olmalı?','Bu görüşmeye sizi getiren şey ne?']},
+  {cat:'IK Yöneticisi Özel',sorular:['En uzun süre çalıştığınız iş hangisiydi ve tam olarak neler yaptınız?','Karşılaştığınız en büyük zorlayıcı sorun neydi, nasıl çözdünüz?','Hayatta aldığınız en zor kararlardan biri nelerdi, neden aldınız?','Ofis ortamında mı yoksa sahada mı çalıştınız? Hangisi daha motive edici?','En başarılı indirim aldığınız pazarlığı anlatır mısınız?']},
+];
 
-// ═══════════════════════════════════════════════════════
+const KONTROL_ITEMS=['Mülakat takımını seçin (diğer personel üyeleri katılacaksa).','Görüşme için sessiz bir ortam hazırlayın.','Adayın özgeçmişini, telefon görüşmesi notlarını ve DISC profil sonuçlarını inceleyin.','Aday için firmanız ve pozisyonla ilgili bir bilgi paketi hazırlayın.','Adayı selamlayın ve tesisinizde kısa gezintiye çıkarın. İçecek bir şeyler teklif edin.','Görüşmenin amacını açıklayın.','Pozisyonla ilgili açık bir genel bakış sunun.','Adayın özgeçmişi ve çalışma hayatıyla ilgili soruları sorun.','Deneyimler, eğitim ve becerilerle ilgili hazırladığınız soruları sorun.','Mülakatı bitirin. Sürecin bundan sonraki kısmını açıklayın.','Adaya başka bir sorusu olup olmadığını sorun ve teşekkür ettikten sonra kapıya kadar eşlik edin.'];
+
+// ══════════════════════════════════════════════════
 // PIPELINE
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function renderPipe(){
   const board=document.getElementById('pipe-board');
   board.innerHTML='';
   STAGES.forEach(stage=>{
     const cards=candidates.filter(c=>c.stage===stage.id);
-    const col=document.createElement('div');
-    col.className='stage-col';
-    col.innerHTML=`<div class="stage-hdr"><span class="stage-lbl">${stage.label}</span><span class="stage-cnt">${cards.length}</span></div>
-    <div class="stage-body">
-      ${cards.map(c=>`<div class="pcard" onclick="openModal(${c.id})">
-        <div class="pcard-pos">${c.position}</div>
-        <div class="pcard-name">${c.name}</div>
-        <div class="pcard-meta">3 gün önce · ${c.loc}</div>
-        <div class="pcard-foot">
-          <div style="display:flex">${[0,1,2].map(i=>`<div style="width:17px;height:17px;border-radius:50%;border:2px solid #fff;background:#e8d8f0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#6a4a7a;margin-left:${i?'-5px':'0'}">IK</div>`).join('')}</div>
-          ${c.score>0?`<div class="pcard-score">★ ${c.score}</div>`:''}
-        </div>
-      </div>`).join('')}
-      <button class="add-btn" onclick="addCand('${stage.id}')">+ Aday Ekle</button>
-    </div>`;
+    const col=document.createElement('div');col.className='stage-col';
+    col.innerHTML=`<div class="stage-hdr"><span class="stage-lbl">${T(stage.i18n)}</span><span class="stage-cnt">${cards.length}</span></div>
+    <div class="stage-body">${cards.map(c=>`<div class="pcard" onclick="openModal(${c.id})">
+      <div class="pcard-pos">${c.position}</div><div class="pcard-name">${c.name}</div>
+      <div class="pcard-meta">3 gün önce · ${c.loc}</div>
+      <div class="pcard-foot"><div style="display:flex">${[0,1,2].map(i=>`<div style="width:16px;height:16px;border-radius:50%;border:2px solid var(--bg2);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--text3);margin-left:${i?'-5px':'0'}">IK</div>`).join('')}</div>${c.score>0?`<div class="pcard-score">★ ${c.score}</div>`:''}</div></div>`).join('')}
+    <button class="add-btn" onclick="addCand('${stage.id}')">+ ${T('add_candidate')}</button></div>`;
     board.appendChild(col);
   });
 }
-function filterCandidates(v){
-  document.querySelectorAll('.pcard').forEach(c=>{
-    const visible=c.querySelector('.pcard-name').textContent.toLowerCase().includes(v.toLowerCase());
-    c.style.opacity=visible?'1':'0.3';
-  });
-}
-function addCand(stageId){
-  const name=prompt('Aday adı soyadı:');
-  if(!name?.trim()) return;
-  const pos=prompt('Pozisyon:')||'Belirtilmedi';
-  candidates.push({id:Date.now(),name:name.trim(),position:pos,stage:stageId,score:0,notes:'',disc:'N/A',loc:'Belirtilmedi'});
+function addCand(sid){
+  const name=prompt(T('candidate_name')+':');if(!name?.trim()) return;
+  const pos=prompt(T('position')+':')||'—';
+  candidates.push({id:Date.now(),name:name.trim(),position:pos,stage:sid,score:0,notes:'',disc:'N/A',loc:'Belirtilmedi'});
   renderPipe();
 }
 function moveC(id,dir){
-  const ids=STAGES.map(s=>s.id);
-  const c=candidates.find(c=>c.id===id);
-  if(!c) return;
-  const idx=ids.indexOf(c.stage);
-  const next=idx+(dir==='next'?1:-1);
+  const ids=STAGES.map(s=>s.id);const c=candidates.find(c=>c.id===id);if(!c) return;
+  const idx=ids.indexOf(c.stage);const next=idx+(dir==='next'?1:-1);
   if(next>=0&&next<ids.length) c.stage=ids[next];
-  renderPipe();
-  document.getElementById('mo').classList.remove('open');
+  renderPipe();document.getElementById('mo').classList.remove('open');
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // MODAL
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function openModal(id){
-  const c=candidates.find(c=>c.id===id);
-  if(!c) return;
+  const c=candidates.find(c=>c.id===id);if(!c) return;
   selCand=c;
   document.getElementById('m-av').textContent=c.name.split(' ').map(n=>n[0]).join('').slice(0,2);
   document.getElementById('m-name').textContent=c.name;
   document.getElementById('m-pos').textContent=c.position;
-  const ids=STAGES.map(s=>s.id);
-  const ci=ids.indexOf(c.stage);
+  const ids=STAGES.map(s=>s.id);const ci=ids.indexOf(c.stage);
   document.getElementById('m-body').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div class="ic"><div class="ic-l">KONUM</div><div class="ic-v">${c.loc}</div></div>
-      <div class="ic"><div class="ic-l">DISC PROFİLİ</div><div class="ic-v">${c.disc}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+      <div style="background:var(--bg3);padding:8px 10px;border-radius:8px;border:1px solid var(--border)"><div style="font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.1em;margin-bottom:2px">KONUM</div><div style="font-size:11px;font-weight:600;color:var(--text)">${c.loc}</div></div>
+      <div style="background:var(--bg3);padding:8px 10px;border-radius:8px;border:1px solid var(--border)"><div style="font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.1em;margin-bottom:2px">DISC</div><div style="font-size:11px;font-weight:600;color:var(--text)">${c.disc}</div></div>
     </div>
-    <div>
-      <div style="font-weight:700;font-size:11px;color:#1a0a2e;margin-bottom:5px;display:flex;align-items:center;gap:5px">📞 Telefon Görüşme Notları</div>
-      <div style="background:#f0e8f8;border-radius:8px;padding:9px 12px;font-size:11px;color:#4a1a6a;line-height:1.7;font-style:italic;border:1px solid #d8c0f0">"${c.notes||'Not eklenmemiş.'}"</div>
-    </div>
-    <div>
-      <div style="font-weight:700;font-size:11px;color:#1a0a2e;margin-bottom:5px">✅ Mülakat Kontrol Listesi</div>
-      <div>${KONTROL_ITEMS.slice(0,6).map(item=>`<div style="display:flex;align-items:flex-start;gap:7px;padding:5px 8px;border:1px solid #f0e8f0;border-radius:6px;font-size:11px;color:#334155;margin-bottom:4px;line-height:1.5"><input type="checkbox" style="flex-shrink:0;accent-color:#8b1a4a;width:12px;height:12px;margin-top:2px"><span>${item}</span></div>`).join('')}</div>
-    </div>
-    <div>
-      <div style="font-weight:700;font-size:11px;color:#1a0a2e;margin-bottom:5px">🔄 Süreç Aşamaları</div>
-      <div class="slist">${STAGES.map((s,i)=>`<div class="step ${s.id===c.stage?'cur':''}">
-        <div class="step-n" style="background:${i<ci?'#10b981':s.id===c.stage?'#8b1a4a':'#e8d8f0'}">${i<ci?'✓':i+1}</div>
-        <span style="font-size:11px;font-weight:${s.id===c.stage?'600':'400'};color:${s.id===c.stage?'#4a1a6a':'#64748b'}">${s.label}</span>
-      </div>`).join('')}</div>
-    </div>`;
+    <div><div style="font-weight:700;font-size:11px;color:var(--text);margin-bottom:5px">📞 Telefon Notları</div><div style="background:var(--bg3);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--text2);line-height:1.7;font-style:italic;border:1px solid var(--border)">"${c.notes||'—'}"</div></div>
+    <div><div style="font-weight:700;font-size:11px;color:var(--text);margin-bottom:5px">🔄 Süreç</div><div>${STAGES.map((s,i)=>`<div style="display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:6px;border:1px solid ${s.id===c.stage?'var(--accent)':'transparent'};background:${s.id===c.stage?'var(--bg3)':'transparent'};margin-bottom:3px">
+      <div style="width:18px;height:18px;border-radius:50%;background:${i<ci?'#10b981':s.id===c.stage?'var(--accent)':'var(--bg3)'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:${i<ci||s.id===c.stage?'#fff':'var(--text3)'}">${i<ci?'✓':i+1}</div>
+      <span style="font-size:11px;font-weight:${s.id===c.stage?'600':'400'};color:${s.id===c.stage?'var(--accent)':'var(--text2)'}">${T(s.i18n)}</span></div>`).join('')}</div></div>`;
   document.getElementById('m-foot').innerHTML=`
-    ${ci<STAGES.length-1?`<button style="flex:1;padding:8px;background:#8b1a4a;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" onclick="moveC(${c.id},'next')">Bir Sonraki Aşamaya Taşı →</button>`:''}
-    <button style="padding:8px 14px;background:transparent;color:#7c5a9a;border:1px solid #3d2a5a;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" onclick="document.getElementById('mo').classList.remove('open')">Kapat</button>`;
+    ${ci<STAGES.length-1?`<button style="flex:1;padding:8px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" onclick="moveC(${c.id},'next')">→ Bir Sonraki</button>`:''}
+    <button style="padding:8px 12px;background:transparent;color:#9a7ab0;border:1px solid var(--sidebar2);border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" onclick="document.getElementById('mo').classList.remove('open')">✕</button>`;
   document.getElementById('mo').classList.add('open');
 }
 function closeMO(e){if(e.target===document.getElementById('mo')) document.getElementById('mo').classList.remove('open');}
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// TELEFON
+// ══════════════════════════════════════════════════
+function renderTelefon(){
+  document.getElementById('telefon-content').innerHTML=`
+  <div class="tip">💡 %10 siz konuşun, %90 adayı konuşturun. Aday kaçamak yanıt veriyorsa görüşmeye çağırmayın.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px">
+    <div class="card">
+      <div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:9px">📋 Sorulacak Sorular</div>
+      ${[{n:1,q:'Web sitemizi incelediniz mi? En çok neler dikkatinizi çekti?'},{n:2,q:'Bu pozisyonu kariyer olarak görüyor musunuz?',sub:['Satınalma sertifikanız var mı?','İlham aldığınız biri var mı?','Bu pozisyon hangi yönlerinizle örtüşüyor?']},{n:3,q:'İlanı okudunuz — başvurunuza en çok ne sebep oldu?'},{n:4,q:'DISC analiz raporunuzu iletebilir misiniz?'},{n:5,q:'En başarılı indirim aldığınız pazarlığı anlatır mısınız?'}].map(i=>`<div style="margin-bottom:7px"><div style="display:flex;gap:7px;font-size:11px;color:var(--text)"><span style="width:16px;height:16px;border-radius:5px;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${i.n}</span><span>${i.q}</span></div>${(i.sub||[]).map(s=>`<div style="font-size:10px;color:var(--text3);padding-left:23px;margin-top:2px">↳ ${s}</div>`).join('')}</div>`).join('')}
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:9px">💬 Gelen Sorulara Yanıtlar</div>
+      ${[{s:'İş ne?',c:'Satınalma asistanlığı.'},{s:'Online görüşebilir miyiz?',c:'Evet — ilk görüşme online, olumlu geçerse ikincisi yüz yüze.'},{s:'Maaş nedir?',c:'Görüşmede konuşuluyor.'},{s:'Diğer sorular',c:'Görüşmede sormanız durumunda iletilecek.'}].map(r=>`<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:600;color:var(--text)">${r.s}</div><div style="font-size:11px;color:#10b981;padding-left:8px;margin-top:2px">→ ${r.c}</div></div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:8px">📍 Ulaşım Kontrolü</div>
+    <div style="font-size:11px;color:var(--text);line-height:1.9">
+      <div>✅ Ofise maksimum <strong>5–6 km</strong> uzaklıkta olmalı.</div>
+      <div>✅ Metro ile <strong>aktarmasız</strong> gelebiliyorsa 10 km de kabul edilebilir.</div>
+      <div style="font-size:10px;color:var(--text3);font-style:italic;margin-top:6px">Bir gün konaklayacağın otele özenmezsin, ama içinde yaşayacağın evi seçerken çok daha dikkatli olursun.</div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════
 // KONTROL LİSTESİ
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function renderKontrolList(){
-  document.getElementById('kontrol-list').innerHTML=KONTROL_ITEMS.map((item,i)=>`
-    <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border:1px solid #e8dff5;border-radius:8px;font-size:11px;color:#334155;margin-bottom:5px;line-height:1.5;background:#fff">
-      <input type="checkbox" style="flex-shrink:0;accent-color:#8b1a4a;width:14px;height:14px;margin-top:2px">
+  document.getElementById('kontrol-list').innerHTML=KONTROL_ITEMS.map(item=>`
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text);margin-bottom:5px;background:var(--bg2);line-height:1.5">
+      <input type="checkbox" style="flex-shrink:0;accent-color:var(--accent);width:13px;height:13px;margin-top:2px">
       <span>${item}</span>
     </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-// MÜLAKAT FORMU — SORU EKLEMELİ
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// MÜLAKAT FORMU
+// ══════════════════════════════════════════════════
 function renderIQList(){
   const el=document.getElementById('iq-list');
-  if(iqItems.length===0){
-    el.innerHTML='<div style="color:#9a7ab0;font-size:12px;padding:16px 0;text-align:center">Henüz soru eklenmedi. Yukarıdaki "+ Soru Ekle" butonunu veya soru bankasını kullanın.</div>';
-    return;
-  }
+  if(iqItems.length===0){el.innerHTML=`<div style="color:var(--text3);font-size:12px;padding:14px 0;text-align:center">${T('add_question')} butonunu veya soru bankasını kullanın.</div>`;return;}
   el.innerHTML=iqItems.map((item,i)=>`
     <div class="iq-row">
-      <div class="iq-top">
-        <div class="iq-num">${i+1}</div>
-        <textarea class="iq-q" id="iq-q-${item.id}" onchange="iqItems[${i}].soru=this.value" rows="2">${item.soru}</textarea>
-        <button class="iq-del" onclick="removeIQ(${item.id})" title="Soruyu Sil">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-        </button>
+      <div class="iq-top"><div class="iq-num">${i+1}</div>
+        <textarea class="iq-q" id="iq-q-${item.id}" rows="2" onchange="iqItems[${i}].soru=this.value">${item.soru}</textarea>
+        <button class="iq-del" onclick="removeIQ('${item.id}')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
       </div>
-      <div class="iq-ans-lbl">✍️ Yanıt / Not</div>
-      <textarea class="iq-ans" id="iq-a-${item.id}" placeholder="Adayın yanıtını veya notunuzu buraya yazın..." rows="3" onchange="iqItems[${i}].yanit=this.value">${item.yanit||''}</textarea>
+      <div class="iq-ans-lbl">✍️ ${T('interviewer_note')}</div>
+      <textarea class="iq-ans" id="iq-a-${item.id}" rows="3" onchange="iqItems[${i}].yanit=this.value">${item.yanit||''}</textarea>
     </div>`).join('');
 }
-
 function addIQ(soruText){
-  const id=Date.now()+Math.random();
+  const id='iq'+Date.now();
   iqItems.push({id,soru:soruText||'',yanit:''});
   renderIQList();
-  if(!soruText){
-    setTimeout(()=>{
-      const el=document.getElementById('iq-q-'+id);
-      if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}
-    },50);
-  }
+  if(!soruText){setTimeout(()=>{const el=document.getElementById('iq-q-'+id);if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}},60);}
 }
-function removeIQ(id){
-  iqItems=iqItems.filter(i=>i.id!==id);
-  renderIQList();
-}
-function syncIQValues(){
-  iqItems.forEach(item=>{
-    const q=document.getElementById('iq-q-'+item.id);
-    const a=document.getElementById('iq-a-'+item.id);
-    if(q) item.soru=q.value;
-    if(a) item.yanit=a.value;
-  });
-}
+function removeIQ(id){iqItems=iqItems.filter(i=>i.id!==id);renderIQList();}
+function syncIQ(){iqItems.forEach(item=>{const q=document.getElementById('iq-q-'+item.id);const a=document.getElementById('iq-a-'+item.id);if(q) item.soru=q.value;if(a) item.yanit=a.value;});}
 
-// ── Banka modalı ──
 function addFromBank(){
-  const el=document.getElementById('bank-mo-list');
-  el.innerHTML=SORU_BANKASI.map(cat=>`
-    <div style="margin-bottom:14px">
-      <div style="font-weight:700;font-size:11px;color:#4a1a6a;margin-bottom:6px;padding:4px 0;border-bottom:1px solid #f0e8f0">${cat.cat}</div>
-      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 4px;border-radius:6px;cursor:pointer;transition:background .1s" onmouseover="this.style.background='#f5f0fa'" onmouseout="this.style.background='transparent'" onclick="addIQ(${JSON.stringify(s)});document.getElementById('bank-mo').style.display='none'">
-        <svg width="13" height="13" fill="none" stroke="#8b1a4a" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span style="font-size:11px;color:#334155;line-height:1.5">${s}</span>
+  document.getElementById('bank-mo-list').innerHTML=SORU_BANKASI.map(cat=>`
+    <div style="margin-bottom:13px">
+      <div style="font-weight:700;font-size:11px;color:var(--accent);margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--border)">${cat.cat}</div>
+      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:7px;padding:5px 4px;border-radius:6px;cursor:pointer" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'" onclick="addIQ(${JSON.stringify(s)});document.getElementById('bank-mo').style.display='none'">
+        <svg width="12" height="12" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span style="font-size:11px;color:var(--text);line-height:1.5">${s}</span>
       </div>`).join('')}
     </div>`).join('');
   document.getElementById('bank-mo').style.display='flex';
 }
-
-// ── Soru bankası sekmesi ──
 function renderSoruBankasi(){
   document.getElementById('soru-bankasi-list').innerHTML=SORU_BANKASI.map(cat=>`
-    <div class="card" style="margin-bottom:10px">
-      <div style="font-weight:700;font-size:12px;color:#4a1a6a;margin-bottom:8px">${cat.cat}</div>
-      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 6px;border-radius:7px;margin-bottom:3px">
-        <span style="width:16px;height:16px;border-radius:5px;background:#f0e8f8;color:#8b1a4a;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px">▸</span>
-        <span style="flex:1;font-size:11px;color:#334155;line-height:1.5">${s}</span>
-        <button class="btn btn-outline btn-sm" onclick="addIQ(${JSON.stringify(s)});st('mul','form',document.querySelectorAll('#panel-mulakat .tab')[1])" style="flex-shrink:0;font-size:10px;padding:3px 8px">Forma Ekle</button>
+    <div class="card" style="margin-bottom:9px">
+      <div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:7px">${cat.cat}</div>
+      ${cat.sorular.map(s=>`<div style="display:flex;align-items:flex-start;gap:7px;padding:5px;border-radius:7px;margin-bottom:2px">
+        <span style="width:14px;height:14px;border-radius:4px;background:var(--bg3);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;margin-top:1px">▸</span>
+        <span style="flex:1;font-size:11px;color:var(--text);line-height:1.5">${s}</span>
+        <button class="btn btn-outline btn-sm" style="flex-shrink:0;font-size:10px;padding:3px 8px" onclick="addIQ(${JSON.stringify(s)});st('mul','form',document.querySelectorAll('#panel-mulakat .tab')[1])">${T('add_to_form')}</button>
       </div>`).join('')}
     </div>`).join('');
 }
-
-// ── Kaydet ──
 function saveInterview(){
-  syncIQValues();
+  syncIQ();
   const aday=document.getElementById('mf-aday').value.trim();
-  const poz=document.getElementById('mf-pozisyon').value.trim();
-  const tarih=document.getElementById('mf-tarih').value;
-  const gorusen=document.getElementById('mf-gorusen').value.trim();
-  const not=document.getElementById('mf-not').value.trim();
-  if(!aday){document.getElementById('save-msg').innerHTML='<div class="err-box">⚠ Adayın adı zorunludur.</div>';return;}
-  const kayit={
-    id:Date.now(),
-    aday,poz,
-    tarih:tarih?new Date(tarih).toLocaleString('tr-TR'):'Belirtilmedi',
-    gorusen:gorusen||'Belirtilmedi',
-    not,
+  if(!aday){document.getElementById('save-msg').innerHTML='<div class="err-box">⚠ '+T('candidate_name')+' zorunludur.</div>';return;}
+  const kayit={id:Date.now(),aday,poz:document.getElementById('mf-pozisyon').value.trim(),
+    tarih:document.getElementById('mf-tarih').value?new Date(document.getElementById('mf-tarih').value).toLocaleString('tr-TR'):'—',
+    gorusen:document.getElementById('mf-gorusen').value.trim()||'—',
+    not:document.getElementById('mf-not').value.trim(),
     sorular:[...iqItems.map(i=>({soru:i.soru,yanit:i.yanit}))],
-    savedAt:new Date().toLocaleString('tr-TR'),
-  };
+    savedAt:new Date().toLocaleString('tr-TR'),lang:LANG};
   const mevcut=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
-  mevcut.unshift(kayit);
-  localStorage.setItem('duay-ik-kayitlar',JSON.stringify(mevcut));
+  mevcut.unshift(kayit);localStorage.setItem('duay-ik-kayitlar',JSON.stringify(mevcut));
   updateBadge();
-  document.getElementById('save-msg').innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 12px;font-size:11px;color:#065f46">✅ Görüşme "'+aday+'" adına kaydedildi! <a href="#" onclick="go(\'kayitlar\',document.querySelector(\'.nb:nth-child(4)\'),\'Mülakat Kayıtları\');return false" style="font-weight:700">Kayıtları Görüntüle →</a></div>';
-  setTimeout(()=>document.getElementById('save-msg').innerHTML='',6000);
+  document.getElementById('save-msg').innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">✅ Görüşme kayıt edildi.</div>';
+  setTimeout(()=>document.getElementById('save-msg').innerHTML='',5000);
 }
 function clearForm(){
-  document.getElementById('mf-aday').value='';
-  document.getElementById('mf-pozisyon').value='';
-  document.getElementById('mf-tarih').value='';
-  document.getElementById('mf-gorusen').value='';
-  document.getElementById('mf-not').value='';
-  iqItems=[];renderIQList();
-  document.getElementById('save-msg').innerHTML='';
+  ['mf-aday','mf-pozisyon','mf-gorusen','mf-not'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mf-tarih').value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+  iqItems=[];renderIQList();document.getElementById('save-msg').innerHTML='';
 }
 function updateBadge(){
   const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
-  const b=document.getElementById('kayit-badge');
-  if(b) b.textContent=k.length;
+  const b=document.getElementById('kayit-badge-sb');if(b) b.textContent=k.length;
 }
-
-// ── Kayıtları göster ──
 function renderKayitlar(){
   const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
   const el=document.getElementById('kayit-listesi');
-  if(k.length===0){el.innerHTML='<div class="empty"><svg width="40" height="40" fill="none" stroke="#d0b8e8" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><span>Henüz kaydedilmiş mülakat yok.</span></div>';return;}
+  if(!k.length){el.innerHTML='<div class="empty">'+T('no_records')+'</div>';return;}
   el.innerHTML=k.map((r,ri)=>`
     <div class="db-row">
       <div class="db-av">${r.aday.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:13px;color:#1a0a2e">${r.aday}</div>
-        <div class="db-meta">${r.poz||'—'} · ${r.tarih} · Görüşen: ${r.gorusen}</div>
-        ${r.not?`<div class="db-preview">${r.not.slice(0,140)}${r.not.length>140?'…':''}</div>`:''}
-        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
-          ${(r.sorular||[]).slice(0,3).map(s=>`<span style="background:#f0e8f8;color:#4a1a6a;font-size:10px;padding:2px 7px;border-radius:20px">${s.soru.slice(0,40)}${s.soru.length>40?'…':''}</span>`).join('')}
-          ${(r.sorular||[]).length>3?`<span style="font-size:10px;color:#9a7ab0">+${r.sorular.length-3} soru</span>`:''}
-        </div>
+        <div style="font-weight:700;font-size:13px;color:var(--text)">${r.aday}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">${r.poz||'—'} · ${r.tarih} · ${r.gorusen}</div>
+        ${r.not?`<div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5">${r.not.slice(0,120)}${r.not.length>120?'…':''}</div>`:''}
+        <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">${(r.sorular||[]).slice(0,3).map(s=>`<span style="background:var(--bg3);color:var(--text3);font-size:10px;padding:2px 7px;border-radius:20px">${s.soru.slice(0,35)}…</span>`).join('')}${r.sorular?.length>3?`<span style="font-size:10px;color:var(--text3)">+${r.sorular.length-3}</span>`:''}</div>
       </div>
-      <div class="db-actions">
-        <button class="btn btn-outline btn-sm" onclick="viewKayit(${ri})">Görüntüle</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteKayit(${ri})">Sil</button>
+      <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+        <button class="btn btn-outline btn-sm" onclick="viewKayit(${ri})">${T('view')}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteKayit(${ri})">${T('delete')}</button>
       </div>
     </div>`).join('');
 }
 function viewKayit(idx){
-  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
-  const r=k[idx];
-  if(!r) return;
+  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');const r=k[idx];if(!r) return;
   const w=window.open('','_blank');
   w.document.write(`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Mülakat — ${r.aday}</title>
-  <style>body{font-family:'Segoe UI',sans-serif;max-width:700px;margin:40px auto;padding:0 20px;color:#1a0a2e}
-  h1{color:#8b1a4a;margin-bottom:4px}h2{font-size:14px;color:#4a1a6a;margin:20px 0 8px;border-bottom:1px solid #e8dff5;padding-bottom:4px}
-  .meta{font-size:12px;color:#6a4a7a;margin-bottom:20px}.qitem{margin-bottom:16px;border:1px solid #e8dff5;border-radius:8px;padding:12px}
-  .qsoru{font-weight:600;font-size:13px;color:#1a0a2e;margin-bottom:6px}.qyanit{font-size:12px;color:#334155;line-height:1.6;background:#f0faf0;padding:8px;border-radius:6px}
-  .not-box{background:#f0e8f8;border-radius:8px;padding:12px;font-size:12px;color:#4a1a6a;line-height:1.6}
-  @media print{.no-print{display:none}}</style></head><body>
-  <h1>${r.aday}</h1>
-  <div class="meta">${r.poz||''} · ${r.tarih} · Görüşen: ${r.gorusen} · Kaydedildi: ${r.savedAt}</div>
-  ${r.not?`<h2>Görüşen Kişinin Notu</h2><div class="not-box">${r.not}</div>`:''}
-  <h2>Sorular & Yanıtlar (${(r.sorular||[]).length} soru)</h2>
-  ${(r.sorular||[]).map((s,i)=>`<div class="qitem"><div class="qsoru">${i+1}. ${s.soru}</div><div class="qyanit">${s.yanit||'<em style="color:#94a3b8">Yanıt girilmemiş.</em>'}</div></div>`).join('')}
-  <div class="no-print" style="margin-top:24px"><button onclick="window.print()" style="padding:8px 16px;background:#8b1a4a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px">🖨 Yazdır / PDF</button></div>
-  </body></html>`);
-  w.document.close();
+  <style>body{font-family:system-ui,sans-serif;max-width:680px;margin:40px auto;padding:0 20px;color:#1a1a2e}h1{color:#8b1a4a;margin-bottom:3px}h2{font-size:14px;color:#4a1a6a;margin:18px 0 7px;border-bottom:1px solid #e8dff5;padding-bottom:4px}.meta{font-size:12px;color:#6a4a7a;margin-bottom:18px}.qitem{margin-bottom:13px;border:1px solid #e8dff5;border-radius:8px;padding:11px}.qsoru{font-weight:600;font-size:13px;color:#1a0a2e;margin-bottom:5px}.qyanit{font-size:12px;color:#334155;line-height:1.6;background:#f0faf6;padding:7px;border-radius:6px}.not-box{background:#f0e8f8;border-radius:8px;padding:11px;font-size:12px;color:#4a1a6a;line-height:1.6}</style></head><body>
+  <h1>${r.aday}</h1><div class="meta">${r.poz||''} · ${r.tarih} · Görüşen: ${r.gorusen} · Kaydedildi: ${r.savedAt}</div>
+  ${r.not?`<h2>Görüşen Notu</h2><div class="not-box">${r.not}</div>`:''}
+  <h2>Sorular & Yanıtlar (${(r.sorular||[]).length})</h2>
+  ${(r.sorular||[]).map((s,i)=>`<div class="qitem"><div class="qsoru">${i+1}. ${s.soru}</div><div class="qyanit">${s.yanit||'<em style="color:#aaa">—</em>'}</div></div>`).join('')}
+  <div style="margin-top:20px"><button onclick="window.print()" style="padding:8px 16px;background:#8b1a4a;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨 Yazdır / PDF</button></div>
+  </body></html>`);w.document.close();
 }
 function deleteKayit(idx){
-  if(!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
-  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');
-  k.splice(idx,1);
-  localStorage.setItem('duay-ik-kayitlar',JSON.stringify(k));
-  updateBadge();renderKayitlar();
+  if(!confirm(T('delete')+'?')) return;
+  const k=JSON.parse(localStorage.getItem('duay-ik-kayitlar')||'[]');k.splice(idx,1);
+  localStorage.setItem('duay-ik-kayitlar',JSON.stringify(k));updateBadge();renderKayitlar();
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // TEST SÜRÜŞÜ
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function renderTests(){
-  const t1=[
-    {title:'Kahraman Bey Testi',desc:'Zor tedarikçiden ayrıcalık almak, özel indirim alma, isteneni yaptırabilme.',color:'#7c3aed'},
-    {title:'Ofis Temizliği',desc:'Her hafta ofis temizliği yaptırıp personelin ne yapacağını gözlemleme.',color:'#10b981'},
-    {title:'Zamansız Arama',desc:'Zamansız arama / mesaj gönderme. Dönüş hızı ve profesyonellik ölçümü.',color:'#f97316'},
-    {title:'Uzak Yere Yollama',desc:'Aniden uzak bir yerden bir şey alıp gelmesini isteme. Sabır ve iş bitirme kapasitesi.',color:'#0ea5e9'},
-    {title:'Fikir Üretkenliği',desc:'Yeni müşteri kazanma, şirketi büyütme konusunda fikirlerini alma.',color:'#ec4899'},
-    {title:'Ürün Araştırması',desc:'Detaylı ve eksik bilgi verilen ürünleri bulmasını isteme. Hangi yöntemleri kullandığını öğrenmek.',color:'#8b1a4a'},
-  ];
-  const t2=[
-    {title:'İknacılık — Satış Eğitimi',desc:'Adaydan bir satış eğitimi satmasını isteyin.',color:'#7c3aed'},
-    {title:'İknacılık — Görsel Temin',desc:'Zor bir firmadan ürün görsellerini kaliteli şekilde göndermesini sağlama.',color:'#8b1a4a'},
-    {title:'İknacılık — Yüksek İndirim',desc:'Çok yüksek fiyat indirimi almasını isteyin ve ne yapacağını izleyin.',color:'#ef4444'},
-    {title:'Hız Testi',desc:'Şirketin çeyreklik hedeflerini ne kadar sürede ve hangi yöntemlerle gerçekleştireceği.',color:'#f97316'},
-    {title:'Eksik Bilgi ile İş',desc:'Detayları tam ve eksik verilmiş ürünü bulmasını isteyin. Hangi yöntemleri kullandığını sorun.',color:'#0ea5e9'},
-    {title:'Döküman Geliştirme',desc:'Şirket dökümanı verip kısa sürede çelişki ve yazım hatası bulmasını, yeni fikirler sunmasını isteyin.',color:'#10b981'},
-    {title:'Fuar Testi',desc:'Fuarda broşür dağıtma ve müşterilerden bilgi alma. Hedef net ama nasıl yapacağı bilgisi az.',color:'#ec4899'},
-    {title:'Uygulama Testi (30+30 dk)',desc:'3-4 iş zorluğunu yazın → 30 dk düşünsün → 30 dk birlikte çalışarak nasıl düşündüğünü görün.',color:'#6366f1'},
-  ];
-  const mkCard=t=>`<div style="background:#fff;padding:15px;border-radius:11px;border:1px solid #e8dff5;display:flex;flex-direction:column;gap:9px">
-    <div style="width:36px;height:36px;border-radius:10px;background:${t.color}18;display:flex;align-items:center;justify-content:center">
-      <svg width="17" height="17" fill="none" stroke="${t.color}" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    </div>
-    <div><div style="font-weight:700;font-size:12px;color:#1a0a2e;margin-bottom:4px">${t.title}</div><div style="font-size:11px;color:#64748b;line-height:1.6">${t.desc}</div></div>
-    <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;align-self:flex-start;background:${t.color}15;color:${t.color}">Gözlemle</span>
-  </div>`;
-  document.getElementById('test-grid-1').innerHTML=t1.map(mkCard).join('');
-  document.getElementById('test-grid-2').innerHTML=t2.map(mkCard).join('');
-  document.getElementById('yonler-wrap').innerHTML=['Pratiklik','Kararlılık','Sabırlılık','Kıvrak Zeka','Dış Görünüş','Kendini Yönetme','Coşku','Dinamizm','Yeni Yollar Deneme','Ekip Çalışmasına Yatkınlık','Araştırmacılık','Detaycılık','Dikkat','Analitik Yetenek','Yenilikçilik','Hırs','Dakiklik','Yalan Söylememe','Pazarlık / İkna','Soğuk Kanlılık','Deneyim (miktar)','Karar Alma','Merak','Hızlı İş Yapma','Fedakarlık','İşi Küçük Görmeme','Deneyim (Kalite)','Öğrenci Zihniyeti','Öz Güven','İletişim','Çalışkanlık','Kaliteli İş Yapma']
-    .map(y=>`<span style="background:#f0e8f8;color:#4a1a6a;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500">${y}</span>`).join('');
+  const mkC=t=>`<div style="background:var(--bg2);padding:14px;border-radius:10px;border:1px solid var(--border);display:flex;flex-direction:column;gap:9px">
+    <div style="width:34px;height:34px;border-radius:9px;background:${t.c}18;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" fill="none" stroke="${t.c}" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <div><div style="font-weight:700;font-size:12px;color:var(--text);margin-bottom:4px">${t.title}</div><div style="font-size:11px;color:var(--text2);line-height:1.6">${t.desc}</div></div>
+    <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;align-self:flex-start;background:${t.c}15;color:${t.c}">${t.badge}</span></div>`;
+  document.getElementById('tg1').innerHTML=[
+    {title:'Kahraman Bey Testi',desc:'Zor tedarikçiden ayrıcalık almak, özel indirim alma.',c:'#7c3aed',badge:'İkna'},
+    {title:'Ofis Temizliği',desc:'Her hafta düzenli ofis temizliği yaptırıp ne yapacağını görme.',c:'#10b981',badge:'Detaycılık'},
+    {title:'Zamansız Arama',desc:'Zamansız arama/mesaj — dönüş hızı ve profesyonellik.',c:'#f97316',badge:'Hız'},
+    {title:'Uzak Yere Yollama',desc:'Aniden uzak bir yerden bir şey alıp gelmesini isteme.',c:'#0ea5e9',badge:'Sabır'},
+    {title:'Fikir Üretkenliği',desc:'Yeni müşteri kazanma konusunda fikirlerini alma.',c:'#ec4899',badge:'Zeka'},
+    {title:'Ürün Araştırması',desc:'Detaylı ve eksik bilgi verilen ürünü bulmasını isteme.',c:'#8b1a4a',badge:'Araştırma'},
+  ].map(mkC).join('');
+  document.getElementById('tg2').innerHTML=[
+    {title:'İknacılık — Satış Eğitimi',desc:'Adaydan bir satış eğitimi satmasını isteyin.',c:'#7c3aed',badge:'İkna'},
+    {title:'Yüksek İndirim',desc:'Çok yüksek fiyat indirimi almasını isteyin ve izleyin.',c:'#ef4444',badge:'Pazarlık'},
+    {title:'Eksik Bilgi ile İş',desc:'Detayları tam ve eksik verilen ürünü bulmasını isteyin.',c:'#0ea5e9',badge:'Pratiklik'},
+    {title:'Döküman Geliştirme',desc:'Kısa sürede çelişki ve yazım hatası bulmasını isteyin.',c:'#10b981',badge:'Dikkat'},
+    {title:'Fuar Testi',desc:'Hedef net ama nasıl yapacağı bilgisi az verilecek.',c:'#ec4899',badge:'Üretkenlik'},
+    {title:'Uygulama Testi (30+30)',desc:'3-4 iş zorluğu yaz → 30 dk düşünsün → birlikte çalış.',c:'#6366f1',badge:'Kapasite'},
+  ].map(mkC).join('');
+  document.getElementById('yonler-wrap').innerHTML=['Pratiklik','Kararlılık','Sabırlılık','Kıvrak Zeka','Dış Görünüş','Kendini Yönetme','Coşku','Dinamizm','Araştırmacılık','Detaycılık','Dikkat','Analitik Yetenek','Yenilikçilik','Hırs','Dakiklik','Pazarlık / İkna','Soğuk Kanlılık','Karar Alma','Merak','Hızlı İş Yapma','Fedakarlık','İşi Küçük Görmeme','Öğrenci Zihniyeti','Öz Güven','İletişim','Çalışkanlık'].map(y=>`<span style="background:var(--bg3);color:var(--text2);font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500">${y}</span>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // DEĞERLENDİRME
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function renderEval(){
   const el=document.getElementById('eval-content');
-  if(!selCand){el.innerHTML='<div class="empty"><svg width="42" height="42" fill="none" stroke="#d0b8e8" stroke-width="1.5" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Aday Havuzu\'ndan bir aday seçin.</span></div>';return;}
+  if(!selCand){el.innerHTML=`<div class="empty">${T('select_candidate')}</div>`;return;}
   const avg=(Object.values(evalSc).reduce((a,b)=>a+b,0)/FACTORS.length).toFixed(1);
   el.innerHTML=`<div class="eval-wrap">
     <div class="eval-hd">
-      <div><div style="font-weight:700;font-size:14px;color:#1a0a2e">${selCand.name}</div><div style="font-size:11px;color:#9a7ab0;margin-top:2px">${selCand.position} · Eleman Adayı Değerlendirme Cetveli · Puanlama: 1–5</div></div>
-      <div style="text-align:right"><div style="font-size:9px;font-weight:700;color:#9a7ab0;letter-spacing:.1em;margin-bottom:2px">TOPLAM PUAN</div><div style="font-size:26px;font-weight:800;color:#8b1a4a">${avg}</div></div>
+      <div><div style="font-weight:700;font-size:14px;color:var(--text)">${selCand.name}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${selCand.position} · 1–5</div></div>
+      <div style="text-align:right"><div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.1em;margin-bottom:2px">TOPLAM</div><div style="font-size:26px;font-weight:800;color:var(--accent)">${avg}</div></div>
     </div>
-    <div class="eval-grid">${FACTORS.map(f=>`<div class="fac">
-      <div class="fac-hd"><span class="fac-lbl">${f}</span><span class="fac-sc">${evalSc[f]}</span></div>
-      <div class="fac-bars">${[1,2,3,4,5].map(v=>`<button class="fbar" style="background:${v<=evalSc[f]?'#8b1a4a':'#e8dff5'}" onclick="setSc('${f}',${v})"></button>`).join('')}</div>
-    </div>`).join('')}</div>
-    <div style="padding:14px 20px;background:#f8f5ff;border-top:1px solid #f0e8f0">
-      <div class="flabel" style="margin-bottom:6px">Diğer Bilgiler ve Gözlemler</div>
-      <textarea style="width:100%;padding:8px 10px;border:1px solid #e0d0f0;border-radius:8px;font-size:11px;color:#334155;background:#fff;min-height:75px;resize:vertical;font-family:'DM Sans',sans-serif" placeholder="Kanaat notlarınızı buraya yazın..."></textarea>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn btn-full" style="flex:1;background:#10b981;color:#fff" onclick="alert('İşe alım onaylandı!')">✓ İşe Alımı Onayla</button>
-        <button class="btn btn-outline" style="flex:1" onclick="go('tesekkur',document.querySelector('.nb:nth-child(8)'),'Teşekkür Mektubu')">✉ Teşekkür Mektubu</button>
+    <div class="eval-grid">${FACTORS.map(f=>`<div><div class="fac-hd"><span class="fac-lbl">${f}</span><span class="fac-sc">${evalSc[f]}</span></div><div class="fac-bars">${[1,2,3,4,5].map(v=>`<button class="fbar" style="background:${v<=evalSc[f]?'var(--accent)':'var(--bg3)'}" onclick="setSc('${f}',${v})"></button>`).join('')}</div></div>`).join('')}</div>
+    <div style="padding:13px 18px;background:var(--bg3);border-top:1px solid var(--border)">
+      <div class="flabel" style="margin-bottom:5px">Gözlemler</div>
+      <textarea style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text);background:var(--bg2);min-height:70px;resize:vertical;font-family:DM Sans,sans-serif" placeholder="Kanaat notu..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:9px">
+        <button class="btn btn-full" style="flex:1;background:#10b981;color:#fff" onclick="alert('İşe alım onaylandı!')">✓ Onayla</button>
+        <button class="btn btn-outline" style="flex:1" onclick="go('tesekkur',null,'Teşekkür Mektubu')">✉ Teşekkür</button>
       </div>
     </div>
   </div>`;
 }
 function setSc(f,v){evalSc[f]=v;renderEval();}
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // TEŞEKKÜR
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function updateTsk(){
-  const a=document.getElementById('tsk-aday').value||'[Adayın Adı]';
-  const g=document.getElementById('tsk-gonderen').value||'İsim Soyisim\nUnvan';
-  document.getElementById('tsk-preview').textContent=`Sayın ${a},\n\nGeldiğiniz ve benimle tanıştığınız için teşekkür ederim. Sizinle görüşmekten memnunluk duyduğumu ve ilginize teşekkür ettiğimi belirtmek isterim.\n\nÇok sayıda nitelikli aday arasından bir karar vermek oldukça güç oldu. Pozisyonu size teklif edemediğimizden dolayı üzüntü duymaktayım; ancak önümüzdeki altı aylık süre içerisinde boşalan diğer pozisyonlar için özgeçmişinizi saklayacağımızı bildirmek isterim.\n\nİş arayışınızda başarılar dilerim.\n\nSaygılarımla,\n${g}\nDUAY Uluslararası Tic. Ltd. Şti.\nwww.duaycor.com | +90 212 625 5 444`;
+  const a=document.getElementById('tsk-aday')?.value||'[Ad Soyad]';
+  const g=document.getElementById('tsk-gonderen')?.value||'İsim Soyisim\nUnvan';
+  const el=document.getElementById('tsk-preview');
+  if(el){const fn=T('thanks_letter');if(typeof fn==='function') el.textContent=fn(a,g);}
 }
 function copyTsk(){
   navigator.clipboard.writeText(document.getElementById('tsk-preview').textContent)
-    .then(()=>alert('Metin kopyalandı!'))
+    .then(()=>alert(T('copy_text')+' ✓'))
     .catch(()=>alert('Manuel olarak seçip kopyalayın.'));
 }
 
-// ═══════════════════════════════════════════════════════
-// ÖZET TABLO
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// ÖZET
+// ══════════════════════════════════════════════════
 function addOzetRow(){
   const tr=document.createElement('tr');
-  tr.innerHTML='<td><input placeholder="Ad Soyad" style="border:none;background:transparent;font-size:11px;color:#334155;width:120px;font-family:DM Sans,sans-serif"></td>'
-    +['—','—','—','—'].map(v=>`<td><input placeholder="${v}" style="border:none;background:transparent;font-size:11px;color:#334155;width:60px;font-family:DM Sans,sans-serif"></td>`).join('')
-    +'<td><button onclick="this.closest(\'tr\').remove()" style="border:none;background:transparent;color:#ef4444;cursor:pointer;font-size:12px">✕</button></td>';
+  tr.innerHTML='<td><input placeholder="Ad Soyad" style="border:none;background:transparent;font-size:11px;color:var(--text);width:120px;font-family:DM Sans,sans-serif"></td>'
+    +['—','—','—','—'].map(v=>`<td><input placeholder="${v}" style="border:none;background:transparent;font-size:11px;color:var(--text);width:65px;font-family:DM Sans,sans-serif"></td>`).join('')
+    +'<td><button onclick="this.closest(\'tr\').remove()" style="border:none;background:transparent;color:#ef4444;cursor:pointer">✕</button></td>';
   document.getElementById('ozet-body').appendChild(tr);
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // KAYNAKLAR
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function renderKaynaklar(){
   const resources=[
-    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'Who: The A Method for Hiring',desc:'Geoff Smart & Randy Street. Doğru insanı işe almanın sistematik yöntemi. DUAY sürecinizle birebir örtüşüyor.',link:'https://www.amazon.com/Who-Geoff-Smart/dp/0345504194'},
-    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'Topgrading (Brad Smart)',desc:'A/B/C kalite çalışan modeli. Mülakatlarda gerçeği nasıl öğrenirsiniz? CIDS görüşme yöntemi.',link:'https://topgrading.com/'},
-    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'Work Rules! (Laszlo Bock)',desc:'Google\'ın IK yaklaşımı. Yapısal mülakat, veri bazlı işe alım ve iş yeri kültürü.',link:'https://www.amazon.com/Work-Rules-Insights-Inside-Transform/dp/1455554790'},
-    {cat:'Kitap',catColor:'#eff6ff',catText:'#1d4ed8',title:'The DISC Model of Human Behavior',desc:'Bill J. Bonnstetter. D/I/S/C profillerini işe alım ve ekip yönetiminde kullanma rehberi.',link:'https://www.amazon.com/DISC-Model-Human-Behavior/dp/1885228139'},
-    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'SHRM — shrm.org',desc:'Dünya\'nın en büyük IK derneği. Ücretsiz şablonlar, mülakat soruları, hukuki rehberler.',link:'https://www.shrm.org'},
-    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'LinkedIn Talent Solutions',desc:'İşe alım trendleri, mülakat soruları bankası, yetenek raporları. Global benchmarklar.',link:'https://business.linkedin.com/talent-solutions'},
-    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'Harvard Business Review — IK',desc:'İşe alım hataları, önyargıdan kaçınma, yapısal mülakat araştırmaları. Akademik temelli.',link:'https://hbr.org/topic/subject/hiring'},
-    {cat:'Web Sitesi',catColor:'#f0fdf4',catText:'#166534',title:'Glassdoor — Interview Questions',desc:'Şirkete ve pozisyona göre gerçek mülakat sorularını görün. Rakip analizi için de kullanılır.',link:'https://www.glassdoor.com/Interview/index.htm'},
-    {cat:'Araç',catColor:'#fdf4ff',catText:'#7e22ce',title:'Crystal Knows (DISC)',desc:'DISC profillerini LinkedIn\'den otomatik çıkaran araç. Adayı tanımak için görüşme öncesi kullanın.',link:'https://www.crystalknows.com'},
-    {cat:'Araç',catColor:'#fdf4ff',catText:'#7e22ce',title:'TestGorilla',desc:'150+ yetenek testi: mantık, kişilik, iş simülasyonu. Test sürüşü öncesi eleme için ideal.',link:'https://www.testgorilla.com'},
-    {cat:'Araç',catColor:'#fdf4ff',catText:'#7e22ce',title:'Workable',desc:'Başvuru takibi (ATS), iş ilanı yayınlama, mülakat planlama ve işbirliği platformu.',link:'https://www.workable.com'},
-    {cat:'Yöntem',catColor:'#fff7ed',catText:'#c2410c',title:'STAR Mülakat Yöntemi',desc:'Situation → Task → Action → Result. Davranışsal mülakat sorularında adayı yapısal olarak değerlendirme.',link:'https://www.themuse.com/advice/star-interview-method'},
-    {cat:'Yöntem',catColor:'#fff7ed',catText:'#c2410c',title:'Yapısal Mülakat Tekniği',desc:'Tüm adaylara aynı soruları sormak ve standart puanlama. Önyargıyı en aza indiren bilimsel yöntem.',link:'https://hbr.org/2016/04/a-refresher-on-structured-vs-unstructured-interviews'},
-    {cat:'Yöntem',catColor:'#fff7ed',catText:'#c2410c',title:'Topgrading CIDS Görüşmesi',desc:'Career History Interview — adayın her iş deneyimini derinlemesine sorgulama. Referans bazlı doğrulama.',link:'https://topgrading.com/resources/topgrading-interview/'},
-    {cat:'Türkçe',catColor:'#fef2f2',catText:'#b91c1c',title:'Kariyer.net İK Rehberi',desc:'Türkiye\'ye özel iş ilanı yayınlama, maaş araştırması ve IK içerikleri.',link:'https://www.kariyer.net'},
-    {cat:'Türkçe',catColor:'#fef2f2',catText:'#b91c1c',title:'HR Dergi — hrdergi.com',desc:'Türkiye\'nin önde gelen IK dergisi. Araştırmalar, vaka çalışmaları ve sektörel haberler.',link:'https://www.hrdergi.com'},
-    {cat:'Türkçe',catColor:'#fef2f2',catText:'#b91c1c',title:'Peryön — peryön.org.tr',desc:'Personel Yönetimi Derneği. Türkiye IK sertifika programları ve etkinlikler.',link:'https://www.peryon.org.tr'},
-    {cat:'Podcast',catColor:'#f0fdf4',catText:'#166534',title:'The Talent Cast',desc:'İşe alım, yetenek yönetimi ve IK teknolojisi üzerine haftalık İngilizce podcast.',link:'https://www.thetalentcast.com'},
+    {cat:'Kitap',cc:'#eff6ff',ct:'#1d4ed8',title:'Who: The A Method for Hiring',desc:'Geoff Smart & Randy Street. Doğru insanı işe almanın sistematik yöntemi.',link:'https://whothebook.com/'},
+    {cat:'Kitap',cc:'#eff6ff',ct:'#1d4ed8',title:'Topgrading (Brad Smart)',desc:'A/B/C kalite çalışan modeli. CIDS görüşme yöntemi ile gerçeği nasıl öğrenirsiniz?',link:'https://topgrading.com/'},
+    {cat:'Kitap',cc:'#eff6ff',ct:'#1d4ed8',title:'Work Rules! (Laszlo Bock)',desc:'Google\'ın IK yaklaşımı. Yapısal mülakat, veri bazlı işe alım.',link:'https://www.amazon.com/Work-Rules-Insights-Inside-Transform/dp/1455554790'},
+    {cat:'Web',cc:'#f0fdf4',ct:'#166534',title:'SHRM — shrm.org',desc:'Dünya\'nın en büyük IK derneği. Ücretsiz şablonlar ve mülakat soruları.',link:'https://www.shrm.org'},
+    {cat:'Web',cc:'#f0fdf4',ct:'#166534',title:'Harvard Business Review',desc:'İşe alım araştırmaları ve yapısal mülakat makaleleri.',link:'https://hbr.org/topic/subject/hiring'},
+    {cat:'Web',cc:'#f0fdf4',ct:'#166534',title:'LinkedIn Talent Solutions',desc:'İşe alım trendleri, yetenek raporları, mülakat soruları bankası.',link:'https://business.linkedin.com/talent-solutions'},
+    {cat:'Araç',cc:'#fdf4ff',ct:'#7e22ce',title:'Crystal Knows (DISC)',desc:'LinkedIn\'den otomatik DISC profili. Görüşme öncesi adayı tanımak için.',link:'https://www.crystalknows.com'},
+    {cat:'Araç',cc:'#fdf4ff',ct:'#7e22ce',title:'TestGorilla',desc:'150+ yetenek testi. Test sürüşü öncesi eleme için ideal.',link:'https://www.testgorilla.com'},
+    {cat:'Araç',cc:'#fdf4ff',ct:'#7e22ce',title:'Workable',desc:'Başvuru takibi (ATS), iş ilanı yayınlama ve mülakat planlama.',link:'https://www.workable.com'},
+    {cat:'Yöntem',cc:'#fff7ed',ct:'#c2410c',title:'STAR Mülakat Yöntemi',desc:'Situation → Task → Action → Result. Davranışsal mülakat için standart.',link:'https://www.themuse.com/advice/star-interview-method'},
+    {cat:'Yöntem',cc:'#fff7ed',ct:'#c2410c',title:'Yapısal Mülakat',desc:'Tüm adaylara aynı soruları sormak ve standart puanlama. Önyargıyı minimize eder.',link:'https://hbr.org/2016/04/a-refresher-on-structured-vs-unstructured-interviews'},
+    {cat:'Türkçe',cc:'#fef2f2',ct:'#b91c1c',title:'HR Dergi — hrdergi.com',desc:'Türkiye\'nin önde gelen IK dergisi. Araştırmalar ve vaka çalışmaları.',link:'https://www.hrdergi.com'},
+    {cat:'Türkçe',cc:'#fef2f2',ct:'#b91c1c',title:'Peryön — peryon.org.tr',desc:'Personel Yönetimi Derneği. Türkiye IK sertifika programları.',link:'https://www.peryon.org.tr'},
+    {cat:'Türkçe',cc:'#fef2f2',ct:'#b91c1c',title:'Kariyer.net IK Rehberi',desc:'Türkiye\'ye özel iş ilanı, maaş araştırması ve IK içerikleri.',link:'https://www.kariyer.net'},
   ];
   document.getElementById('kaynak-grid').innerHTML=resources.map(r=>`
     <div class="res-card">
-      <span class="res-cat" style="background:${r.catColor};color:${r.catText}">${r.cat}</span>
-      <div class="res-title">${r.title}</div>
-      <div class="res-desc">${r.desc}</div>
-      <a href="${r.link}" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;color:#8b1a4a;display:flex;align-items:center;gap:4px">Ziyaret Et <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+      <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:${r.cc};color:${r.ct};align-self:flex-start">${r.cat}</span>
+      <div style="font-weight:700;font-size:12px;color:var(--text);line-height:1.4">${r.title}</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.5;flex:1">${r.desc}</div>
+      <a href="${r.link}" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:4px">Ziyaret Et <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
     </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// VERSİYON GEÇMİŞİ
+// ══════════════════════════════════════════════════
+function renderVersions(){
+  document.getElementById('version-list').innerHTML=APP_VERSIONS.map((v,i)=>`
+    <div class="ver-entry">
+      <span class="ver-badge">v${v.ver}</span>${i===0?` <span style="font-size:9px;font-weight:700;background:#ecfdf5;color:#065f46;padding:1px 8px;border-radius:20px;margin-left:5px">Güncel</span>`:''}
+      <div class="ver-time">${fmtTs(v.ts)}</div>
+      <div class="ver-list">${v.changes.map(c=>`<div>• ${c}</div>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+// ÖNERİLER
+// ══════════════════════════════════════════════════
+function submitSuggestion(){
+  const name=document.getElementById('sg-name').value.trim();
+  const cat=document.getElementById('sg-cat').value;
+  const title=document.getElementById('sg-title').value.trim();
+  const desc=document.getElementById('sg-desc').value.trim();
+  const msgEl=document.getElementById('sg-msg');
+  if(!title||!desc){msgEl.innerHTML='<div class="err-box">'+T('suggestion_err')+'</div>';return;}
+  const sug={id:Date.now(),name:name||'Anonim',cat,title,desc,votes:0,status:'beklemede',date:new Date().toLocaleString('tr-TR')};
+  const list=JSON.parse(localStorage.getItem('duay-ik-suggestions')||'[]');
+  list.unshift(sug);localStorage.setItem('duay-ik-suggestions',JSON.stringify(list));
+  msgEl.innerHTML='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:7px 11px;font-size:11px;color:#065f46">'+T('suggestion_saved')+'</div>';
+  document.getElementById('sg-title').value='';document.getElementById('sg-desc').value='';
+  setTimeout(()=>{msgEl.innerHTML='';renderSuggestions();},2000);
+}
+function voteSuggestion(idx,dir){
+  const list=JSON.parse(localStorage.getItem('duay-ik-suggestions')||'[]');
+  if(list[idx]) list[idx].votes+=dir;
+  localStorage.setItem('duay-ik-suggestions',JSON.stringify(list));renderSuggestions();
+}
+function renderSuggestions(){
+  const list=JSON.parse(localStorage.getItem('duay-ik-suggestions')||'[]');
+  const el=document.getElementById('suggest-list');if(!el) return;
+  if(!list.length){el.innerHTML='<div class="empty" style="height:120px">Henüz öneri yok.</div>';return;}
+  const catColors={Özellik:'#eff6ff:#1d4ed8',İyileştirme:'#f0fdf4:#166534',Hata:'#fef2f2:#b91c1c',Tasarım:'#fdf4ff:#7e22ce',Diğer:'#f8fafc:#334155'};
+  el.innerHTML=list.map((s,i)=>{
+    const [cc,ct]=(catColors[s.cat]||'#f8fafc:#334155').split(':');
+    return `<div class="sug-row">
+      <div class="sug-vote">
+        <button onclick="voteSuggestion(${i},1)">▲</button>
+        <span>${s.votes}</span>
+        <button onclick="voteSuggestion(${i},-1)">▼</button>
+      </div>
+      <div style="flex:1;min-width:0">
+        <span class="sug-cat" style="background:${cc};color:${ct}">${s.cat}</span>
+        <span class="sug-status" style="background:#f0fdf4;color:#166534">${s.status}</span>
+        <div style="font-weight:700;font-size:12px;color:var(--text);margin-bottom:3px;margin-top:4px">${s.title}</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">${s.desc}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">${s.name} · ${s.date}</div>
+      </div>
+    </div>`;}).join('');
+}
+
+// ══════════════════════════════════════════════════
 // AI TOOLS
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 async function callClaude(prompt,sys,max){
   const res=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max||1024,system:sys,messages:[{role:'user',content:prompt}]})
   });
-  const d=await res.json();
-  return d.content?.[0]?.text||'';
+  const d=await res.json();return d.content?.[0]?.text||'';
 }
 async function analyzeCV(){
   const pos=document.getElementById('cv-pos').value.trim();
   const txt=document.getElementById('cv-text').value.trim();
   const krit=document.getElementById('cv-krit').value.trim();
   const er=document.getElementById('cv-err'),re=document.getElementById('cv-result'),btn=document.getElementById('cv-btn');
-  if(!pos||!txt){er.innerHTML='<div class="err-box">⚠ Pozisyon ve CV metni zorunludur.</div>';return;}
-  er.innerHTML='';btn.disabled=true;btn.textContent='Analiz ediliyor...';
-  re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Yapay zeka CV\'yi inceliyor<span class="dot-load"></span></div>';
+  if(!pos||!txt){er.innerHTML='<div class="err-box">⚠ '+T('position')+' ve '+T('cv_text')+' zorunludur.</div>';return;}
+  er.innerHTML='';btn.disabled=true;btn.textContent='...';
+  re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Analiz ediliyor<span class="dot-load"></span></div>';
   try{
-    const raw=await callClaude('Pozisyon: '+pos+'\n'+(krit?'Kriterler: '+krit+'\n':'')+'CV:\n'+txt,'Sen deneyimli bir IK uzmanısın. Sadece JSON döndür:\n{"uyum_skoru":0-100,"guclu_yonler":["..."],"eksik_yonler":["..."],"genel_yorum":"2-3 cümle","tavsiye":"işe al / değerlendirilebilir / uygun değil"}');
+    const raw=await callClaude('Pozisyon: '+pos+'\n'+(krit?'Kriterler: '+krit+'\n':'')+'CV:\n'+txt,'Deneyimli IK uzmanısın. Sadece JSON döndür:\n{"uyum_skoru":0-100,"guclu_yonler":["..."],"eksik_yonler":["..."],"genel_yorum":"2-3 cümle","tavsiye":"işe al / değerlendirilebilir / uygun değil"}');
     const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
     const s=d.uyum_skoru||0;
     const bc=s>=70?'#10b981':s>=45?'#f59e0b':'#ef4444';
     const [bb,bf]=s>=70?['#ecfdf5','#065f46']:s>=45?['#fffbeb','#92400e']:['#fef2f2','#991b1b'];
-    re.innerHTML='<div class="res-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-weight:600;font-size:13px">Uyum Skoru</span><span style="font-size:10px;font-weight:700;background:'+bb+';color:'+bf+';padding:2px 10px;border-radius:20px">'+d.tavsiye+'</span></div>'
-      +'<div class="score-row"><span style="font-size:22px;font-weight:800;min-width:36px">'+s+'</span><div class="sbar-wrap"><div class="sbar-fill" style="width:'+s+'%;background:'+bc+'"></div></div><span style="font-size:11px;color:#9a7ab0">/100</span></div>'
-      +(d.guclu_yonler||[]).map(g=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#10b981;font-weight:700">+ </span>'+g+'</div>').join('')
-      +((d.eksik_yonler||[]).length?'<div style="margin-top:8px">'+(d.eksik_yonler||[]).map(e=>'<div style="font-size:12px;color:#334155;padding:2px 0"><span style="color:#ef4444;font-weight:700">- </span>'+e+'</div>').join('')+'</div>':'')
-      +(d.genel_yorum?'<div style="margin-top:10px;padding-top:10px;border-top:1px solid #e8dff5;font-size:11px;color:#64748b;line-height:1.7">'+d.genel_yorum+'</div>':'')
+    re.innerHTML='<div class="res-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><span style="font-weight:600;font-size:13px">Uyum Skoru</span><span style="font-size:10px;font-weight:700;background:'+bb+';color:'+bf+';padding:2px 10px;border-radius:20px">'+d.tavsiye+'</span></div>'
+      +'<div class="score-row"><span style="font-size:22px;font-weight:800;color:var(--text);min-width:36px">'+s+'</span><div class="sbar-wrap"><div class="sbar-fill" style="width:'+s+'%;background:'+bc+'"></div></div><span style="font-size:11px;color:var(--text3)">/100</span></div>'
+      +(d.guclu_yonler||[]).map(g=>'<div style="font-size:12px;color:var(--text);padding:2px 0"><span style="color:#10b981;font-weight:700">+ </span>'+g+'</div>').join('')
+      +((d.eksik_yonler||[]).length?'<div style="margin-top:7px">'+(d.eksik_yonler||[]).map(e=>'<div style="font-size:12px;color:var(--text);padding:2px 0"><span style="color:#ef4444;font-weight:700">- </span>'+e+'</div>').join('')+'</div>':'')
+      +(d.genel_yorum?'<div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--border);font-size:11px;color:var(--text2);line-height:1.7">'+d.genel_yorum+'</div>':'')
       +'</div>';
-  }catch(e){re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı. Lütfen tekrar deneyin.</div>';}
-  btn.disabled=false;btn.textContent="CV'yi Analiz Et";
+  }catch(e){re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Sonuç alınamadı.</div>';}
+  btn.disabled=false;btn.textContent=T('analyze_cv');
 }
 async function genSorular(){
   const pos=document.getElementById('s-pos').value.trim();
   const er=document.getElementById('s-err'),re=document.getElementById('s-result'),btn=document.getElementById('s-btn');
-  if(!pos){er.innerHTML='<div class="err-box">⚠ Pozisyon adı zorunludur.</div>';return;}
-  er.innerHTML='';btn.disabled=true;btn.textContent='Üretiliyor...';
-  re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sorular hazırlanıyor<span class="dot-load"></span></div>';
+  if(!pos){er.innerHTML='<div class="err-box">⚠ '+T('position')+' zorunludur.</div>';return;}
+  er.innerHTML='';btn.disabled=true;btn.textContent='...';
+  re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Üretiliyor<span class="dot-load"></span></div>';
   try{
-    const raw=await callClaude('Pozisyon: '+pos+'\nSeviye: '+document.getElementById('s-sev').value+'\nTür: '+document.getElementById('s-tur').value+(document.getElementById('s-yet').value?'\nYetkinlikler: '+document.getElementById('s-yet').value:''),'IK mülakatçısısın. Tam 7 soru üret. Sadece JSON:\n{"sorular":[{"soru":"...","amac":"kısa","ipucu":"kısa"}]}');
+    const raw=await callClaude('Pozisyon: '+pos+'\nSeviye: '+document.getElementById('s-sev').value+'\nTür: '+document.getElementById('s-tur').value+(document.getElementById('s-yet').value?'\nYetkinlikler: '+document.getElementById('s-yet').value:''),'IK mülakatçısısın. 7 soru üret. Sadece JSON:\n{"sorular":[{"soru":"...","amac":"kısa","ipucu":"kısa"}]}');
     const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    re.innerHTML='<div style="display:flex;flex-direction:column;gap:7px;margin-top:8px">'
-      +(d.sorular||[]).map((s,i)=>'<div class="res-box" style="padding:11px 13px"><div style="font-size:9px;color:#9a7ab0;font-weight:600;margin-bottom:3px">Soru '+(i+1)+'</div>'
-        +'<div style="font-size:12px;font-weight:600;color:#1a0a2e;margin-bottom:5px;line-height:1.5">'+s.soru+'</div>'
-        +'<div style="font-size:11px;color:#64748b"><strong>Amaç:</strong> '+s.amac+'</div>'
-        +'<div style="font-size:11px;color:#64748b;margin-top:2px"><strong>İpucu:</strong> '+s.ipucu+'</div>'
-        +'<button class="btn btn-outline btn-sm" style="margin-top:7px;font-size:10px" onclick="addIQ('+JSON.stringify(s.soru)+');go(\'mulakat\',document.querySelector(\'.nb:nth-child(3)\'),\'Mülakat Formu\')">Forma Ekle →</button>'
-        +'</div>').join('')+'</div>';
-  }catch(e){re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı.</div>';}
-  btn.disabled=false;btn.textContent='Soru Üret';
+    re.innerHTML='<div style="display:flex;flex-direction:column;gap:7px;margin-top:7px">'
+      +(d.sorular||[]).map((s,i)=>`<div class="res-box" style="padding:10px 12px"><div style="font-size:9px;color:var(--text3);font-weight:600;margin-bottom:2px">Soru ${i+1}</div>
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.5">${s.soru}</div>
+      <div style="font-size:11px;color:var(--text2)"><strong>Amaç:</strong> ${s.amac}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px"><strong>İpucu:</strong> ${s.ipucu}</div>
+      <button class="btn btn-outline btn-sm" style="margin-top:7px;font-size:10px" onclick="addIQ(${JSON.stringify(s.soru)});go('mulakat',null,'${T('interview_form_nav')}');st('mul','form',document.querySelectorAll('#panel-mulakat .tab')[1])">${T('add_to_form')} →</button>
+      </div>`).join('')+'</div>';
+  }catch(e){re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Sonuç alınamadı.</div>';}
+  btn.disabled=false;btn.textContent=T('generate_questions');
 }
 async function genIlan(){
   const pos=document.getElementById('i-pos').value.trim();
   const er=document.getElementById('i-err'),re=document.getElementById('i-result'),btn=document.getElementById('i-btn');
-  if(!pos){er.innerHTML='<div class="err-box">⚠ Pozisyon adı zorunludur.</div>';return;}
-  er.innerHTML='';btn.disabled=true;btn.textContent='Oluşturuluyor...';
-  re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">İş ilanı yazılıyor<span class="dot-load"></span></div>';
+  if(!pos){er.innerHTML='<div class="err-box">⚠ '+T('position_name')+' zorunludur.</div>';return;}
+  er.innerHTML='';btn.disabled=true;btn.textContent='...';
+  re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Oluşturuluyor<span class="dot-load"></span></div>';
   try{
-    const txt=await callClaude('Pozisyon: '+pos+'\n'+(document.getElementById('i-dep').value?'Departman: '+document.getElementById('i-dep').value+'\n':'')+'Çalışma: '+document.getElementById('i-mod').value+'\n'+(document.getElementById('i-ger').value?'Gereksinimler:\n'+document.getElementById('i-ger').value:''),'Profesyonel IK yazarısın. DUAY Uluslararası Tic. Ltd. Şti. için çekici Türkçe iş ilanı yaz. Format: başlık, hakkımızda, görev tanımı, nitelikler, imkânlar. Düz metin.',1200);
-    re.innerHTML='<div class="res-box"><div style="font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap">'+txt+'</div></div>';
-  }catch(e){re.innerHTML='<div class="res-box" style="color:#9a7ab0;font-size:12px">Sonuç alınamadı.</div>';}
-  btn.disabled=false;btn.textContent='İş İlanı Oluştur';
+    const txt=await callClaude('Pozisyon: '+pos+'\n'+(document.getElementById('i-dep').value?'Departman: '+document.getElementById('i-dep').value+'\n':'')+'Çalışma: '+document.getElementById('i-mod').value+'\n'+(document.getElementById('i-ger').value?'Gereksinimler:\n'+document.getElementById('i-ger').value:''),'Profesyonel IK yazarısın. DUAY Uluslararası için Türkçe iş ilanı yaz. Format: başlık, hakkımızda, görev tanımı, nitelikler, imkânlar. Düz metin.',1200);
+    re.innerHTML='<div class="res-box"><div style="font-size:12px;color:var(--text);line-height:1.8;white-space:pre-wrap">'+txt+'</div></div>';
+  }catch(e){re.innerHTML='<div class="res-box" style="color:var(--text3);font-size:12px">Sonuç alınamadı.</div>';}
+  btn.disabled=false;btn.textContent=T('generate_posting');
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+renderLoginVersion();
 renderPipe();
 renderKontrolList();
 renderIQList();
 renderSoruBankasi();
 renderTests();
-updateTsk();
 renderKaynaklar();
+updateTsk();
 updateBadge();
-// Set default datetime
 document.getElementById('mf-tarih').value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+document.getElementById('app').style.display='none';
+
+// demo: Login ekranı gözükmesin diye App'i baştan gizleyelim
+window.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('app').style.display='';
+  document.getElementById('app').classList.remove('visible');
+});
 </script>
 </body>
 </html>
